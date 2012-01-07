@@ -246,6 +246,7 @@ public:
 	virtual ~Vehicle();
 
 	void BeginLoading();
+	void CancelReservation(Station *st);
 	void LeaveStation();
 
 	GroundVehicleCache *GetGroundVehicleCache();
