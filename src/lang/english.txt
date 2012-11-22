@@ -1358,7 +1358,7 @@ STR_CONFIG_SETTING_TIMETABLE_IN_TICKS                           :Show timetable 
 STR_CONFIG_SETTING_TIMETABLE_IN_TICKS_HELPTEXT                  :Show travel times in time tables in game ticks instead of days
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE             :Show arrival and departure in timetables: {STRING2}
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE_HELPTEXT    :Display anticipated arrival and departure times in timetables
-STR_CONFIG_SETTING_TIMETABLE_ENABLE_SEPARATION                  :{LTBLUE}Enable automatic timetable separation: {ORANGE}{STRING1}
+STR_CONFIG_SETTING_TIMETABLE_ENABLE_SEPARATION                  :Enable automatic timetable separation: {STRING2}
 STR_CONFIG_SETTING_QUICKGOTO                                    :Quick creation of vehicle orders: {STRING2}
 STR_CONFIG_SETTING_QUICKGOTO_HELPTEXT                           :Pre-select the 'goto cursor' when opening the orders window
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE                            :Default rail type (after new game/game load): {STRING2}
