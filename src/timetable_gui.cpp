@@ -29,6 +29,18 @@
 
 #include "table/sprites.h"
 #include "table/strings.h"
+#include "widgets/dropdown_func.h"
+
+
+/** Entries for mode selection dropdown list. Order must be identical to the one in #TTSepMode */
+static const StringID TimetableSeparationDropdownOptions[6] = {
+	STR_TTSEPARATION_AUTO,
+	STR_TTSEPARATION_OFF,
+	STR_TTSEPARATION_MAN_TIME,
+	STR_TTSEPARATION_MAN_NUM,
+	STR_TTSEPARATION_BUFFERED_AUTO,
+	INVALID_STRING_ID,
+};
 
 /** Container for the arrival/departure dates of a vehicle */
 struct TimetableArrivalDeparture {
@@ -157,12 +169,14 @@ static void ChangeTimetableStartCallback(const Window *w, Date date)
 
 struct TimetableWindow : Window {
 	int sel_index;
-	const Vehicle *vehicle; ///< Vehicle monitored by the window.
-	bool show_expected;     ///< Whether we show expected arrival or scheduled
-	uint deparr_time_width; ///< The width of the departure/arrival time
-	uint deparr_abbr_width; ///< The width of the departure/arrival abbreviation
+	const Vehicle *vehicle;               ///< Vehicle monitored by the window.
+	bool show_expected;                   ///< Whether we show expected arrival or scheduled
+	uint deparr_time_width;               ///< The width of the departure/arrival time
+	uint deparr_abbr_width;               ///< The width of the departure/arrival abbreviation
 	Scrollbar *vscroll;
 	bool query_is_speed_query; ///< The currently open query window is a speed query and not a time query.
+	TTSepSettings new_sep_settings;       ///< Contains new separation settings.
+	VehicleTimetableWidgets query_widget; ///< Required to determinate source of input query
 
 	TimetableWindow(WindowDesc *desc, WindowNumber window_number) :
 			Window(desc),
@@ -170,6 +184,7 @@ struct TimetableWindow : Window {
 			vehicle(Vehicle::Get(window_number)),
 			show_expected(true)
 	{
+		this->new_sep_settings = (vehicle->orders.list != NULL) ? vehicle->orders.list->GetSepSettings() : TTSepSettings();
 		this->CreateNestedTree();
 		this->vscroll = this->GetScrollbar(WID_VT_SCROLLBAR);
 		this->UpdateSelectionStates();
@@ -344,6 +359,20 @@ struct TimetableWindow : Window {
 
 		this->SetWidgetLoweredState(WID_VT_AUTOFILL, HasBit(v->vehicle_flags, VF_AUTOFILL_TIMETABLE));
 
+		bool b;
+
+		if(this->vehicle->orders.list != NULL) {
+			b = !(_settings_game.order.automatic_timetable_separation && this->vehicle->orders.list->IsCompleteTimetable());
+		} else {
+			b = false;
+		}
+		this->SetWidgetsDisabledState(b, WID_VT_TTSEP_SET_PARAMETER, WID_VT_TTSEP_MODE_DROPDOWN, WIDGET_LIST_END);
+
+		/* We can only set parameters if we're in one of the manual modes. */
+		bool enabled_state = (this->new_sep_settings.mode == TTS_MODE_MAN_N) || (this->new_sep_settings.mode == TTS_MODE_MAN_T);
+
+		this->SetWidgetDisabledState(WID_VT_TTSEP_SET_PARAMETER, !enabled_state);
+
 		this->DrawWidgets();
 	}
 
@@ -352,6 +381,8 @@ struct TimetableWindow : Window {
 		switch (widget) {
 			case WID_VT_CAPTION: SetDParam(0, this->vehicle->index); break;
 			case WID_VT_EXPECTED: SetDParam(0, this->show_expected ? STR_TIMETABLE_EXPECTED : STR_TIMETABLE_SCHEDULED); break;
+			case WID_VT_TTSEP_MODE_DROPDOWN: SetDParam(0, TimetableSeparationDropdownOptions[this->new_sep_settings.mode]); break;
+			case WID_VT_TTSEP_SET_PARAMETER: SetDParam(0, (this->new_sep_settings.mode == TTS_MODE_MAN_N) ? STR_TTSEPARATION_SET_NUM : STR_TTSEPARATION_SET_TIME); break;
 		}
 	}
 
@@ -494,6 +525,75 @@ struct TimetableWindow : Window {
 				}
 				break;
 			}
+
+			case WID_VT_TTSEP_PANEL_TEXT: {
+				int       y            = r.top + WD_FRAMERECT_TOP;     // Represents the current vertical position
+				const int left_border  = r.left + WD_FRAMERECT_LEFT;   // Represents the left border of the separation display frame
+				const int right_border = r.right - WD_FRAMERECT_RIGHT; // Represents the right border of the separation display frame.
+
+				/* If separation is inactive, we can stop here. */
+				if (!_settings_game.order.automatic_timetable_separation || (this->vehicle->orders.list == NULL))
+					break;
+
+				/* If the new mode is OFF... */
+				if (this->new_sep_settings.mode == TTS_MODE_OFF) {
+					/* ... skip description lines. */
+					int offset = _settings_client.gui.timetable_in_ticks ? GetStringBoundingBox(STR_TTSEPARATION_REQ_TIME_DESC_TICKS).height
+																		 : GetStringBoundingBox(STR_TTSEPARATION_REQ_TIME_DESC_DAYS).height;
+
+					y = y + GetStringBoundingBox(STR_TTSEPARATION_REQ_NUM_DESC).height + offset;
+
+				} else {
+					/* If separation hasn't just been switched off, we need to draw various description lines.
+					 * The first line is the amount of separation which is either saved in the stuct or must
+					 * be calculated on the fly.
+					 */
+					uint64 par;
+					if (this->new_sep_settings.mode == TTS_MODE_MAN_T || this->new_sep_settings.mode == TTS_MODE_AUTO) {
+						par = this->new_sep_settings.sep_ticks;
+					} else {
+						par = this->vehicle->orders.list->GetTimetableTotalDuration() / this->new_sep_settings.num_veh;
+					}
+
+					/* Depending on the setting for time displays, set up and draw either tick or days string. */
+					if (_settings_client.gui.timetable_in_ticks) {
+						SetDParam(0, par);
+						DrawString(left_border, right_border, y, STR_TTSEPARATION_REQ_TIME_DESC_TICKS, TC_BLACK);
+
+						y += GetStringBoundingBox(STR_TTSEPARATION_REQ_TIME_DESC_TICKS).height;
+					} else {
+						SetDParam(0, par / DAY_TICKS);
+						DrawString(left_border, right_border, y, STR_TTSEPARATION_REQ_TIME_DESC_DAYS, TC_BLACK);
+
+						y += GetStringBoundingBox(STR_TTSEPARATION_REQ_TIME_DESC_DAYS).height;
+					}
+
+					/* Print either the chosen amount of vehicles (when in MAN_N mode) or the calculated result... */
+					if (this->new_sep_settings.mode == TTS_MODE_MAN_N || this->new_sep_settings.mode == TTS_MODE_AUTO) {
+						par = this->new_sep_settings.num_veh;
+					} else {
+						par = this->vehicle->orders.list->GetTimetableTotalDuration() / this->new_sep_settings.sep_ticks;
+					}
+
+					SetDParam(0, par);
+					DrawString(left_border, right_border, y, STR_TTSEPARATION_REQ_NUM_DESC, TC_BLACK);
+
+					y += GetStringBoundingBox(STR_TTSEPARATION_REQ_NUM_DESC).height;
+				}
+
+				/* If separation is switched on at all... */
+				if(this->vehicle->orders.list->IsSeparationOn())
+				{
+					/* ... set displayed status to either "Running" or "Initializing" */
+					SetDParam(0, (this->vehicle->orders.list->IsSeparationValid()) ? STR_TTSEPARATION_STATUS_RUNNING : STR_TTSEPARATION_STATUS_INIT);
+				} else {
+					/* If separation is switched off, show this instead. */
+					SetDParam(0, STR_TTSEPARATION_STATUS_OFF);
+				}
+
+				/* Print status description. */
+				DrawStringMultiLine(left_border, right_border, y, r.bottom - WD_FRAMERECT_BOTTOM, STR_TTSEPARATION_STATUS_DESC);
+			}
 		}
 	}
 
@@ -518,7 +618,6 @@ struct TimetableWindow : Window {
 
 			case WID_VT_TIMETABLE_PANEL: { // Main panel.
 				int selected = GetOrderFromTimetableWndPt(pt.y, v);
-
 				this->DeleteChildWindows();
 				this->sel_index = (selected == INVALID_ORDER || selected == this->sel_index) ? -1 : selected;
 				break;
@@ -547,6 +646,7 @@ struct TimetableWindow : Window {
 					}
 				}
 
+				this->query_widget = WID_VT_CHANGE_TIME;
 				this->query_is_speed_query = false;
 				ShowQueryString(current, STR_TIMETABLE_CHANGE_TIME, 31, this, CS_NUMERAL, QSF_NONE);
 				break;
@@ -603,16 +703,41 @@ struct TimetableWindow : Window {
 			case WID_VT_SHARED_ORDER_LIST:
 				ShowVehicleListWindow(v);
 				break;
+
+			case WID_VT_TTSEP_MODE_DROPDOWN: {
+				ShowDropDownMenu(this, TimetableSeparationDropdownOptions, this->new_sep_settings.mode, WID_VT_TTSEP_MODE_DROPDOWN, 0, 0);
+				break;
+			}
+
+			case WID_VT_TTSEP_SET_PARAMETER: {
+				this->query_widget = WID_VT_TTSEP_SET_PARAMETER;
+				SetDParam(0, (this->new_sep_settings.mode == TTS_MODE_MAN_N) ? this->new_sep_settings.num_veh : this->new_sep_settings.sep_ticks);
+				ShowQueryString(STR_JUST_INT, STR_TIMETABLE_CHANGE_TIME, 31, this, CS_NUMERAL, QSF_NONE);
+				break;
+			}
 		}
 
 		this->SetDirty();
 	}
 
+	virtual void OnDropdownSelect(int widget, int index)
+	{
+		assert(widget == WID_VT_TTSEP_MODE_DROPDOWN);
+
+		this->new_sep_settings = this->vehicle->orders.list->GetSepSettings();
+		this->new_sep_settings.mode = (TTSepMode)index;
+		this->vehicle->orders.list->SetSepSettings(this->new_sep_settings);
+		this->InvalidateData();
+	}
+
 	virtual void OnQueryTextFinished(char *str)
 	{
-		if (str == NULL) return;
+		if(str == NULL || StrEmpty(str))
+			return;
 
-		const Vehicle *v = this->vehicle;
+		switch(this->query_widget) {
+		case WID_VT_CHANGE_TIME: {
+			const Vehicle *v = this->vehicle;
 
 		uint32 p1 = PackTimetableArgs(v, this->sel_index, this->query_is_speed_query);
 
@@ -625,7 +750,40 @@ struct TimetableWindow : Window {
 
 		uint32 p2 = minu(val, UINT16_MAX);
 
-		DoCommandP(0, p1, p2, CMD_CHANGE_TIMETABLE | CMD_MSG(STR_ERROR_CAN_T_TIMETABLE_VEHICLE));
+			DoCommandP(0, p1, p2, CMD_CHANGE_TIMETABLE | CMD_MSG(STR_ERROR_CAN_T_TIMETABLE_VEHICLE));
+			break;
+		}
+		case WID_VT_TTSEP_SET_PARAMETER: {
+			int value = atoi(str);
+
+			switch (this->new_sep_settings.mode)
+			{
+				case TTS_MODE_AUTO:
+				case TTS_MODE_BUFFERED_AUTO:
+				case TTS_MODE_OFF:
+					break;
+
+				case TTS_MODE_MAN_N:
+					this->new_sep_settings.num_veh = Clamp(value, 1, 65535);
+					break;
+
+				case TTS_MODE_MAN_T:
+					this->new_sep_settings.sep_ticks = Clamp(value, 1, 65535);
+					break;
+
+				default:
+					NOT_REACHED();
+					break;
+			}
+
+			this->vehicle->orders.list->SetSepSettings(this->new_sep_settings);
+			this->InvalidateData();
+			break;
+		}
+		default:
+			NOT_REACHED();
+			break;
+		}
 	}
 
 	virtual void OnResize()
@@ -659,6 +817,13 @@ static const NWidgetPart _nested_timetable_widgets[] = {
 			NWidget(WWT_PANEL, COLOUR_GREY, WID_VT_ARRIVAL_DEPARTURE_PANEL), SetMinimalSize(110, 0), SetFill(0, 1), SetDataTip(STR_NULL, STR_TIMETABLE_TOOLTIP), SetScrollbar(WID_VT_SCROLLBAR), EndContainer(),
 		EndContainer(),
 		NWidget(NWID_VSCROLLBAR, COLOUR_GREY, WID_VT_SCROLLBAR),
+		NWidget(WWT_PANEL, COLOUR_GREY),
+			NWidget(WWT_FRAME, COLOUR_GREY), SetDataTip(STR_TTSEPARATION_SETTINGS_DESC, STR_NULL), SetPadding(3),
+				NWidget(WWT_DROPDOWN, COLOUR_GREY, WID_VT_TTSEP_MODE_DROPDOWN), SetDataTip(STR_JUST_STRING, STR_TIMETABLE_TOOLTIP),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_VT_TTSEP_SET_PARAMETER), SetFill(1, 0), SetDataTip(STR_TTSEPARATION_SET_XX, STR_TIMETABLE_TOOLTIP),
+				NWidget(WWT_PANEL,COLOUR_GREY, WID_VT_TTSEP_PANEL_TEXT), SetFill(1,1), SetResize(0,1), SetMinimalSize(0,44), EndContainer(),
+			EndContainer(),
+		EndContainer(),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_GREY, WID_VT_SUMMARY_PANEL), SetMinimalSize(400, 22), SetResize(1, 0), EndContainer(),
 	NWidget(NWID_HORIZONTAL),
