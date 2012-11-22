@@ -1358,6 +1358,7 @@ STR_CONFIG_SETTING_TIMETABLE_IN_TICKS                           :Show timetable 
 STR_CONFIG_SETTING_TIMETABLE_IN_TICKS_HELPTEXT                  :Show travel times in time tables in game ticks instead of days
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE             :Show arrival and departure in timetables: {STRING2}
 STR_CONFIG_SETTING_TIMETABLE_SHOW_ARRIVAL_DEPARTURE_HELPTEXT    :Display anticipated arrival and departure times in timetables
+STR_CONFIG_SETTING_TIMETABLE_ENABLE_SEPARATION                  :{LTBLUE}Enable automatic timetable separation: {ORANGE}{STRING1}
 STR_CONFIG_SETTING_QUICKGOTO                                    :Quick creation of vehicle orders: {STRING2}
 STR_CONFIG_SETTING_QUICKGOTO_HELPTEXT                           :Pre-select the 'goto cursor' when opening the orders window
 STR_CONFIG_SETTING_DEFAULT_RAIL_TYPE                            :Default rail type (after new game/game load): {STRING2}
@@ -3967,6 +3968,27 @@ STR_FEEDER_COST_TINY                                            :{TINY_FONT}{YEL
 STR_FEEDER_COST                                                 :{YELLOW}Transfer: {CURRENCY_LONG}{WHITE} / {RED}Cost: {CURRENCY_LONG}
 STR_MESSAGE_ESTIMATED_COST                                      :{WHITE}Estimated Cost: {CURRENCY_LONG}
 STR_MESSAGE_ESTIMATED_INCOME                                    :{WHITE}Estimated Income: {CURRENCY_LONG}
+
+# Timetable separation UI strings
+STR_TTSEPARATION_AUTO                                           :Auto
+STR_TTSEPARATION_MAN_NUM                                        :Manual Number
+STR_TTSEPARATION_MAN_TIME                                       :Manual Time
+STR_TTSEPARATION_BUFFERED_AUTO                                  :Buffered Auto
+STR_TTSEPARATION_OFF                                            :Off
+STR_TTSEPARATION_APPLY                                          :{BLACK}Apply
+STR_TTSEPARATION_RESET                                          :{BLACK}Reset
+STR_TTSEPARATION_MODE_DESC                                      :{BLACK}Separation mode
+STR_TTSEPARATION_SETTINGS_DESC                                  :{BLACK}Separation settings
+STR_TTSEPARATION_SET_XX                                         :{BLACK}Set {STRING}
+STR_TTSEPARATION_SET_NUM                                        :number
+STR_TTSEPARATION_SET_TIME                                       :time
+STR_TTSEPARATION_STATUS_DESC                                    :{BLACK}Status:{}{STRING}
+STR_TTSEPARATION_STATUS_INIT                                    :{RED}Initializing
+STR_TTSEPARATION_STATUS_RUNNING                                 :{GREEN}Running
+STR_TTSEPARATION_STATUS_OFF                                     :{BLACK}Off
+STR_TTSEPARATION_REQ_TIME_DESC_TICKS                            :{NUM} ticks between
+STR_TTSEPARATION_REQ_TIME_DESC_DAYS                             :{NUM} days between
+STR_TTSEPARATION_REQ_NUM_DESC                                   :{NUM} vehicles
 
 # Saveload messages
 STR_ERROR_SAVE_STILL_IN_PROGRESS                                :{WHITE}Saving still in progress,{}please wait until it is finished!
