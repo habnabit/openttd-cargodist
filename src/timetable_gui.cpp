@@ -324,6 +324,7 @@ struct TimetableWindow : Window {
 		int selected = this->sel_index;
 
 		this->vscroll->SetCount(v->GetNumOrders() * 2);
+		this->new_sep_settings = (vehicle->orders.list != NULL) ? vehicle->orders.list->GetSepSettings() : TTSepSettings();
 
 		if (v->owner == _local_company) {
 			bool disable = true;

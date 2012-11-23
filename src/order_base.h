@@ -331,7 +331,9 @@ public:
 	 */
 	inline uint GetSepTime() const
 	{
-		if (this->is_separation_valid) {
+		if (!this->IsCompleteTimetable()) {
+			return 0;
+		} else if (this->is_separation_valid) {
 			return this->current_separation;
 		} else {
 			return this->GetTimetableTotalDuration() / this->GetNumVehicles();

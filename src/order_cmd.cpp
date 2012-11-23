@@ -772,8 +772,8 @@ TTSepSettings OrderList::GetSepSettings()
  */
 void OrderList::SetSepSettings(TTSepSettings s)
 {
-	uint32 p2 = GB<uint32>(s.mode,0,3);
-	AB<uint32, uint>(p2,3,29, (s.mode == TTS_MODE_MAN_N) ? s.num_veh : s.sep_ticks);
+	uint32 p2 = GB<uint32>(s.mode, 0, 2);
+	AB<uint32, uint>(p2, 2, 29, (s.mode == TTS_MODE_MAN_N) ? s.num_veh : s.sep_ticks);
 	DoCommandP(0, this->first_shared->index, p2, CMD_REINIT_SEPARATION);
 }
 
