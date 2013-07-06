@@ -2209,6 +2209,24 @@ void Vehicle::RefreshNextHopsStats(CapacitiesMap &capacities,
 		 * reassign "first" below without afterwards terminating early here. */
 		next = this->orders.list->GetNextStoppingOrder(
 				this->orders.list->GetNext(next), hops++ / 2);
+		/* Resolve conditionals by recursion. */
+		while (next != NULL && next->IsType(OT_CONDITIONAL)) {
+			++hops;
+			const Order *skip_to = this->orders.list->GetNextStoppingOrder(
+					this->orders.list->GetOrderAt(next->GetConditionSkipToOrder()),
+					hops / 2);
+
+			if (skip_to != NULL) {
+				/* Make copies of capacity tracking lists. */
+				CapacitiesMap skip_capacities = capacities;
+				RefitList skip_refit_capacities = refit_capacities;
+				this->RefreshNextHopsStats(skip_capacities,
+						skip_refit_capacities, first, cur, skip_to, hops,
+						was_refit, has_cargo);
+			}
+			next = this->orders.list->GetNextStoppingOrder(
+					this->orders.list->GetNext(next), hops / 2);
+		}
 		if (next == NULL) break;
 
 		if (next->IsType(OT_GOTO_STATION) || next->IsType(OT_IMPLICIT)) {
