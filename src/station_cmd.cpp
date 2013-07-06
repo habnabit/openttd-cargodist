@@ -3419,11 +3419,38 @@ void DeleteStaleLinks(Station *from)
 			assert(to->goods[c].node == it->first);
 			++it; // Do that before removing the node. Anything else may crash.
 			assert(_date >= edge.LastUpdate());
-			if ((uint)(_date - edge.LastUpdate()) > LinkGraph::MIN_TIMEOUT_DISTANCE +
-					(DistanceManhattan(from->xy, to->xy) >> 2)) {
-				node.RemoveEdge(to->goods[c].node);
-				ge.flows.DeleteFlows(to->index);
-				RerouteCargo(from, c, to->index, from->index);
+			uint timeout = LinkGraph::MIN_TIMEOUT_DISTANCE +
+					(DistanceManhattan(from->xy, to->xy) >> 3);
+			if ((uint)(_date - edge.LastUpdate()) > timeout) {
+				/* Have all vehicles refresh their next hops before deciding to
+				 * remove the node. */
+				Vehicle *v;
+				FOR_ALL_VEHICLES(v) {
+					/* This loop is expensive. Someone should implement a cache for
+					 * "vehicles that visit a station". That could also be used for
+					 * the vehicle list window. */
+					if (!v->IsPrimaryVehicle()) continue;
+					const Order *order;
+					bool found_from = false;
+					bool found_to = false;
+					FOR_VEHICLE_ORDERS(v, order) {
+						if (!order->IsType(OT_GOTO_STATION) && !order->IsType(OT_IMPLICIT)) continue;
+						if (order->GetDestination() == from->index) {
+							found_from = true;
+							if (found_to) break;
+						} else if (order->GetDestination() == to->index) {
+							found_to = true;
+							if (found_from) break;
+						}
+					}
+					if (found_to && found_from) v->RefreshNextHopsStats();
+				}
+				if ((uint)(_date - edge.LastUpdate()) > timeout) {
+					/* If it's still considered dead remove it. */
+					node.RemoveEdge(to->goods[c].node);
+					ge.flows.DeleteFlows(to->index);
+					RerouteCargo(from, c, to->index, from->index);
+				}
 			}
 		}
 		assert(_date >= lg->LastCompression());
