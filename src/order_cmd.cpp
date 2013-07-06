@@ -392,39 +392,22 @@ const Order *OrderList::GetBestLoadableNext(const Vehicle *v, const Order *o2, c
 /**
  * Get the next order which will make the given vehicle stop at a station
  * or refit at a depot if its state doesn't change.
- * @param v The vehicle in question.
  * @param next The order to start looking at.
  * @param hops The number of orders we have already looked at.
- * @param is_loading If the vehicle is loading. This triggers a different
- * behaviour on conditional orders based on load percentage.
  * @return Either an order or NULL if the vehicle won't stop anymore.
- * @see OrderList::GetBestLoadableNext
  */
-const Order *OrderList::GetNextStoppingOrder(const Vehicle *v, const Order *next, uint hops, bool is_loading) const
+const Order *OrderList::GetNextStoppingOrder(const Order *next, uint hops) const
 {
 	if (hops > this->GetNumOrders() || next == NULL) return NULL;
 
 	if (next->IsType(OT_CONDITIONAL)) {
-		if (is_loading && next->GetConditionVariable() == OCV_LOAD_PERCENTAGE) {
-			/* If the condition is based on load percentage we can't
-			 * tell what it will do. So we choose randomly. */
-			const Order *skip_to = this->GetNextStoppingOrder(v,
-					this->GetOrderAt(next->GetConditionSkipToOrder()),
-					hops + 1);
-			const Order *advance = this->GetNextStoppingOrder(v,
-					this->GetNext(next), hops + 1);
-			if (advance == NULL) return skip_to;
-			if (skip_to == NULL) return advance;
-			return this->GetBestLoadableNext(v, skip_to, advance);
-		}
-		/* Otherwise we're optimistic and expect that the
-		 * condition value won't change until it's evaluated. */
-		VehicleOrderID skip_to = ProcessConditionalOrder(next, v);
-		if (skip_to != INVALID_VEH_ORDER_ID) {
-			return this->GetNextStoppingOrder(v, this->GetOrderAt(skip_to),
-					hops + 1);
-		}
-		return this->GetNextStoppingOrder(v, this->GetNext(next), hops + 1);
+		if (next->GetConditionVariable() != OCV_UNCONDITIONALLY) return next;
+
+		/* We can evaluate trivial conditions right away. They're conceptually
+		 * the same as regular order progression. */
+		return this->GetNextStoppingOrder(
+				this->GetOrderAt(next->GetConditionSkipToOrder()),
+				hops + 1);
 	}
 
 	if (next->IsType(OT_GOTO_DEPOT)) {
@@ -433,7 +416,7 @@ const Order *OrderList::GetNextStoppingOrder(const Vehicle *v, const Order *next
 	}
 
 	if (!next->CanLoadOrUnload()) {
-		return this->GetNextStoppingOrder(v, this->GetNext(next), hops + 1);
+		return this->GetNextStoppingOrder(this->GetNext(next), hops + 1);
 	}
 
 	return next;
@@ -445,6 +428,7 @@ const Order *OrderList::GetNextStoppingOrder(const Vehicle *v, const Order *next
  * @return Next stoppping station or INVALID_STATION.
  * @pre The vehicle is currently loading and v->last_station_visited is meaningful.
  * @note This function may draw a random number. Don't use it from the GUI.
+ * @see OrderList::GetBestLoadableNext
  */
 StationID OrderList::GetNextStoppingStation(const Vehicle *v) const
 {
@@ -464,7 +448,39 @@ StationID OrderList::GetNextStoppingStation(const Vehicle *v) const
 
 	uint hops = 0;
 	do {
-		next = this->GetNextStoppingOrder(v, next, ++hops, true);
+		next = this->GetNextStoppingOrder(next, ++hops);
+
+		/* Resolve possibly nested conditionals by estimation. */
+		while (next != NULL && next->IsType(OT_CONDITIONAL)) {
+			++hops;
+			if (next->GetConditionVariable() == OCV_LOAD_PERCENTAGE) {
+				/* If the condition is based on load percentage we can't
+				 * tell what it will do. So we choose randomly. */
+				const Order *skip_to = this->GetNextStoppingOrder(
+						this->GetOrderAt(next->GetConditionSkipToOrder()),
+						hops);
+				const Order *advance = this->GetNextStoppingOrder(
+						this->GetNext(next), hops);
+				if (advance == NULL) {
+					next = skip_to;
+				} else if (skip_to == NULL) {
+					next = advance;
+				} else {
+					next = this->GetBestLoadableNext(v, skip_to, advance);
+				}
+			} else {
+				/* Otherwise we're optimistic and expect that the
+				 * condition value won't change until it's evaluated. */
+				VehicleOrderID skip_to = ProcessConditionalOrder(next, v);
+				if (skip_to != INVALID_VEH_ORDER_ID) {
+					next = this->GetNextStoppingOrder(this->GetOrderAt(skip_to),
+							hops);
+				} else {
+					next = this->GetNextStoppingOrder(this->GetNext(next), hops);
+				}
+			}
+		}
+
 		/* Don't return a next stop if the vehicle has to unload everything. */
 		if (next == NULL || (next->GetDestination() == v->last_station_visited &&
 				(next->GetUnloadType() & (OUFB_TRANSFER | OUFB_UNLOAD)) == 0)) {
