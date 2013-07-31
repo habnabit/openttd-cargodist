@@ -2204,29 +2204,29 @@ void Vehicle::RefreshNextHopsStats(CapacitiesMap &capacities,
 		 * it wasn't at all refit during the current hop. */
 		bool reset_refit = was_refit && (next->IsType(OT_GOTO_STATION) || next->IsType(OT_IMPLICIT));
 
-		/* Reassign next with the following stop. This can be a station or a
-		 * depot. Allow the order list to be walked twice so that we can
-		 * reassign "first" below without afterwards terminating early here. */
-		next = this->orders.list->GetNextStoppingOrder(
-				this->orders.list->GetNext(next), hops++ / 2);
 		/* Resolve conditionals by recursion. */
-		while (next != NULL && next->IsType(OT_CONDITIONAL)) {
+		do {
 			++hops;
-			const Order *skip_to = this->orders.list->GetNextStoppingOrder(
-					this->orders.list->GetOrderAt(next->GetConditionSkipToOrder()),
-					hops / 2);
+			if (next->IsType(OT_CONDITIONAL)) {
+				const Order *skip_to = this->orders.list->GetNextStoppingOrder(
+						this->orders.list->GetOrderAt(next->GetConditionSkipToOrder()),
+						hops / 2);
 
-			if (skip_to != NULL) {
-				/* Make copies of capacity tracking lists. */
-				CapacitiesMap skip_capacities = capacities;
-				RefitList skip_refit_capacities = refit_capacities;
-				this->RefreshNextHopsStats(skip_capacities,
-						skip_refit_capacities, first, cur, skip_to, hops,
-						was_refit, has_cargo);
+				if (skip_to != NULL) {
+					/* Make copies of capacity tracking lists. */
+					CapacitiesMap skip_capacities = capacities;
+					RefitList skip_refit_capacities = refit_capacities;
+					this->RefreshNextHopsStats(skip_capacities,
+							skip_refit_capacities, first, cur, skip_to, hops,
+							was_refit, has_cargo);
+				}
 			}
+			/* Reassign next with the following stop. This can be a station or a
+			 * depot. Allow the order list to be walked twice so that we can
+			 * reassign "first" below without afterwards terminating early here. */
 			next = this->orders.list->GetNextStoppingOrder(
 					this->orders.list->GetNext(next), hops / 2);
-		}
+		} while (next != NULL && next->IsType(OT_CONDITIONAL));
 		if (next == NULL) break;
 
 		if (next->IsType(OT_GOTO_STATION) || next->IsType(OT_IMPLICIT)) {
