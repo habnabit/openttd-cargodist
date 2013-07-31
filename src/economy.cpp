@@ -1232,7 +1232,8 @@ void PrepareUnload(Vehicle *front_v)
 	assert(CargoPayment::CanAllocateItem());
 	front_v->cargo_payment = new CargoPayment(front_v);
 
-	StationID next_station = front_v->GetNextStoppingStation();
+	std::set<StationID> next_stations;
+	front_v->GetNextStoppingStation(&next_stations);
 	if (front_v->orders.list == NULL || (front_v->current_order.GetUnloadType() & OUFB_NO_UNLOAD) == 0) {
 		Station *st = Station::Get(front_v->last_station_visited);
 		for (Vehicle *v = front_v; v != NULL; v = v->Next()) {
@@ -1240,7 +1241,7 @@ void PrepareUnload(Vehicle *front_v)
 			if (v->cargo_cap > 0 && v->cargo.TotalCount() > 0) {
 				v->cargo.Stage(
 						HasBit(ge->acceptance_pickup, GoodsEntry::GES_ACCEPTANCE),
-						front_v->last_station_visited, next_station,
+						front_v->last_station_visited, next_stations,
 						front_v->current_order.GetUnloadType(), ge,
 						front_v->cargo_payment);
 				if (v->cargo.UnloadCount() > 0) SetBit(v->vehicle_flags, VF_CARGO_UNLOADING);
@@ -1295,9 +1296,9 @@ static uint GetLoadAmount(Vehicle *v)
  * @param st Station where the consist is loading at the moment.
  * @param u Front of the loading vehicle consist.
  * @param consist_capleft If given, save free capacities after reserving there.
- * @param next_station Station the vehicle will stop at next.
+ * @param next_stations Station the vehicle might stop at next.
  */
-static void ReserveConsist(Station *st, Vehicle *u, CargoArray *consist_capleft, StationID next_station)
+static void ReserveConsist(Station *st, Vehicle *u, CargoArray *consist_capleft, std::set<StationID> next_stations)
 {
 	Vehicle *next_cargo = u;
 	uint32 seen_cargos = 0;
@@ -1324,10 +1325,10 @@ static void ReserveConsist(Station *st, Vehicle *u, CargoArray *consist_capleft,
 			assert(v->cargo_cap >= v->cargo.RemainingCount());
 			uint cap = v->cargo_cap - v->cargo.RemainingCount();
 
+
 			/* Nothing to do if the vehicle is full */
-			if (cap > 0) {
-				cap -= st->goods[v->cargo_type].cargo.Reserve(cap, &v->cargo, st->xy, next_station);
-			}
+			if (cap == 0) break;
+			cap -= st->goods[v->cargo_type].cargo.Reserve(cap, &v->cargo, st->xy, next_stations);
 
 			if (consist_capleft != NULL) {
 				(*consist_capleft)[current_cargo] += cap;
@@ -1363,14 +1364,15 @@ static void LoadUnloadVehicle(Vehicle *front)
 	StationID last_visited = front->last_station_visited;
 	Station *st = Station::Get(last_visited);
 
-	StationID next_station = front->GetNextStoppingStation();
+	std::set<StationID> next_stations;
+	front->GetNextStoppingStation(&next_stations);
 	bool use_autorefit = front->current_order.IsRefit() && front->current_order.GetRefitCargo() == CT_AUTO_REFIT;
 	CargoArray consist_capleft;
 	if (_settings_game.order.improved_load &&
 			((front->current_order.GetLoadType() & OLFB_FULL_LOAD) != 0 || use_autorefit)) {
 		ReserveConsist(st, front,
 				(use_autorefit && front->load_unload_ticks != 0) ? &consist_capleft : NULL,
-				next_station);
+				next_stations);
 	}
 
 	/* We have not waited enough time till the next round of loading/unloading */
@@ -1493,12 +1495,11 @@ static void LoadUnloadVehicle(Vehicle *front)
 			}
 
 			if (new_cid == CT_AUTO_REFIT) {
-				/* Get a refittable cargo type with waiting cargo for next_station or INVALID_STATION. */
+				/* Get a refittable cargo type with waiting cargo for next_stations or INVALID_STATION. */
 				CargoID cid;
 				new_cid = v_start->cargo_type;
 				FOR_EACH_SET_CARGO_ID(cid, refit_mask) {
-					if (st->goods[cid].cargo.HasCargoFor(next_station) ||
-							st->goods[cid].cargo.HasCargoFor(INVALID_STATION)) {
+					if (st->goods[cid].cargo.HasCargoFor(next_stations)) {
 						/* Try to find out if auto-refitting would succeed. In case the refit is allowed,
 						 * the returned refit capacity will be greater than zero. */
 						DoCommand(v_start->tile, v_start->index, cid | 1U << 6 | 0xFF << 8 | 1U << 16, DC_QUERY_COST, GetCmdRefitVeh(v_start)); // Auto-refit and only this vehicle including artic parts.
@@ -1522,7 +1523,7 @@ static void LoadUnloadVehicle(Vehicle *front)
 			/* Add new capacity to consist capacity and reserve cargo */
 			w = v_start;
 			do {
-				st->goods[w->cargo_type].cargo.Reserve(w->cargo_cap, &w->cargo, st->xy, next_station);
+				st->goods[w->cargo_type].cargo.Reserve(w->cargo_cap, &w->cargo, st->xy, next_stations);
 				consist_capleft[w->cargo_type] += w->cargo_cap - w->cargo.RemainingCount();
 				w = w->HasArticulatedPart() ? w->GetNextArticulatedPart() : NULL;
 			} while (w != NULL);
@@ -1565,7 +1566,7 @@ static void LoadUnloadVehicle(Vehicle *front)
 			if (_settings_game.order.gradual_loading) cap_left = min(cap_left, load_amount);
 			if (v->cargo.StoredCount() == 0) TriggerVehicle(v, VEHICLE_TRIGGER_NEW_CARGO);
 
-			uint loaded = ge->cargo.Load(cap_left, &v->cargo, st->xy, next_station);
+			uint loaded = ge->cargo.Load(cap_left, &v->cargo, st->xy, next_stations);
 			if (v->cargo.ActionCount(VehicleCargoList::MTA_LOAD) > 0) {
 				/* Remember if there are reservations left so that we don't stop
 				 * loading before they're loaded. */

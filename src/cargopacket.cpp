@@ -415,13 +415,13 @@ void VehicleCargoList::SetTransferLoadPlace(TileIndex xy)
  * chunks.
  * @param accepted If the cargo will be accepted at the station.
  * @param current_station ID of the station.
- * @param next_station ID of the station the vehicle will go to next.
+ * @param next_stations IDs of the stations the vehicle might go to next.
  * @param order_flags OrderUnloadFlags that will apply to the unload operation.
  * @param ge GoodsEntry for getting the flows.
  * @param payment Payment object for registering transfers.
  * return If any cargo will be unloaded.
  */
-bool VehicleCargoList::Stage(bool accepted, StationID current_station, StationID next_station, uint8 order_flags, const GoodsEntry *ge, CargoPayment *payment)
+bool VehicleCargoList::Stage(bool accepted, StationID current_station, const std::set<StationID> &next_stations, uint8 order_flags, const GoodsEntry *ge, CargoPayment *payment)
 {
 	this->AssertCountConsistency();
 	assert(this->action_counts[MTA_LOAD] == 0);
@@ -446,6 +446,9 @@ bool VehicleCargoList::Stage(bool accepted, StationID current_station, StationID
 			action = MTA_DELIVER;
 		} else if (force_transfer) {
 			action = MTA_TRANSFER;
+			/* If there is exactly one possible next hop, exclude it from cargo_next. Otherwise give up. */
+			StationID next_station = (next_stations.empty() || ++next_stations.begin() != next_stations.end()) ?
+					INVALID_STATION : *next_stations.begin();
 			cargo_next = ge->GetVia(cp->source, current_station, next_station);
 			assert((cargo_next != next_station || cargo_next == INVALID_STATION) &&
 					cargo_next != current_station);
@@ -460,7 +463,7 @@ bool VehicleCargoList::Stage(bool accepted, StationID current_station, StationID
 				action = (accepted && cp->source != current_station) ? MTA_DELIVER : MTA_KEEP;
 			} else if (cargo_next == current_station) {
 				action = MTA_DELIVER;
-			} else if (cargo_next == next_station) {
+			} else if (next_stations.find(cargo_next) != next_stations.end()) {
 				action = MTA_KEEP;
 			} else {
 				action = MTA_TRANSFER;
@@ -735,12 +738,17 @@ uint StationCargoList::Truncate(uint max_move, StationCargoAmountMap *cargo_per_
  * @param max_move Maximum amount of cargo to reserve.
  * @param dest VehicleCargoList to reserve for.
  * @param load_place Tile index of the current station.
- * @param next_station Next station the loading vehicle will visit.
+ * @param next Next stations the vehicle might visit.
  * @return Amount of cargo actually reserved.
  */
-uint StationCargoList::Reserve(uint max_move, VehicleCargoList *dest, TileIndex load_place, StationID next_station)
+uint StationCargoList::Reserve(uint max_move, VehicleCargoList *dest, TileIndex load_place, const std::set<StationID> &next)
 {
-	return this->ShiftCargo(CargoReservation(this, dest, max_move, load_place), next_station, true);
+	uint move = 0;
+	for (std::set<StationID>::const_iterator it(next.begin()); it != next.end(); ++it) {
+		move += this->ShiftCargo(CargoReservation(this, dest, max_move - move, load_place), *it, false);
+	}
+	if (move < max_move) move += this->ShiftCargo(CargoReservation(this, dest, max_move - move, load_place), INVALID_STATION, false);
+	return move;
 }
 
 /**
@@ -749,13 +757,13 @@ uint StationCargoList::Reserve(uint max_move, VehicleCargoList *dest, TileIndex 
  * @param max_move Amount of cargo to load.
  * @param dest Vehicle cargo list where the cargo resides.
  * @param load_place The new loaded_at_xy to be assigned to packets being moved.
- * @param next_station Next station the loading vehicle will visit.
+ * @param next Next stations the vehicle might visit.
  * @return Amount of cargo actually loaded.
  * @note Vehicles may or may not reserve, depending on their orders. The two
  *       modes of loading are exclusive, though. If cargo is reserved we don't
  *       need to load unreserved cargo.
  */
-uint StationCargoList::Load(uint max_move, VehicleCargoList *dest, TileIndex load_place, StationID next_station)
+uint StationCargoList::Load(uint max_move, VehicleCargoList *dest, TileIndex load_place, const std::set<StationID> &next)
 {
 	uint move = min(dest->ActionCount(VehicleCargoList::MTA_LOAD), max_move);
 	if (move > 0) {
@@ -763,7 +771,12 @@ uint StationCargoList::Load(uint max_move, VehicleCargoList *dest, TileIndex loa
 		dest->Reassign(move, VehicleCargoList::MTA_LOAD, VehicleCargoList::MTA_KEEP);
 		return move;
 	} else {
-		return this->ShiftCargo(CargoLoad(this, dest, max_move, load_place), next_station, true);
+		move = 0;
+		for (std::set<StationID>::const_iterator it(next.begin()); it != next.end(); ++it) {
+			move += this->ShiftCargo(CargoLoad(this, dest, max_move - move, load_place), *it, true);
+		}
+		if (move < max_move) move += this->ShiftCargo(CargoLoad(this, dest, max_move - move, load_place), INVALID_STATION, false);
+		return move;
 	}
 }
 

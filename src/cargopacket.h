@@ -20,6 +20,7 @@
 #include "vehicle_type.h"
 #include "core/multimap.hpp"
 #include <list>
+#include <set>
 
 /** Unique identifier for a single cargo packet. */
 typedef uint32 CargoPacketID;
@@ -409,7 +410,7 @@ public:
 
 	void SetTransferLoadPlace(TileIndex xy);
 
-	bool Stage(bool accepted, StationID current_station, StationID next_station, uint8 order_flags, const GoodsEntry *ge, CargoPayment *payment);
+	bool Stage(bool accepted, StationID current_station, const std::set<StationID> &next_stations, uint8 order_flags, const GoodsEntry *ge, CargoPayment *payment);
 
 	/**
 	 * Marks all cargo in the vehicle as to be kept. This is mostly useful for
@@ -492,9 +493,12 @@ public:
 	 * @param next Station the cargo is headed for.
 	 * @return If there is any cargo for that station.
 	 */
-	inline bool HasCargoFor(StationID next) const
+	inline bool HasCargoFor(const std::set<StationID> &next) const
 	{
-		return this->packets.find(next) != this->packets.end();
+		for (std::set<StationID>::const_iterator it(next.begin()); it != next.end(); ++it) {
+			if (this->packets.find(*it) != this->packets.end()) return true;
+		}
+		return this->packets.find(INVALID_STATION) != this->packets.end();
 	}
 
 	/**
@@ -539,8 +543,8 @@ public:
 	 * amount of cargo to be moved. Second parameter is destination (if
 	 * applicable), return value is amount of cargo actually moved. */
 
-	uint Reserve(uint max_move, VehicleCargoList *dest, TileIndex load_place, StationID next);
-	uint Load(uint max_move, VehicleCargoList *dest, TileIndex load_place, StationID next);
+	uint Reserve(uint max_move, VehicleCargoList *dest, TileIndex load_place, const std::set<StationID> &next);
+	uint Load(uint max_move, VehicleCargoList *dest, TileIndex load_place, const std::set<StationID> &next);
 	uint Truncate(uint max_move = UINT_MAX, StationCargoAmountMap *cargo_per_source = NULL);
 	uint Reroute(uint max_move, StationCargoList *dest, StationID avoid, StationID avoid2, const GoodsEntry *ge);
 

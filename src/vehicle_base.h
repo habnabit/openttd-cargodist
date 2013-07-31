@@ -626,11 +626,12 @@ public:
 
 	/**
 	 * Get the next station the vehicle will stop at.
+	 * @param conditionals Optional set of StationID to save all conditional branches in.
 	 * @return ID of the next station the vehicle will stop at or INVALID_STATION.
 	 */
-	inline StationID GetNextStoppingStation() const
+	inline StationID GetNextStoppingStation(std::set<StationID> *conditionals = NULL) const
 	{
-		return (this->orders.list == NULL) ? INVALID_STATION : this->orders.list->GetNextStoppingStation(this);
+		return (this->orders.list == NULL) ? INVALID_STATION : this->orders.list->GetNextStoppingStation(this, conditionals);
 	}
 
 	void ResetRefitCaps();

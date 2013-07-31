@@ -351,44 +351,6 @@ Order *OrderList::GetOrderAt(int index) const
 }
 
 /**
- * Choose between the two possible next orders so that the given consist can
- * load most cargo.
- * @param v Head of the consist.
- * @param o1 First order to choose from.
- * @param o2 Second order to choose from.
- * @return The best option of o1 and o2 and (recursively) possibly other conditionals.
- */
-StationID OrderList::GetBestLoadableNext(const Vehicle *v, const Order *o2, const Order *o1) const
-{
-	SmallMap<CargoID, uint> capacities;
-	v->GetConsistFreeCapacities(capacities);
-	uint loadable1 = 0;
-	uint loadable2 = 0;
-	StationID st1 = o1->IsType(OT_CONDITIONAL) ? this->GetNextStoppingStation(v, o1) : o1->GetDestination();
-	StationID st2 = o2->IsType(OT_CONDITIONAL) ? this->GetNextStoppingStation(v, o2) : o2->GetDestination();
-	const Station *cur_station = Station::Get(v->last_station_visited);
-	for (SmallPair<CargoID, uint> *i = capacities.Begin(); i != capacities.End(); ++i) {
-		const StationCargoPacketMap *loadable_packets = cur_station->goods[i->first].cargo.Packets();
-		uint loadable_cargo = 0;
-		std::pair<StationCargoPacketMap::const_iterator, StationCargoPacketMap::const_iterator> p =
-				loadable_packets->equal_range(st1);
-		for (StationCargoPacketMap::const_iterator j = p.first; j != p.second; ++j) {
-			loadable_cargo = (*j)->Count();
-		}
-		loadable1 += min(i->second, loadable_cargo);
-
-		loadable_cargo = 0;
-		p = loadable_packets->equal_range(st2);
-		for (StationCargoPacketMap::const_iterator j = p.first; j != p.second; ++j) {
-			loadable_cargo = (*j)->Count();
-		}
-		loadable2 += min(i->second, loadable_cargo);
-	}
-	if (loadable1 == loadable2) return RandomRange(2) == 0 ? st1 : st2;
-	return loadable1 > loadable2 ? st1 : st2;
-}
-
-/**
  * Get the next order which will make the given vehicle stop at a station
  * or refit at a depot if its state doesn't change.
  * @param next The order to start looking at.
@@ -430,7 +392,7 @@ const Order *OrderList::GetNextStoppingOrder(const Order *next, uint hops) const
  * @note This function may draw a random number. Don't use it from the GUI.
  * @see OrderList::GetBestLoadableNext
  */
-StationID OrderList::GetNextStoppingStation(const Vehicle *v, const Order *first) const
+StationID OrderList::GetNextStoppingStation(const Vehicle *v, std::set<StationID> *conditionals, const Order *first, uint hops) const
 {
 
 	const Order *next = first;
@@ -448,37 +410,24 @@ StationID OrderList::GetNextStoppingStation(const Vehicle *v, const Order *first
 		}
 	}
 
-	uint hops = 0;
 	do {
 		next = this->GetNextStoppingOrder(next, ++hops);
 
 		/* Resolve possibly nested conditionals by estimation. */
 		while (next != NULL && next->IsType(OT_CONDITIONAL)) {
 			++hops;
-			if (next->GetConditionVariable() == OCV_LOAD_PERCENTAGE) {
-				/* If the condition is based on load percentage we can't
-				 * tell what it will do. So we choose randomly. */
-				const Order *skip_to = this->GetNextStoppingOrder(
-						this->GetOrderAt(next->GetConditionSkipToOrder()),
-						hops);
-				const Order *advance = this->GetNextStoppingOrder(
-						this->GetNext(next), hops);
-				if (advance == NULL) {
-					next = skip_to;
-				} else if (skip_to == NULL) {
-					next = advance;
-				} else {
-					return this->GetBestLoadableNext(v, skip_to, advance);
+			VehicleOrderID skip_to = ProcessConditionalOrder(next, v);
+			if (skip_to != INVALID_VEH_ORDER_ID) {
+				next = this->GetNextStoppingOrder(this->GetOrderAt(skip_to), hops);
+				if (conditionals != NULL) {
+					this->GetNextStoppingStation(v, conditionals,
+							this->GetNextStoppingOrder(this->GetNext(next), hops));
 				}
 			} else {
-				/* Otherwise we're optimistic and expect that the
-				 * condition value won't change until it's evaluated. */
-				VehicleOrderID skip_to = ProcessConditionalOrder(next, v);
-				if (skip_to != INVALID_VEH_ORDER_ID) {
-					next = this->GetNextStoppingOrder(this->GetOrderAt(skip_to),
-							hops);
-				} else {
-					next = this->GetNextStoppingOrder(this->GetNext(next), hops);
+				next = this->GetNextStoppingOrder(this->GetNext(next), hops);
+				if (conditionals != NULL) {
+					this->GetNextStoppingStation(v, conditionals,
+							this->GetNextStoppingOrder(this->GetOrderAt(skip_to), hops));
 				}
 			}
 		}
@@ -489,6 +438,7 @@ StationID OrderList::GetNextStoppingStation(const Vehicle *v, const Order *first
 			return INVALID_STATION;
 		}
 	} while (next->IsType(OT_GOTO_DEPOT) || next->GetDestination() == v->last_station_visited);
+	if (conditionals != NULL) conditionals->insert(next->GetDestination());
 
 	return next->GetDestination();
 }

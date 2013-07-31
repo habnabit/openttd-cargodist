@@ -20,6 +20,7 @@
 #include "station_type.h"
 #include "vehicle_type.h"
 #include "date_type.h"
+#include <set>
 
 typedef Pool<Order, OrderID, 256, 64000> OrderPool;
 typedef Pool<OrderList, OrderListID, 128, 64000> OrderListPool;
@@ -263,7 +264,7 @@ public:
 	 */
 	inline VehicleOrderID GetNumManualOrders() const { return this->num_manual_orders; }
 
-	StationID GetNextStoppingStation(const Vehicle *v, const Order *first = NULL) const;
+	StationID GetNextStoppingStation(const Vehicle *v, std::set<StationID> *conditionals = NULL, const Order *first = NULL, uint hops = 0) const;
 	const Order *GetNextStoppingOrder(const Order *next, uint hops) const;
 
 	void InsertOrderAt(Order *new_order, int index);
