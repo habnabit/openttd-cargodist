@@ -544,7 +544,7 @@ struct TimetableWindow : Window {
 
 					y = y + GetStringBoundingBox(STR_TTSEPARATION_REQ_NUM_DESC).height + offset;
 
-				} else {
+				} else if (this->vehicle->orders.list->IsCompleteTimetable()) {
 					/* If separation hasn't just been switched off, we need to draw various description lines.
 					 * The first line is the amount of separation which is either saved in the stuct or must
 					 * be calculated on the fly.
@@ -582,9 +582,11 @@ struct TimetableWindow : Window {
 					y += GetStringBoundingBox(STR_TTSEPARATION_REQ_NUM_DESC).height;
 				}
 
+				/* If the timetable isn't completely filled in... */
+				if (!this->vehicle->orders.list->IsCompleteTimetable()) {
+					SetDParam(0, STR_TTSEPARATION_STATUS_INCOMPLETE);
 				/* If separation is switched on at all... */
-				if(this->vehicle->orders.list->IsSeparationOn())
-				{
+				} else if (this->vehicle->orders.list->IsSeparationOn()) {
 					/* ... set displayed status to either "Running" or "Initializing" */
 					SetDParam(0, (this->vehicle->orders.list->IsSeparationValid()) ? STR_TTSEPARATION_STATUS_RUNNING : STR_TTSEPARATION_STATUS_INIT);
 				} else {
