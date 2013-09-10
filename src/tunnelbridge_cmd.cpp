@@ -22,6 +22,7 @@
 #include "train.h"
 #include "ship.h"
 #include "roadveh.h"
+#include "station_map.h"
 #include "pathfinder/yapf/yapf_cache.h"
 #include "newgrf_sound.h"
 #include "autoslope.h"
@@ -537,6 +538,56 @@ CommandCost CmdBuildBridge(TileIndex end_tile, DoCommandFlag flags, uint32 p1, u
 	return cost;
 }
 
+/**
+ * CmdBuildTunnel helper function for crossing water tunnels.
+ *   __ __                                 __ __
+ * //      \~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/     \\
+ * @param tiles quantity of tiles passed before this function is called.
+ * @param end_tile coast tile fom where tunnel starts crossing water.
+ * @param delta tile index difference used to find next connecting tile.
+ * @param direction diagonal direction that crossing will be tested.
+ * @returns true if tunnel is allowed to cross water.
+ */
+bool IsCrossableWater(int tiles, TileIndex end_tile, TileIndexDiff delta, DiagDirection direction)
+{
+	/* Building only allowed on slopes SLOPE_NE, SLOPE_SE, SLOPE_SW, SLOPE_NW. */
+	if (GetTileSlope(end_tile) != InclinedSlope(ReverseDiagDir(direction))) return false;
+
+	/* Check if beginning of tunnel has valid length of minimal 2 tiles. */
+	if (tiles < 2) return false;
+ 
+	/* Test for minimal one water tile. */
+	end_tile += delta;
+	if (!IsValidTile(end_tile)) return false;
+	if (!(IsWaterTile(end_tile) || IsBuoyTile(end_tile))) return false;
+
+	/* Continue until water is passed. */
+	for (;;) {
+		end_tile += delta;
+		if (!IsValidTile(end_tile)) return false;
+		if (GetTileSlope(end_tile) != SLOPE_FLAT) break;
+		if (!(IsWaterTile(end_tile) || IsBuoyTile(end_tile))) return false;
+	}
+	
+	/* Building only allowed on slopes SLOPE_NE, SLOPE_SE, SLOPE_SW, SLOPE_NW. */
+	if (GetTileSlope(end_tile) != InclinedSlope(direction)) return false;
+
+	/* After crossing water test last section of tunnel. */
+	tiles = 0;
+	for (;;) {
+		end_tile += delta;
+		if (!IsValidTile(end_tile)) return false;
+		if (GetTileZ(end_tile) == 0) break;
+		tiles++;
+	}
+
+	/* Check if end of tunnel has valid length of minimal 2 tiles. */
+	if (tiles < 2) return false;
+
+	_build_tunnel_endtile = end_tile;
+
+	return true;
+}
 
 /**
  * Build Tunnel.
@@ -623,9 +674,16 @@ CommandCost CmdBuildTunnel(TileIndex start_tile, DoCommandFlag flags, uint32 p1,
 		if (!IsValidTile(end_tile)) return_cmd_error(STR_ERROR_TUNNEL_THROUGH_MAP_BORDER);
 		end_tileh = GetTileSlope(end_tile, &end_z);
 
-		if (start_z == end_z) break;
+		if (start_z == end_z) {
+			if(_build_tunnel_endtile > 0) {
+				if(_build_tunnel_endtile == end_tile) break;
+			} else {
+				if (!IsCrossableWater(tiles, end_tile, delta, direction)) break;
+			}
+		}
 
 		if (!_cheats.crossing_tunnels.value && IsTunnelInWayDir(end_tile, start_z, tunnel_in_way_dir)) {
+			_build_tunnel_endtile = end_tile; // Highlight tile.
 			return_cmd_error(STR_ERROR_ANOTHER_TUNNEL_IN_THE_WAY);
 		}
 

@@ -477,6 +477,9 @@ static CommandCost ClearTile_Water(TileIndex tile, DoCommandFlag flags)
 				return_cmd_error(STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP);
 			}
 
+			/* Check to see if crossing-water tunnel present. */
+			if (GetTileZ(tile) == 0 && IsTunnelInWay(tile, 0)) return_cmd_error(STR_ERROR_MUST_DEMOLISH_TUNNEL_FIRST);
+
 			/* Make sure no vehicle is on the tile */
 			CommandCost ret = EnsureNoVehicleOnGround(tile);
 			if (ret.Failed()) return ret;

@@ -11,6 +11,7 @@
 
 #include "stdafx.h"
 #include "tunnelbridge_map.h"
+#include "station_map.h"
 
 
 /**
@@ -37,6 +38,24 @@ TileIndex GetOtherTunnelEnd(TileIndex tile)
 	return tile;
 }
 
+/**
+ * Helper function for under_water tunnel finding.
+ * @param tile the tile to search from.
+ * @param dir the direction to start searching to.
+ * @return true if and only if there is a tunnel.
+ */
+bool IsTunnelInWayDirLevelZero(TileIndex tile, DiagDirection dir)
+{
+	TileIndexDiff delta = TileOffsByDiagDir(dir);
+	int height;
+	do {
+		tile -= delta;
+		if (!IsValidTile(tile)) return false;
+		height = GetTileZ(tile);
+	} while (height > 0);
+
+	return IsTunnelTile(tile) && GetTunnelBridgeDirection(tile) == dir;
+}
 
 /**
  * Is there a tunnel in the way in the given direction?
@@ -54,9 +73,25 @@ bool IsTunnelInWayDir(TileIndex tile, int z, DiagDirection dir)
 		tile -= delta;
 		if (!IsValidTile(tile)) return false;
 		height = GetTileZ(tile);
-	} while (z < height);
+	} while (z < height ||
+			(height == 0 &&
+			GetTileMaxZ(tile) == 0 &&	// Flat tile.
+			(IsTileType(tile, MP_WATER) || IsBuoyTile(tile))));
 
-	return z == height && IsTunnelTile(tile) && GetTunnelBridgeDirection(tile) == dir;
+	if (z == height) {
+		if (IsTunnelTile(tile)) return GetTunnelBridgeDirection(tile) == dir;
+
+		if (height == 0) {
+			switch (GetTileSlope(tile, NULL)) {
+				case SLOPE_NE: if (dir == DIAGDIR_NE || dir == DIAGDIR_SW) return IsTunnelInWayDirLevelZero(tile, DIAGDIR_SW); break;
+				case SLOPE_SE: if (dir == DIAGDIR_SE || dir == DIAGDIR_NW) return IsTunnelInWayDirLevelZero(tile, DIAGDIR_NW); break;
+				case SLOPE_SW: if (dir == DIAGDIR_SW || dir == DIAGDIR_NE) return IsTunnelInWayDirLevelZero(tile, DIAGDIR_NE); break;
+				case SLOPE_NW: if (dir == DIAGDIR_NW || dir == DIAGDIR_SE) return IsTunnelInWayDirLevelZero(tile, DIAGDIR_SE); break;
+				default: return false;
+			}
+		}
+	}
+	return false;
 }
 
 /**
