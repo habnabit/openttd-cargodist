@@ -35,6 +35,7 @@
 #include "widgets/station_widget.h"
 
 #include "table/strings.h"
+#include "table/control_codes.h"
 
 #include <set>
 #include <vector>
@@ -55,10 +56,13 @@ int DrawStationCoverageAreaText(int left, int right, int top, StationCoverageTyp
 	uint32 cargo_mask = 0;
 	if (_thd.drawstyle == HT_RECT && tile < MapSize()) {
 		CargoArray cargoes;
+		CargoArray rates;
 		if (supplies) {
 			cargoes = GetProductionAroundTiles(tile, _thd.size.x / TILE_SIZE, _thd.size.y / TILE_SIZE, rad);
+			rates = GetProductionRateAroundTiles(tile, _thd.size.x / TILE_SIZE, _thd.size.y / TILE_SIZE, rad);
 		} else {
 			cargoes = GetAcceptanceAroundTiles(tile, _thd.size.x / TILE_SIZE, _thd.size.y / TILE_SIZE, rad);
+			rates = GetAcceptanceRateAroundTiles(tile, _thd.size.x / TILE_SIZE, _thd.size.y / TILE_SIZE, rad);
 		}
 
 		/* Convert cargo counts to a set of cargo bits, and draw the result. */
@@ -70,9 +74,18 @@ int DrawStationCoverageAreaText(int left, int right, int top, StationCoverageTyp
 				default: NOT_REACHED();
 			}
 			if (cargoes[i] >= (supplies ? 1U : 8U)) SetBit(cargo_mask, i);
+
+			if (i == CT_PASSENGERS) {
+				SetDParam(2, rates[i]);
+			} else if (i == CT_MAIL) {
+				SetDParam(3, rates[i]);
+			}
 		}
 	}
 	SetDParam(0, cargo_mask);
+
+	/* SCC_CARGO_LIST works as a magic number to let FormatString() know it's being called from here. */
+	SetDParam(1, SCC_CARGO_LIST);
 	return DrawStringMultiLine(left, right, top, INT32_MAX, supplies ? STR_STATION_BUILD_SUPPLIES_CARGO : STR_STATION_BUILD_ACCEPTS_CARGO);
 }
 

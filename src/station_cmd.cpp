@@ -537,6 +537,126 @@ CargoArray GetAcceptanceAroundTiles(TileIndex tile, int w, int h, int rad, uint3
 }
 
 /**
+ * Get the rate of cargo being produced around the tile (in a rectangle).
+ * @param tile Northtile of area
+ * @param w X extent of the area
+ * @param h Y extent of the area
+ * @param rad Search radius in addition to the given area
+ */
+CargoArray GetProductionRateAroundTiles(TileIndex tile, int w, int h, int rad)
+{
+	CargoArray production_rate;
+
+	int x = TileX(tile);
+	int y = TileY(tile);
+
+	/* expand the region by rad tiles on each side
+	 * while making sure that we remain inside the board. */
+	int x2 = min(x + w + rad, MapSizeX());
+	int x1 = max(x - rad, 0);
+
+	int y2 = min(y + h + rad, MapSizeY());
+	int y1 = max(y - rad, 0);
+
+	assert(x1 < x2);
+	assert(y1 < y2);
+	assert(w > 0);
+	assert(h > 0);
+
+	TileArea ta(TileXY(x1, y1), TileXY(x2 - 1, y2 - 1));
+
+	/* Loop over all tiles to get the produced cargo of
+	 * everything except industries */
+	TILE_AREA_LOOP(tile, ta) {
+		if (GetTileType(tile) == MP_HOUSE) {
+			if (!IsHouseCompleted(tile)) continue;
+
+			const HouseSpec *hs = HouseSpec::Get(GetHouseType(tile));
+			
+			/* Use expected values to calculate supply forecasting since there is a random factor
+			 * in the equation.
+			 * E[x] = x1p1 + x2p2 + ... + xkpk
+			 * random number ranges from 0 to 255. However, all the ones above population are dropped.
+			 * All probabilities p1...pk are the same ( = 1 / 256 )
+			 * Thus, E[x] = (1 + 2 + ... + pop - 1) / 256
+			 */
+			uint sum = 0;
+			for (uint i = 1; i < hs->population; i++) {
+				sum += i;
+			}
+			/* Bitshift to the right by 8 is from the above equation and 3 is 
+			 * to divide by 8. For details, look at TileLoop_Town() in town_cmd.cpp */
+			uint amt = (sum >> 11) + 1;
+			if (EconomyIsInRecession()) amt = (amt + 1) >> 1;
+			production_rate[CT_PASSENGERS] += amt;
+
+			sum = 0;
+			for (uint i = 1; i < hs->mail_generation; i++) {
+				sum += i;
+			}
+			amt = (sum >> 11) + 1;
+			if (EconomyIsInRecession()) amt = (amt + 1) >> 1;
+			production_rate[CT_MAIL] += amt;
+		}
+	}
+
+	/* Loop over the industries. They produce cargo for
+	 * anything that is within 'rad' from their bounding
+	 * box. As such if you have e.g. a oil well the tile
+	 * area loop might not hit an industry tile while
+	 * the industry would produce cargo for the station.
+	 */
+	const Industry *i;
+	FOR_ALL_INDUSTRIES(i) {
+		if (!ta.Intersects(i->location)) continue;
+
+		for (uint j = 0; j < lengthof(i->produced_cargo); j++) {
+			CargoID cargo = i->produced_cargo[j];
+
+			if (cargo != CT_INVALID) production_rate[cargo] += i->last_month_production[j];
+		}
+	}
+
+	return production_rate;
+}
+
+/**
+ * Get the acceptance rate of cargoes around the tile.
+ * @param tile Center of the search area
+ * @param w X extent of area
+ * @param h Y extent of area
+ * @param rad Search radius in addition to given area
+ * @param always_accepted bitmask of cargo accepted by houses and headquarters; can be NULL
+ */
+CargoArray GetAcceptanceRateAroundTiles(TileIndex tile, int w, int h, int rad)
+{
+	CargoArray acceptance_rate;
+
+	int x = TileX(tile);
+	int y = TileY(tile);
+
+	/* expand the region by rad tiles on each side
+	 * while making sure that we remain inside the board. */
+	int x2 = min(x + w + rad, MapSizeX());
+	int y2 = min(y + h + rad, MapSizeY());
+	int x1 = max(x - rad, 0);
+	int y1 = max(y - rad, 0);
+
+	assert(x1 < x2);
+	assert(y1 < y2);
+	assert(w > 0);
+	assert(h > 0);
+
+	for (int yc = y1; yc != y2; yc++) {
+		for (int xc = x1; xc != x2; xc++) {
+			TileIndex tile = TileXY(xc, yc);
+			AddAcceptedCargo(tile, acceptance_rate, NULL);
+		}
+	}
+
+	return acceptance_rate;
+}
+/**
  * Update the acceptance for a station.
  * @param st Station to update
  * @param show_msg controls whether to display a message that acceptance was changed.

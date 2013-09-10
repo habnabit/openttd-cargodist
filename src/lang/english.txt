@@ -1259,6 +1259,7 @@ STR_CONFIG_SETTING_POPULATION_IN_LABEL                          :Show town popul
 STR_CONFIG_SETTING_POPULATION_IN_LABEL_HELPTEXT                 :Display the population of towns in their label on the map
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Thickness of lines in graphs: {STRING2}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Width of the line in the graphs. A thin line is more precisely readable, a thicker line is easier to see and colours are easier to distinguish
+STR_CONFIG_SETTING_FORECAST_DISPLAY                             :{LTBLUE}Display supply and demand forecasting on station building: {ORANGE}{STRING1}
 
 STR_CONFIG_SETTING_LAND_GENERATOR                               :Land generator: {STRING2}
 STR_CONFIG_SETTING_LAND_GENERATOR_ORIGINAL                      :Original
