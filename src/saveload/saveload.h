@@ -15,6 +15,7 @@
 #include "../fileio_type.h"
 #include "../strings_type.h"
 
+#define SL_TRIP 198
 #define SL_CONDORDERS 199
 #define SL_TTSEP_VER 200
 
