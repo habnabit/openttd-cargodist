@@ -231,7 +231,8 @@ public:
 						if (n.m_num_signals_passed == 0) {
 							switch (sig_type) {
 								case SIGTYPE_COMBO:
-								case SIGTYPE_EXIT:   cost += Yapf().PfGetSettings().rail_firstred_exit_penalty; break; // first signal is red pre-signal-exit
+								case SIGTYPE_EXIT:
+								case SIGTYPE_LOGIC:  cost += Yapf().PfGetSettings().rail_firstred_exit_penalty; break; // first signal is red pre-signal-exit
 								case SIGTYPE_NORMAL:
 								case SIGTYPE_ENTRY:  cost += Yapf().PfGetSettings().rail_firstred_penalty; break;
 								default: break;

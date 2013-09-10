@@ -285,10 +285,19 @@ static inline TrackBits GetDepotReservationTrackBits(TileIndex t)
 	return HasDepotReservation(t) ? TrackToTrackBits(GetRailDepotTrack(t)) : TRACK_BIT_NONE;
 }
 
-
 static inline bool IsPbsSignal(SignalType s)
 {
 	return s == SIGTYPE_PBS || s == SIGTYPE_PBS_ONEWAY;
+}
+
+/**
+ * Tests if the given signal type is a PBS or a logic signal.
+ * @param s The signal type to test
+ * @return Returns true if the given signal type is a PBS or a logic signal
+ */
+static inline bool IsPbsOrLogicSignal(SignalType s)
+{
+	return IsPbsSignal(s) || s == SIGTYPE_LOGIC;
 }
 
 static inline SignalType GetSignalType(TileIndex t, Track track)
@@ -316,6 +325,17 @@ static inline bool IsPresignalExit(TileIndex t, Track track)
 	return GetSignalType(t, track) == SIGTYPE_EXIT || GetSignalType(t, track) == SIGTYPE_COMBO;
 }
 
+/**
+ * Tests whether the signal on the given tile and track is a logic signal.
+ * @param t The tile to test
+ * @param track The track to test
+ * @return Returns true if the signal on the given tile and track is a logic signal.
+ */
+static inline bool IsLogicSignal(TileIndex t, Track track)
+{
+	return GetSignalType(t, track) == SIGTYPE_LOGIC;
+}
+
 /** One-way signals can't be passed the 'wrong' way. */
 static inline bool IsOnewaySignal(TileIndex t, Track track)
 {
@@ -328,7 +348,7 @@ static inline void CycleSignalSide(TileIndex t, Track track)
 	byte pos = (track == TRACK_LOWER || track == TRACK_RIGHT) ? 4 : 6;
 
 	sig = GB(_m[t].m3, pos, 2);
-	if (--sig == 0) sig = IsPbsSignal(GetSignalType(t, track)) ? 2 : 3;
+	if (--sig == 0) sig = IsPbsOrLogicSignal(GetSignalType(t, track)) ? 2 : 3;
 	SB(_m[t].m3, pos, 2, sig);
 }
 

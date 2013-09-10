@@ -2279,6 +2279,9 @@ STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TUNNEL                  :{BLACK}Build ra
 STR_RAIL_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR                :{BLACK}Toggle build/remove for railway track, signals, waypoints and stations. Hold Ctrl to also remove the rail of waypoints and stations
 STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL                           :{BLACK}Convert/Upgrade the type of rail. Shift toggles building/showing cost estimate
 
+STR_RAIL_TOOLBAR_TOOLTIP_PROGRAM_SIGNAL                         :{BLACK}Program Signal{}When selected, clicking an existing logic signal will allow the modification of the signal program
+STR_ERROR_PROGRAM_NOT_LOGIC_SIGNAL                              :{WHITE}Only logic signals can be programmed
+
 STR_RAIL_NAME_RAILROAD                                          :Railway
 STR_RAIL_NAME_ELRAIL                                            :Electrified railway
 STR_RAIL_NAME_MONORAIL                                          :Monorail
@@ -2317,16 +2320,43 @@ STR_BUILD_SIGNAL_SEMAPHORE_EXIT_TOOLTIP                         :{BLACK}Exit Sig
 STR_BUILD_SIGNAL_SEMAPHORE_COMBO_TOOLTIP                        :{BLACK}Combo Signal (semaphore){}The combo signal simply acts as both an entry and exit signal. This allows you to build large "trees" of pre-signals
 STR_BUILD_SIGNAL_SEMAPHORE_PBS_TOOLTIP                          :{BLACK}Path Signal (semaphore){}A path signal allows more than one train to enter a signal block at the same time, if the train can reserve a path to a safe stopping point. Standard path signals can be passed from the back side
 STR_BUILD_SIGNAL_SEMAPHORE_PBS_OWAY_TOOLTIP                     :{BLACK}One-way Path Signal (semaphore){}A path signal allows more than one train to enter a signal block at the same time, if the train can reserve a path to a safe stopping point. One-way path signals can't be passed from the back side
+STR_BUILD_SIGNAL_SEMAPHORE_LOGIC_TOOLTIP                        :{BLACK}Logic Signal (semaphore){}Logic signals are programmable signals which use other signals as inputs to determine their state
 STR_BUILD_SIGNAL_ELECTRIC_NORM_TOOLTIP                          :{BLACK}Block Signal (electric){}This is the most basic type of signal, allowing only one train to be in the same block at the same time
 STR_BUILD_SIGNAL_ELECTRIC_ENTRY_TOOLTIP                         :{BLACK}Entry Signal (electric){}Green as long as there is one or more green exit-signal from the following section of track. Otherwise it shows red
 STR_BUILD_SIGNAL_ELECTRIC_EXIT_TOOLTIP                          :{BLACK}Exit Signal (electric){}Behaves in the same way as a block signal but is necessary to trigger the correct colour on entry & combo pre-signals
 STR_BUILD_SIGNAL_ELECTRIC_COMBO_TOOLTIP                         :{BLACK}Combo Signal (electric){}The combo signal simply acts as both an entry and exit signal. This allows you to build large "trees" of pre-signals
 STR_BUILD_SIGNAL_ELECTRIC_PBS_TOOLTIP                           :{BLACK}Path Signal (electric){}A path signal allows more than one train to enter a signal block at the same time, if the train can reserve a path to a safe stopping point. Standard path signals can be passed from the back side
 STR_BUILD_SIGNAL_ELECTRIC_PBS_OWAY_TOOLTIP                      :{BLACK}One-way Path Signal (electric){}A path signal allows more than one train to enter a signal block at the same time, if the train can reserve a path to a safe stopping point. One-way path signals can't be passed from the back side
+STR_BUILD_SIGNAL_ELECTRIC_LOGIC_TOOLTIP                         :{BLACK}Logic Signal (electric){}Logic signals are programmable signals which use other signals as inputs to determine their state
 STR_BUILD_SIGNAL_CONVERT_TOOLTIP                                :{BLACK}Signal Convert{}When selected, clicking an existing signal will convert it to the selected signal type and variant. Ctrl+Click will toggle the existing variant. Shift+Click shows estimated conversion cost
 STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_TOOLTIP                   :{BLACK}Dragging signal density
 STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_DECREASE_TOOLTIP          :{BLACK}Decrease dragging signal density
 STR_BUILD_SIGNAL_DRAG_SIGNALS_DENSITY_INCREASE_TOOLTIP          :{BLACK}Increase dragging signal density
+
+# Program signal window
+STR_PROGSIG_CAPTION                                             :{BLACK}Logic Signal Program
+STR_PROGSIG_OWN_DEFAULT_COLOR                                   :{BLACK}Default color of this signal
+STR_PROGSIG_TRIGGER_COLOR                                       :{BLACK}Color of input signals to trigger on
+STR_PROGSIG_OPERATOR                                            :{BLACK}Operator used in evaluating inputs
+STR_PROGSIG_LINKED_SIGNALS                                      :{BLACK}Number of linked input signals
+STR_PROGSIG_OP_OR                                               :{BLACK}Or
+STR_PROGSIG_OP_AND                                              :{BLACK}And
+STR_PROGSIG_OP_NOT                                              :{BLACK}Not
+STR_PROGSIG_OP_XOR                                              :{BLACK}Xor
+STR_PROGSIG_COLOR_GREEN                                         :{BLACK}Green
+STR_PROGSIG_COLOR_RED                                           :{BLACK}Red
+STR_PROGSIG_ADD_LINK                                            :{BLACK}Add Input
+STR_PROGSIG_CLEAR_LINKS                                         :{BLACK}Clear All Inputs
+STR_PROGSIG_OWN_DEFAULT_COLOR_TOOLTIP                           :{BLACK}The color of this signal in default condition, when not triggered by inputs
+STR_PROGSIG_TRIGGER_COLOR_TOOLTIP                               :{BLACK}The color of input signals which qualifies them as TRUE in the logic comparison
+STR_PROGSIG_OPERATOR_TOOLTIP                                    :{BLACK}The operator which is used to combine input signals
+STR_PROGSIG_LINKED_SIGNALS_TOOLTIP                              :{BLACK}The number of input signals which have been linked to this signal program
+STR_PROGSIG_ADD_LINK_TOOLTIP                                    :{BLACK}Select signals which act as inputs for this signal
+STR_PROGSIG_CLEAR_LINKS_TOOLTIP                                 :{BLACK}Clear all input signals
+STR_ERROR_PROGRAM_SIGNAL_HEADER                                 :{WHITE}Error programming signal
+STR_ERROR_LINK_SIGNAL_HEADER                                    :{WHITE}Error linking signals
+STR_ERROR_LINK_SIGNAL_TO_ITSELF                                 :{WHITE}Logic signal cannot use itself as input
+STR_ERROR_LINK_SIGNAL_NO_SIGNAL                                 :{WHITE}You can only use other signals as inputs
 
 # Bridge selection window
 STR_SELECT_RAIL_BRIDGE_CAPTION                                  :{WHITE}Select Rail Bridge
@@ -2565,21 +2595,28 @@ STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXITSIGNALS                 :{STRING} track 
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBOSIGNALS                :{STRING} track with combo-signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBSSIGNALS                  :{STRING} track with path signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NOENTRYSIGNALS              :{STRING} track with one-way path signals
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_LOGICSIGNALS                :{STRING} track with logic signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_PRESIGNALS           :{STRING} track with block and pre-signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_EXITSIGNALS          :{STRING} track with block and exit-signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_COMBOSIGNALS         :{STRING} track with block and combo-signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_PBSSIGNALS           :{STRING} track with block and path signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_NOENTRYSIGNALS       :{STRING} track with block and one-way path signals
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NORMAL_LOGICSIGNALS         :{STRING} track with block and logic signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_EXITSIGNALS             :{STRING} track with pre- and exit-signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_COMBOSIGNALS            :{STRING} track with pre- and combo-signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_PBSSIGNALS              :{STRING} track with pre- and path signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_NOENTRYSIGNALS          :{STRING} track with pre- and one-way path signals
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PRE_LOGICSIGNALS            :{STRING} track with pre- and logic signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_COMBOSIGNALS           :{STRING} track with exit- and combo-signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_PBSSIGNALS             :{STRING} track with exit- and path signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_NOENTRYSIGNALS         :{STRING} track with exit- and one-way path signals
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_LOGICSIGNALS           :{STRING} track with exit- and logic signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_PBSSIGNALS            :{STRING} track with combo- and path signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_NOENTRYSIGNALS        :{STRING} track with combo- and one-way path signals
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_LOGICSIGNALS          :{STRING} track with combo- and logic signals
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBS_NOENTRYSIGNALS          :{STRING} track with path and one-way path signals
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBS_LOGICSIGNALS            :{STRING} track with path and logic signals
+STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_NOENTRY_LOGICSIGNALS        :{STRING} track with one-way path and logic signals
 STR_LAI_RAIL_DESCRIPTION_TRAIN_DEPOT                            :{STRING} train depot
 
 STR_LAI_ROAD_DESCRIPTION_ROAD                                   :Road

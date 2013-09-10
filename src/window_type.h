@@ -681,6 +681,12 @@ enum WindowClass {
 	 */
 	WC_LINKGRAPH_LEGEND,
 
+	/**
+	 * Signal program GUI; %Window numbers:
+	 *   - #SignalReference
+	 */
+	WC_SIGNAL_PROGRAM,
+
 	WC_INVALID = 0xFFFF, ///< Invalid window.
 };
 

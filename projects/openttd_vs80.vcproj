@@ -627,6 +627,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\logic_signal_program.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\logic_signals.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\map.cpp"
 				>
 			</File>
@@ -1244,6 +1252,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\livery.h"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\logic_signals.h"
 				>
 			</File>
 			<File
@@ -2103,6 +2115,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\logic_signals_gui.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\main_gui.cpp"
 				>
 			</File>
@@ -2507,6 +2523,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\..\src\logic_signals_cmd.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\..\src\misc_cmd.cpp"
 				>
 			</File>
@@ -2660,6 +2680,10 @@
 			</File>
 			<File
 				RelativePath=".\..\src\saveload\linkgraph_sl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\..\src\saveload\logic_signals_sl.cpp"
 				>
 			</File>
 			<File

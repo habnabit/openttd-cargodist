@@ -314,6 +314,8 @@ enum Commands {
 
 	CMD_OPEN_CLOSE_AIRPORT,           ///< open/close an airport to incoming aircraft
 
+	CMD_PROGRAM_LOGIC_SIGNAL,         ///< modify a logic signal program
+
 	CMD_END,                          ///< Must ALWAYS be on the end of this list!! (period)
 };
 

@@ -246,6 +246,12 @@
     <ClCompile Include="..\src\linkgraph\mcf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\logic_signal_program.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\logic_signals.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -706,6 +712,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\livery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\logic_signals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\map_func.h">
@@ -1344,6 +1353,9 @@
     <ClCompile Include="..\src\linkgraph\linkgraph_gui.cpp">
       <Filter>GUI Source Code</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\logic_signals_gui.cpp">
+      <Filter>GUI Source Code</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\main_gui.cpp">
       <Filter>GUI Source Code</Filter>
     </ClCompile>
@@ -1641,6 +1653,9 @@
     <ClCompile Include="..\src\industry_cmd.cpp">
       <Filter>Command handlers</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\logic_signals_cmd.cpp">
+      <Filter>Command handlers</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\misc_cmd.cpp">
       <Filter>Command handlers</Filter>
     </ClCompile>
@@ -1753,6 +1768,9 @@
       <Filter>Save/Load handlers</Filter>
     </ClCompile>
     <ClCompile Include="..\src\saveload\linkgraph_sl.cpp">
+      <Filter>Save/Load handlers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\saveload\logic_signals_sl.cpp">
       <Filter>Save/Load handlers</Filter>
     </ClCompile>
     <ClCompile Include="..\src\saveload\map_sl.cpp">

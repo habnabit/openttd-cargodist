@@ -47,6 +47,8 @@ linkgraph/linkgraph.cpp
 linkgraph/linkgraphjob.cpp
 linkgraph/linkgraphschedule.cpp
 linkgraph/mcf.cpp
+logic_signal_program.cpp
+logic_signals.cpp
 map.cpp
 misc.cpp
 mixer.cpp
@@ -226,6 +228,7 @@ linkgraph/linkgraphjob_base.h
 linkgraph/linkgraphschedule.h
 linkgraph/mcf.h
 livery.h
+logic_signals.h
 map_func.h
 map_type.h
 mixer.h
@@ -457,6 +460,7 @@ highscore_gui.cpp
 industry_gui.cpp
 intro_gui.cpp
 linkgraph/linkgraph_gui.cpp
+logic_signals_gui.cpp
 main_gui.cpp
 misc_gui.cpp
 music_gui.cpp
@@ -560,6 +564,7 @@ depot_cmd.cpp
 disaster_cmd.cpp
 group_cmd.cpp
 industry_cmd.cpp
+logic_signals_cmd.cpp
 misc_cmd.cpp
 object_cmd.cpp
 order_cmd.cpp
@@ -600,6 +605,7 @@ saveload/group_sl.cpp
 saveload/industry_sl.cpp
 saveload/labelmaps_sl.cpp
 saveload/linkgraph_sl.cpp
+saveload/logic_signals_sl.cpp
 saveload/map_sl.cpp
 saveload/misc_sl.cpp
 saveload/newgrf_sl.cpp

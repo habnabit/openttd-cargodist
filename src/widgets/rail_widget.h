@@ -30,6 +30,7 @@ enum RailToolbarWidgets {
 	WID_RAT_BUILD_TUNNEL,   ///< Build a tunnel.
 	WID_RAT_REMOVE,         ///< Bulldozer to remove rail.
 	WID_RAT_CONVERT_RAIL,   ///< Convert other rail to this type.
+	WID_RAT_PROGRAM_SIGNALS,///< Program logic signals.
 };
 
 /** Widgets of the #BuildRailStationWindow class. */
@@ -84,12 +85,14 @@ enum BuildSignalWidgets {
 	WID_BS_SEMAPHORE_COMBO,    ///< Build a semaphore combo block signal
 	WID_BS_SEMAPHORE_PBS,      ///< Build a semaphore path signal.
 	WID_BS_SEMAPHORE_PBS_OWAY, ///< Build a semaphore one way path signal.
+	WID_BS_SEMAPHORE_LOGIC,    ///< Build a semaphore logic signal.
 	WID_BS_ELECTRIC_NORM,      ///< Build an electric normal block signal
 	WID_BS_ELECTRIC_ENTRY,     ///< Build an electric entry block signal
 	WID_BS_ELECTRIC_EXIT,      ///< Build an electric exit block signal
 	WID_BS_ELECTRIC_COMBO,     ///< Build an electric combo block signal
 	WID_BS_ELECTRIC_PBS,       ///< Build an electric path signal.
 	WID_BS_ELECTRIC_PBS_OWAY,  ///< Build an electric one way path signal.
+	WID_BS_ELECTRIC_LOGIC,     ///< Build an electric logic signal.
 	WID_BS_CONVERT,            ///< Convert the signal.
 	WID_BS_DRAG_SIGNALS_DENSITY_LABEL,    ///< The current signal density.
 	WID_BS_DRAG_SIGNALS_DENSITY_DECREASE, ///< Decrease the signal density.

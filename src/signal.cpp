@@ -17,6 +17,7 @@
 #include "viewport_func.h"
 #include "train.h"
 #include "company_base.h"
+#include "logic_signals.h"
 
 
 /** these are the maximums used for updating signal blocks */
@@ -415,23 +416,37 @@ static void UpdateSignalsAroundSegment(SigFlags flags)
 		SignalType sig = GetSignalType(tile, TrackdirToTrack(trackdir));
 		SignalState newstate = SIGNAL_STATE_GREEN;
 
-		/* determine whether the new state is red */
-		if (flags & SF_TRAIN) {
-			/* train in the segment */
-			newstate = SIGNAL_STATE_RED;
+		if (sig == SIGTYPE_LOGIC) {
+			SignalProgram *program = FindSignalProgram(tile, TrackdirToTrack(trackdir));
+
+			if (flags & SF_TRAIN) {
+				/* Blocked by a train */
+				newstate = SIGNAL_STATE_RED;
+				program->blocked_by_train = true;
+			} else {
+				/* Cleared by a train, we need to re-evaluate the state based on logic */
+				newstate = program->Evaluate();
+				program->blocked_by_train = false;
+			}
 		} else {
-			/* is it a bidir combo? - then do not count its other signal direction as exit */
-			if (sig == SIGTYPE_COMBO && HasSignalOnTrackdir(tile, ReverseTrackdir(trackdir))) {
-				/* at least one more exit */
-				if ((flags & SF_EXIT2) &&
-						/* no green exit */
-						(!(flags & SF_GREEN) ||
-						/* only one green exit, and it is this one - so all other exits are red */
-						(!(flags & SF_GREEN2) && GetSignalStateByTrackdir(tile, ReverseTrackdir(trackdir)) == SIGNAL_STATE_GREEN))) {
-					newstate = SIGNAL_STATE_RED;
+			/* determine whether the new state is red */
+			if (flags & SF_TRAIN) {
+				/* train in the segment */
+				newstate = SIGNAL_STATE_RED;
+			} else {
+				/* is it a bidir combo? - then do not count its other signal direction as exit */
+				if (sig == SIGTYPE_COMBO && HasSignalOnTrackdir(tile, ReverseTrackdir(trackdir))) {
+					/* at least one more exit */
+					if ((flags & SF_EXIT2) &&
+							/* no green exit */
+							(!(flags & SF_GREEN) ||
+							/* only one green exit, and it is this one - so all other exits are red */
+							(!(flags & SF_GREEN2) && GetSignalStateByTrackdir(tile, ReverseTrackdir(trackdir)) == SIGNAL_STATE_GREEN))) {
+						newstate = SIGNAL_STATE_RED;
+					}
+				} else { // entry, at least one exit, no green exit
+					if (IsPresignalEntry(tile, TrackdirToTrack(trackdir)) && (flags & SF_EXIT) && !(flags & SF_GREEN)) newstate = SIGNAL_STATE_RED;
 				}
-			} else { // entry, at least one exit, no green exit
-				if (IsPresignalEntry(tile, TrackdirToTrack(trackdir)) && (flags & SF_EXIT) && !(flags & SF_GREEN)) newstate = SIGNAL_STATE_RED;
 			}
 		}
 
@@ -444,9 +459,11 @@ static void UpdateSignalsAroundSegment(SigFlags flags)
 			}
 			SetSignalStateByTrackdir(tile, trackdir, newstate);
 			MarkTileDirtyByTile(tile);
+
+			/* notify logic signals of the state change */
+			SignalStateChanged(tile, TrackdirToTrack(trackdir), 1);
 		}
 	}
-
 }
 
 
