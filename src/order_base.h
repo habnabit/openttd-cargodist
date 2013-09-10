@@ -44,6 +44,8 @@ private:
 
 	CargoID refit_cargo;  ///< Refit CargoID
 
+	int8 jump_counter;    ///< Counter for the 'jump xx% of times' option
+
 public:
 	Order *next;          ///< Pointer to next order. If NULL, end of list
 
@@ -125,6 +127,14 @@ public:
 	inline CargoID GetRefitCargo() const { return this->refit_cargo; }
 
 	void SetRefit(CargoID cargo);
+
+	/**
+	 * Update the jump_counter of this order.
+	 * @param the jump chance in %.
+	 * @return whether to jump or not.
+	 * @pre IsType(OT_CONDITIONAL) && this->GetConditionVariable() == OCV_PERCENT.
+	 */
+	bool UpdateJumpCounter(uint8 percent);
 
 	/** How must the consist be loaded? */
 	inline OrderLoadFlags GetLoadType() const { return (OrderLoadFlags)GB(this->flags, 4, 4); }
