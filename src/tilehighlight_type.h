@@ -19,16 +19,18 @@
 
 /** Highlighting draw styles */
 enum HighLightStyle {
-	HT_NONE      = 0x000, ///< default
-	HT_RECT      = 0x010, ///< rectangle (stations, depots, ...)
-	HT_POINT     = 0x020, ///< point (lower land, raise land, level land, ...)
-	HT_SPECIAL   = 0x030, ///< special mode used for highlighting while dragging (and for tunnels/docks)
-	HT_DRAG      = 0x040, ///< dragging items in the depot windows
-	HT_LINE      = 0x008, ///< used for autorail highlighting (longer stretches), lower bits: direction
-	HT_RAIL      = 0x080, ///< autorail (one piece), lower bits: direction
-	HT_VEHICLE   = 0x100, ///< vehicle is accepted as target as well (bitmask)
-	HT_DIAGONAL  = 0x200, ///< Also allow 'diagonal rectangles'. Only usable in combination with #HT_RECT or #HT_POINT.
-	HT_DRAG_MASK = 0x0F8, ///< Mask for the tile drag-type modes.
+	HT_NONE          = 0x000, ///< default
+	HT_RECT          = 0x010, ///< rectangle (stations, depots, ...)
+	HT_POINT         = 0x020, ///< point (lower land, raise land, level land, ...)
+	HT_SPECIAL       = 0x030, ///< special mode used for highlighting while dragging (and for tunnels/docks)
+	HT_DRAG          = 0x040, ///< dragging items in the depot windows
+	HT_LINE          = 0x008, ///< used for autorail highlighting (longer stretches), lower bits: direction
+	HT_RAIL          = 0x080, ///< autorail (one piece), lower bits: direction
+	HT_VEHICLE       = 0x100, ///< vehicle is accepted as target as well (bitmask)
+	HT_DIAGONAL      = 0x200, ///< Also allow 'diagonal rectangles'. Only usable in combination with #HT_RECT or #HT_POINT.
+	HT_POLY          = 0x400, ///< polyline mode; connect highlighted track with previous one
+	HT_PASTE_PREVIEW = 0x800, ///< Preview of a paste result. Only usable in combination with #HT_POINT.
+	HT_DRAG_MASK     = 0x0F8, ///< Mask for the tile drag-type modes.
 
 	/* lower bits (used with HT_LINE and HT_RAIL):
 	 * (see ASCII art in table/autorail.h for a visual interpretation) */
@@ -54,11 +56,15 @@ struct TileHighlightData {
 
 	Point new_pos;       ///< New value for \a pos; used to determine whether to redraw the selection.
 	Point new_size;      ///< New value for \a size; used to determine whether to redraw the selection.
+	Point new_offs;      ///< New value for \a offs; used to determine whether to redraw the selection.
 	Point new_outersize; ///< New value for \a outersize; used to determine whether to redraw the selection.
 	byte dirty;          ///< Whether the build station window needs to redraw due to the changed selection.
 
 	Point selstart;      ///< The location where the dragging started.
 	Point selend;        ///< The location where the drag currently ends.
+	Point selstart2;     ///< The location where the second segment of a polyline track starts.
+	Point selend2;       ///< The location where the second segment of a polyline track ends.
+	HighLightStyle dir2; ///< Direction of the second segment of a polyline track, HT_DIR_END if second segment is not selected.
 	byte sizelimit;      ///< Whether the selection is limited in length, and what the maximum length is.
 
 	HighLightStyle drawstyle;      ///< Lower bits 0-3 are reserved for detailed highlight information.

@@ -32,6 +32,7 @@
 CommandProc CmdBuildRailroadTrack;
 CommandProc CmdRemoveRailroadTrack;
 CommandProc CmdBuildSingleRail;
+CommandProc CmdBuildSingleRails;
 CommandProc CmdRemoveSingleRail;
 
 CommandProc CmdLandscapeClear;
@@ -193,6 +194,10 @@ CommandProc CmdReinitSeparation;
 
 CommandProc CmdOpenCloseAirport;
 
+CommandProc CmdInstantCopyPaste;
+CommandProc CmdCopyToClipboard;
+CommandProc CmdPasteFromClipboard;
+
 CommandProc CmdProgramLogicSignal;
 
 #define DEF_CMD(proc, flags, type) {proc, #proc, (CommandFlags)flags, type}
@@ -208,6 +213,7 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdBuildRailroadTrack,       CMD_NO_WATER | CMD_AUTO, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_BUILD_RAILROAD_TRACK
 	DEF_CMD(CmdRemoveRailroadTrack,                     CMD_AUTO, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_REMOVE_RAILROAD_TRACK
 	DEF_CMD(CmdBuildSingleRail,          CMD_NO_WATER | CMD_AUTO, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_BUILD_SINGLE_RAIL
+	DEF_CMD(CmdBuildSingleRails,         CMD_NO_WATER | CMD_AUTO, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_BUILD_MULTI_RAIL
 	DEF_CMD(CmdRemoveSingleRail,                        CMD_AUTO, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_REMOVE_SINGLE_RAIL
 	DEF_CMD(CmdLandscapeClear,                                 0, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_LANDSCAPE_CLEAR
 	DEF_CMD(CmdBuildBridge,  CMD_DEITY | CMD_NO_WATER | CMD_AUTO, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_BUILD_BRIDGE
@@ -348,6 +354,10 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdReinitSeparation,                               0, CMDT_ROUTE_MANAGEMENT      ), // CMD_REINIT_SEPARATION
 
 	DEF_CMD(CmdOpenCloseAirport,                               0, CMDT_ROUTE_MANAGEMENT      ), // CMD_OPEN_CLOSE_AIRPORT
+
+	DEF_CMD(CmdCopyToClipboard,                      CMD_OFFLINE, CMDT_OTHER_MANAGEMENT      ), // CMD_COPY_TO_CLIPBOARD
+	DEF_CMD(CmdPasteFromClipboard,CMD_OFFLINE|CMD_NO_TEST|CMD_AUTO,CMDT_LANDSCAPE_CONSTRUCTION),// CMD_PASTE_FROM_CLIPBOARD
+	DEF_CMD(CmdInstantCopyPaste,          CMD_NO_TEST | CMD_AUTO, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_INSTANT_COPY_PASTE
 
 	DEF_CMD(CmdProgramLogicSignal,                             0, CMDT_OTHER_MANAGEMENT      ), // CMD_PROGRAM_LOGIC_SIGNAL
 };

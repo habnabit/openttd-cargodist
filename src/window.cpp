@@ -2701,6 +2701,7 @@ enum MouseClick {
 	MAX_OFFSET_HOVER = 5,            ///< Maximum mouse movement before stopping a hover event.
 };
 extern EventState VpHandlePlaceSizingDrag();
+extern EventState VpHandleMouseWheel(int mousewheel);
 
 static void ScrollMainViewport(int x, int y)
 {
@@ -2762,11 +2763,12 @@ static void MouseLoop(MouseClick click, int mousewheel)
 	HandlePlacePresize();
 	UpdateTileSelection();
 
-	if (VpHandlePlaceSizingDrag()  == ES_HANDLED) return;
-	if (HandleMouseDragDrop()      == ES_HANDLED) return;
-	if (HandleWindowDragging()     == ES_HANDLED) return;
-	if (HandleScrollbarScrolling() == ES_HANDLED) return;
-	if (HandleViewportScroll()     == ES_HANDLED) return;
+	if (VpHandlePlaceSizingDrag()      == ES_HANDLED) return;
+	if (VpHandleMouseWheel(mousewheel) == ES_HANDLED) return;
+	if (HandleMouseDragDrop()          == ES_HANDLED) return;
+	if (HandleWindowDragging()         == ES_HANDLED) return;
+	if (HandleScrollbarScrolling()     == ES_HANDLED) return;
+	if (HandleViewportScroll()         == ES_HANDLED) return;
 
 	HandleMouseOver();
 
@@ -2798,7 +2800,7 @@ static void MouseLoop(MouseClick click, int mousewheel)
 			case MC_DOUBLE_LEFT:
 			case MC_LEFT:
 				DEBUG(misc, 2, "Cursor: 0x%X (%d)", _cursor.sprite, _cursor.sprite);
-				if (!HandleViewportClicked(vp, x, y) &&
+				if (!HandleViewportClicked(vp, x, y, click == MC_DOUBLE_LEFT) &&
 						!(w->flags & WF_DISABLE_VP_SCROLL) &&
 						_settings_client.gui.left_mouse_btn_scrolling) {
 					_scrolling_viewport = true;
