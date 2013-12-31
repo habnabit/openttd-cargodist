@@ -268,13 +268,9 @@ void Window::OnDropdownClose(Point pt, int widget, int index, bool instant_close
 	}
 
 	/* Raise the dropdown button */
-	if (this->nested_array != NULL) {
-		NWidgetCore *nwi2 = this->GetWidget<NWidgetCore>(widget);
-		if ((nwi2->type & WWT_MASK) == NWID_BUTTON_DROPDOWN) {
-			nwi2->disp_flags &= ~ND_DROPDOWN_ACTIVE;
-		} else {
-			this->RaiseWidget(widget);
-		}
+	NWidgetCore *nwi2 = this->GetWidget<NWidgetCore>(widget);
+	if ((nwi2->type & WWT_MASK) == NWID_BUTTON_DROPDOWN) {
+		nwi2->disp_flags &= ~ND_DROPDOWN_ACTIVE;
 	} else {
 		this->RaiseWidget(widget);
 	}
@@ -3378,19 +3374,10 @@ void RelocateAllWindows(int neww, int newh)
 
 	FOR_ALL_WINDOWS_FROM_BACK(w) {
 		int left, top;
-
-		if (w->window_class == WC_MAIN_WINDOW) {
-			ViewPort *vp = w->viewport;
-			vp->width = w->width = neww;
-			vp->height = w->height = newh;
-			vp->virtual_width = ScaleByZoom(neww, vp->zoom);
-			vp->virtual_height = ScaleByZoom(newh, vp->zoom);
-			continue; // don't modify top,left
-		}
-
 		/* XXX - this probably needs something more sane. For example specifying
 		 * in a 'backup'-desc that the window should always be centered. */
 		switch (w->window_class) {
+			case WC_MAIN_WINDOW:
 			case WC_BOOTSTRAP:
 				ResizeWindow(w, neww, newh);
 				continue;

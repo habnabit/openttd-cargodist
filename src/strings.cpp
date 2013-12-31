@@ -233,7 +233,10 @@ char *GetStringWithArgs(char *buffr, StringID string, StringParameters *args, co
 
 		case 15:
 			/* Old table for custom names. This is no longer used */
-			error("Incorrect conversion of custom name string.");
+			if (!game_script) {
+				error("Incorrect conversion of custom name string.");
+			}
+			break;
 
 		case GAME_TEXT_TAB:
 			return FormatString(buffr, GetGameStringPtr(index), args, last, case_index, true);
@@ -254,9 +257,6 @@ char *GetStringWithArgs(char *buffr, StringID string, StringParameters *args, co
 
 		case 30:
 			return FormatString(buffr, GetGRFStringPtr(index + 0x1000), args, last, case_index);
-
-		case 31:
-			NOT_REACHED();
 	}
 
 	if (index >= _langtab_num[tab]) {
@@ -801,7 +801,7 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 		/* We have to restore the original offset here to to read the correct values. */
 		args->offset = orig_offset;
 	}
-	WChar b;
+	WChar b = '\0';
 	uint next_substr_case_index = 0;
 	char *buf_start = buff;
 	std::stack<const char *> str_stack;
@@ -1505,7 +1505,7 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 
 					StringID str;
 					switch (v->type) {
-						default: NOT_REACHED();
+						default:           str = STR_INVALID_VEHICLE; break;
 						case VEH_TRAIN:    str = STR_SV_TRAIN_NAME; break;
 						case VEH_ROAD:     str = STR_SV_ROAD_VEHICLE_NAME; break;
 						case VEH_SHIP:     str = STR_SV_SHIP_NAME; break;
@@ -1779,7 +1779,12 @@ bool ReadLanguagePack(const LanguageMetadata *lang)
 
 	uint count = 0;
 	for (uint i = 0; i < TAB_COUNT; i++) {
-		uint num = lang_pack->offsets[i];
+		uint16 num = lang_pack->offsets[i];
+		if (num > TAB_SIZE) {
+			free(lang_pack);
+			return false;
+		}
+
 		_langtab_start[i] = count;
 		_langtab_num[i] = num;
 		count += num;

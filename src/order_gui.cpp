@@ -349,8 +349,10 @@ void DrawOrderString(const Vehicle *v, const Order *order, int order_index, int 
 
 static Order GetOrderCmdFromTile(const Vehicle *v, TileIndex tile)
 {
-	Order order;
-	order.next  = NULL;
+	/* Hack-ish; unpack order 0, so everything gets initialised with either zero
+	 * or a suitable default value for the variable. Then also override the index
+	 * as it is not coming from a pool, so would be initialised. */
+	Order order(0);
 	order.index = 0;
 
 	/* check depot first */
@@ -496,9 +498,11 @@ struct OrdersWindow : public Window {
 private:
 	/** Under what reason are we using the PlaceObject functionality? */
 	enum OrderPlaceObjectState {
+		OPOS_NONE,
 		OPOS_GOTO,
 		OPOS_CONDITIONAL,
 		OPOS_SHARE,
+		OPOS_END,
 	};
 
 	/** Displayed planes of the #NWID_SELECTION widgets. */
@@ -571,16 +575,18 @@ private:
 	/**
 	 * Handle the click on the goto button.
 	 */
-	void OrderClick_Goto()
+	void OrderClick_Goto(OrderPlaceObjectState type)
 	{
+		assert(type > OPOS_NONE && type < OPOS_END);
+
+		static const HighLightStyle goto_place_style[OPOS_END - 1] = {
+			HT_RECT | HT_VEHICLE, // OPOS_GOTO
+			HT_NONE,              // OPOS_CONDITIONAL
+			HT_VEHICLE,           // OPOS_SHARE
+		};
+		SetObjectToPlaceWnd(ANIMCURSOR_PICKSTATION, PAL_NONE, goto_place_style[type - 1], this);
+		this->goto_type = type;
 		this->SetWidgetDirty(WID_O_GOTO);
-		this->ToggleWidgetLoweredState(WID_O_GOTO);
-		if (this->IsWidgetLowered(WID_O_GOTO)) {
-			SetObjectToPlaceWnd(ANIMCURSOR_PICKSTATION, PAL_NONE, HT_RECT | HT_VEHICLE, this);
-			this->goto_type = OPOS_GOTO;
-		} else {
-			ResetObjectToPlace();
-		}
 	}
 
 	/**
@@ -636,28 +642,6 @@ private:
 		order.SetDepotActionType(ODATFB_NEAREST_DEPOT);
 
 		DoCommandP(this->vehicle->tile, this->vehicle->index + (this->OrderGetSel() << 20), order.Pack(), CMD_INSERT_ORDER | CMD_MSG(STR_ERROR_CAN_T_INSERT_NEW_ORDER));
-	}
-
-	/**
-	 * Handle the click on the conditional order button.
-	 */
-	void OrderClick_Conditional()
-	{
-		this->LowerWidget(WID_O_GOTO);
-		this->SetWidgetDirty(WID_O_GOTO);
-		SetObjectToPlaceWnd(ANIMCURSOR_PICKSTATION, PAL_NONE, HT_NONE, this);
-		this->goto_type = OPOS_CONDITIONAL;
-	}
-
-	/**
-	 * Handle the click on the share button.
-	 */
-	void OrderClick_Share()
-	{
-		this->LowerWidget(WID_O_GOTO);
-		this->SetWidgetDirty(WID_O_GOTO);
-		SetObjectToPlaceWnd(ANIMCURSOR_PICKSTATION, PAL_NONE, HT_VEHICLE, this);
-		this->goto_type = OPOS_SHARE;
 	}
 
 	/**
@@ -818,6 +802,7 @@ public:
 
 		this->selected_order = -1;
 		this->order_over = INVALID_VEH_ORDER_ID;
+		this->goto_type = OPOS_NONE;
 		this->owner = v->owner;
 
 		this->UpdateAutoRefitState();
@@ -830,7 +815,7 @@ public:
 				if (order->IsType(OT_GOTO_STATION)) station_orders++;
 			}
 
-			if (station_orders < 2) this->OrderClick_Goto();
+			if (station_orders < 2) this->OrderClick_Goto(OPOS_GOTO);
 		}
 		this->OnInvalidateData(VIWD_MODIFY_ORDERS);
 	}
@@ -1077,8 +1062,8 @@ public:
 					}
 					OrderConditionVariable ocv = order->GetConditionVariable();
 					/* Set the strings for the dropdown boxes. */
-					this->GetWidget<NWidgetCore>(WID_O_COND_VARIABLE)->widget_data   = STR_ORDER_CONDITIONAL_LOAD_PERCENTAGE + (order == NULL ? 0 : ocv);
-					this->GetWidget<NWidgetCore>(WID_O_COND_COMPARATOR)->widget_data = _order_conditional_condition[order == NULL ? 0 : order->GetConditionComparator()];
+					this->GetWidget<NWidgetCore>(WID_O_COND_VARIABLE)->widget_data   = STR_ORDER_CONDITIONAL_LOAD_PERCENTAGE + ocv;
+					this->GetWidget<NWidgetCore>(WID_O_COND_COMPARATOR)->widget_data = _order_conditional_condition[order->GetConditionComparator()];
 					this->SetWidgetDisabledState(WID_O_COND_COMPARATOR, ocv == OCV_UNCONDITIONALLY);
 					this->SetWidgetDisabledState(WID_O_COND_VALUE, ocv == OCV_REQUIRES_SERVICE || ocv == OCV_UNCONDITIONALLY);
 					break;
@@ -1109,7 +1094,11 @@ public:
 
 	virtual void OnPaint()
 	{
-		if (this->vehicle->owner != _local_company) this->selected_order = -1; // Disable selection any selected row at a competitor order window.
+		if (this->vehicle->owner != _local_company) {
+			this->selected_order = -1; // Disable selection any selected row at a competitor order window.
+		} else {
+			this->SetWidgetLoweredState(WID_O_GOTO, this->goto_type != OPOS_NONE);
+		}
 		this->DrawWidgets();
 	}
 
@@ -1197,7 +1186,6 @@ public:
 		switch (widget) {
 			case WID_O_ORDER_LIST: {
 				if (this->goto_type == OPOS_CONDITIONAL) {
-					this->goto_type = OPOS_GOTO;
 					VehicleOrderID order_id = this->GetOrderFromPt(_cursor.pos.y - this->top);
 					if (order_id != INVALID_VEH_ORDER_ID) {
 						Order order;
@@ -1270,9 +1258,21 @@ public:
 
 			case WID_O_GOTO:
 				if (this->GetWidget<NWidgetLeaf>(widget)->ButtonHit(pt)) {
-					this->OrderClick_Goto();
+					if (this->goto_type != OPOS_NONE) {
+						ResetObjectToPlace();
+					} else {
+						this->OrderClick_Goto(OPOS_GOTO);
+					}
 				} else {
-					ShowDropDownMenu(this, this->vehicle->type == VEH_AIRCRAFT ? _order_goto_dropdown_aircraft : _order_goto_dropdown, 0, WID_O_GOTO, 0, 0);
+					int sel;
+					switch (this->goto_type) {
+						case OPOS_NONE:        sel = -1; break;
+						case OPOS_GOTO:        sel =  0; break;
+						case OPOS_CONDITIONAL: sel =  2; break;
+						case OPOS_SHARE:       sel =  3; break;
+						default: NOT_REACHED();
+					}
+					ShowDropDownMenu(this, this->vehicle->type == VEH_AIRCRAFT ? _order_goto_dropdown_aircraft : _order_goto_dropdown, sel, WID_O_GOTO, 0, 0);
 				}
 				break;
 
@@ -1319,7 +1319,7 @@ public:
 			case WID_O_COND_VARIABLE: {
 				DropDownList *list = new DropDownList();
 				for (uint i = 0; i < lengthof(_order_conditional_variable); i++) {
-					list->push_back(new DropDownListStringItem(STR_ORDER_CONDITIONAL_LOAD_PERCENTAGE + _order_conditional_variable[i], _order_conditional_variable[i], false));
+					*list->Append() = new DropDownListStringItem(STR_ORDER_CONDITIONAL_LOAD_PERCENTAGE + _order_conditional_variable[i], _order_conditional_variable[i], false);
 				}
 				ShowDropDownList(this, list, this->vehicle->GetOrder(this->OrderGetSel())->GetConditionVariable(), WID_O_COND_VARIABLE);
 				break;
@@ -1386,10 +1386,10 @@ public:
 
 			case WID_O_GOTO:
 				switch (index) {
-					case 0: this->OrderClick_Goto(); break;
+					case 0: this->OrderClick_Goto(OPOS_GOTO); break;
 					case 1: this->OrderClick_NearestDepot(); break;
-					case 2: this->OrderClick_Conditional(); break;
-					case 3: this->OrderClick_Share(); break;
+					case 2: this->OrderClick_Goto(OPOS_CONDITIONAL); break;
+					case 3: this->OrderClick_Goto(OPOS_SHARE); break;
 					default: NOT_REACHED();
 				}
 				break;
@@ -1450,17 +1450,17 @@ public:
 		if (this->vehicle->owner != _local_company) return ES_NOT_HANDLED;
 
 		switch (hotkey) {
-			case OHK_SKIP:           this->OrderClick_Skip();         break;
-			case OHK_DELETE:         this->OrderClick_Delete();       break;
-			case OHK_GOTO:           this->OrderClick_Goto();         break;
-			case OHK_NONSTOP:        this->OrderClick_Nonstop(-1);    break;
-			case OHK_FULLLOAD:       this->OrderClick_FullLoad(-1);   break;
-			case OHK_UNLOAD:         this->OrderClick_Unload(-1);     break;
-			case OHK_NEAREST_DEPOT:  this->OrderClick_NearestDepot(); break;
-			case OHK_ALWAYS_SERVICE: this->OrderClick_Service(-1);    break;
-			case OHK_TRANSFER:       this->OrderHotkey_Transfer();    break;
-			case OHK_NO_UNLOAD:      this->OrderHotkey_NoUnload();    break;
-			case OHK_NO_LOAD:        this->OrderHotkey_NoLoad();      break;
+			case OHK_SKIP:           this->OrderClick_Skip();          break;
+			case OHK_DELETE:         this->OrderClick_Delete();        break;
+			case OHK_GOTO:           this->OrderClick_Goto(OPOS_GOTO); break;
+			case OHK_NONSTOP:        this->OrderClick_Nonstop(-1);     break;
+			case OHK_FULLLOAD:       this->OrderClick_FullLoad(-1);    break;
+			case OHK_UNLOAD:         this->OrderClick_Unload(-1);      break;
+			case OHK_NEAREST_DEPOT:  this->OrderClick_NearestDepot();  break;
+			case OHK_ALWAYS_SERVICE: this->OrderClick_Service(-1);     break;
+			case OHK_TRANSFER:       this->OrderHotkey_Transfer();     break;
+			case OHK_NO_UNLOAD:      this->OrderHotkey_NoUnload();     break;
+			case OHK_NO_LOAD:        this->OrderHotkey_NoLoad();       break;
 			default: return ES_NOT_HANDLED;
 		}
 		return ES_HANDLED;
@@ -1499,7 +1499,7 @@ public:
 
 	virtual void OnPlaceObjectAbort()
 	{
-		this->RaiseWidget(WID_O_GOTO);
+		this->goto_type = OPOS_NONE;
 		this->SetWidgetDirty(WID_O_GOTO);
 
 		/* Remove drag highlighting if it exists. */

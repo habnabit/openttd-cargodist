@@ -50,7 +50,8 @@ description.sr_RS = Originalni skup grafika nemačkog Transport Tycoon Deluxe DO
 description.sv_SE = Originalgrafiken från Transport Tycoon Deluxe, DOS-utgåvan (tyska).
 description.ta_IN = அசல் டிரான்ஸ்ஃபோர்ட் டைகூன் டீலக்ஸ் DOS (செருமன்) பதிப்பு அசைவூட்டங்கள்.
 description.th_TH = กราฟฟิกต้นตำหรับของ Transport Tycoon Deluxe DOS (German) edition
-description.tr_TR = Orijinal Transport Tycoon Deluxe DOS (Almanca) sürümü grafikleri.
+description.tr_TR = Özgün Transport Tycoon Deluxe DOS (Almanca) sürümü grafikleri.
+description.uk_UA = Оригінальна графіка з Transport Tycoon Deluxe DOS edition (німецького).
 description.vi_VN = Đồ họa gốc từ phiên bản Transport Tycoon Deluxe trên DOS (tiếng Đức)
 description.zh_CN = 运输大亨DOS豪华德语版原版图形包.
 description.zh_TW = 原版 Transport Tycoon Deluxe DOS 版 (德國版) 的圖形。
@@ -69,7 +70,7 @@ TRGI.GRF     = da6a6c9dcc451eec88d79211437b76a8
 TRGC.GRF     = ed446637e034104c5559b32c18afe78d
 TRGH.GRF     = ee6616fb0e6ef6b24892c58c93d86fc9
 TRGT.GRF     = fcde1d7e8a74197d72a62695884b909e
-OPENTTD.GRF  = 63d40d4bc6cfb3546cab72d94614e6cd
+OPENTTD.GRF  = 75a93cea2ed455c2fd5dcbda39e53538
 
 [origin]
 default      = You can find it on your Transport Tycoon Deluxe CD-ROM.

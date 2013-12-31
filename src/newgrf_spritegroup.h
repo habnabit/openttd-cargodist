@@ -57,6 +57,7 @@ enum SpriteGroupType {
 
 struct SpriteGroup;
 typedef uint32 SpriteGroupID;
+struct ResolverObject;
 
 /* SPRITE_WIDTH is 24. ECS has roughly 30 sprite groups per real sprite.
  * Adding an 'extra' margin would be assuming 64 sprite groups per real
@@ -69,7 +70,7 @@ struct SpriteGroup : SpriteGroupPool::PoolItem<&_spritegroup_pool> {
 protected:
 	SpriteGroup(SpriteGroupType type) : type(type) {}
 	/** Base sprite group resolver */
-	virtual const SpriteGroup *Resolve(struct ResolverObject *object) const { return this; };
+	virtual const SpriteGroup *Resolve(ResolverObject &object) const { return this; };
 
 public:
 	virtual ~SpriteGroup() {}
@@ -80,19 +81,7 @@ public:
 	virtual byte GetNumResults() const { return 0; }
 	virtual uint16 GetCallbackResult() const { return CALLBACK_FAILED; }
 
-	/**
-	 * ResolverObject (re)entry point.
-	 * This cannot be made a call to a virtual function because virtual functions
-	 * do not like NULL and checking for NULL *everywhere* is more cumbersome than
-	 * this little helper function.
-	 * @param group the group to resolve for
-	 * @param object information needed to resolve the group
-	 * @return the resolved group
-	 */
-	static const SpriteGroup *Resolve(const SpriteGroup *group, ResolverObject *object)
-	{
-		return group == NULL ? NULL : group->Resolve(object);
-	}
+	static const SpriteGroup *Resolve(const SpriteGroup *group, ResolverObject &object, bool top_level = true);
 };
 
 
@@ -115,7 +104,7 @@ struct RealSpriteGroup : SpriteGroup {
 	const SpriteGroup **loading; ///< List of loading groups (can be SpriteIDs or Callback results)
 
 protected:
-	const SpriteGroup *Resolve(ResolverObject *object) const;
+	const SpriteGroup *Resolve(ResolverObject &object) const;
 };
 
 /* Shared by deterministic and random groups. */
@@ -204,7 +193,7 @@ struct DeterministicSpriteGroup : SpriteGroup {
 	const SpriteGroup *default_group;
 
 protected:
-	const SpriteGroup *Resolve(ResolverObject *object) const;
+	const SpriteGroup *Resolve(ResolverObject &object) const;
 };
 
 enum RandomizedSpriteGroupCompareMode {
@@ -228,7 +217,7 @@ struct RandomizedSpriteGroup : SpriteGroup {
 	const SpriteGroup **groups; ///< Take the group with appropriate index:
 
 protected:
-	const SpriteGroup *Resolve(ResolverObject *object) const;
+	const SpriteGroup *Resolve(ResolverObject &object) const;
 };
 
 
@@ -301,8 +290,6 @@ struct IndustryProductionSpriteGroup : SpriteGroup {
 	uint8 again;
 };
 
-struct ResolverObject;
-
 /**
  * Interface to query and set values specific to a single #VarSpriteGroupScope (action 2 scope).
  *
@@ -310,9 +297,9 @@ struct ResolverObject;
  * to different game entities from a #SpriteGroup-chain (action 1-2-3 chain).
  */
 struct ScopeResolver {
-	ResolverObject *ro; ///< Surrounding resolver object.
+	ResolverObject &ro; ///< Surrounding resolver object.
 
-	ScopeResolver(ResolverObject *ro);
+	ScopeResolver(ResolverObject &ro);
 	virtual ~ScopeResolver();
 
 	virtual uint32 GetRandomBits() const;

@@ -190,7 +190,7 @@ static void ShowHelp()
 	p = BaseMusic::GetSetsList(p, lastof(buf));
 
 	/* List the drivers */
-	p = VideoDriverFactoryBase::GetDriversInfo(p, lastof(buf));
+	p = DriverFactoryBase::GetDriversInfo(p, lastof(buf));
 
 	/* List the blitters */
 	p = BlitterFactoryBase::GetBlittersInfo(p, lastof(buf));
@@ -557,6 +557,7 @@ int openttd_main(int argc, char *argv[])
 	_config_file = NULL;
 
 	GetOptData mgo(argc - 1, argv + 1, _options);
+	int ret = 0;
 
 	int i;
 	while ((i = mgo.GetOpt()) != -1) {
@@ -638,7 +639,11 @@ int openttd_main(int argc, char *argv[])
 			break;
 		case 'q': {
 			DeterminePaths(argv[0]);
-			if (StrEmpty(mgo.opt)) return 1;
+			if (StrEmpty(mgo.opt)) {
+				ret = 1;
+				goto exit_noshutdown;
+			}
+
 			char title[80];
 			title[0] = '\0';
 			FiosGetSavegameListCallback(SLD_LOAD_GAME, mgo.opt, strrchr(mgo.opt, '.'), title, lastof(title));
@@ -653,12 +658,12 @@ int openttd_main(int argc, char *argv[])
 					GetString(buf, _load_check_data.error, lastof(buf));
 					fprintf(stderr, "%s\n", buf);
 				}
-				return 1;
+				goto exit_noshutdown;
 			}
 
 			WriteSavegameInfo(title);
 
-			return 0;
+			goto exit_noshutdown;
 		}
 		case 'G': scanner->generation_seed = atoi(mgo.opt); break;
 		case 'c': _config_file = strdup(mgo.opt); break;
@@ -682,8 +687,8 @@ int openttd_main(int argc, char *argv[])
 		BaseSounds::FindSets();
 		BaseMusic::FindSets();
 		ShowHelp();
-		delete scanner;
-		return 0;
+
+		goto exit_noshutdown;
 	}
 
 #if defined(WINCE) && defined(_DEBUG)
@@ -762,7 +767,7 @@ int openttd_main(int argc, char *argv[])
 	free(blitter);
 
 	if (videodriver == NULL && _ini_videodriver != NULL) videodriver = strdup(_ini_videodriver);
-	_video_driver = (VideoDriver*)VideoDriverFactoryBase::SelectDriver(videodriver, Driver::DT_VIDEO);
+	_video_driver = (VideoDriver*)DriverFactoryBase::SelectDriver(videodriver, Driver::DT_VIDEO);
 	if (_video_driver == NULL) {
 		StrEmpty(videodriver) ?
 			usererror("Failed to autoprobe video driver") :
@@ -790,7 +795,11 @@ int openttd_main(int argc, char *argv[])
 	}
 #endif /* ENABLE_NETWORK */
 
-	if (!HandleBootstrap()) goto exit;
+	if (!HandleBootstrap()) {
+		ShutdownGame();
+
+		goto exit_bootstrap;
+	}
 
 	_video_driver->ClaimMousePointer();
 
@@ -824,7 +833,7 @@ int openttd_main(int argc, char *argv[])
 	free(music_set);
 
 	if (sounddriver == NULL && _ini_sounddriver != NULL) sounddriver = strdup(_ini_sounddriver);
-	_sound_driver = (SoundDriver*)SoundDriverFactoryBase::SelectDriver(sounddriver, Driver::DT_SOUND);
+	_sound_driver = (SoundDriver*)DriverFactoryBase::SelectDriver(sounddriver, Driver::DT_SOUND);
 	if (_sound_driver == NULL) {
 		StrEmpty(sounddriver) ?
 			usererror("Failed to autoprobe sound driver") :
@@ -833,7 +842,7 @@ int openttd_main(int argc, char *argv[])
 	free(sounddriver);
 
 	if (musicdriver == NULL && _ini_musicdriver != NULL) musicdriver = strdup(_ini_musicdriver);
-	_music_driver = (MusicDriver*)MusicDriverFactoryBase::SelectDriver(musicdriver, Driver::DT_MUSIC);
+	_music_driver = (MusicDriver*)DriverFactoryBase::SelectDriver(musicdriver, Driver::DT_MUSIC);
 	if (_music_driver == NULL) {
 		StrEmpty(musicdriver) ?
 			usererror("Failed to autoprobe music driver") :
@@ -852,7 +861,9 @@ int openttd_main(int argc, char *argv[])
 
 	CheckForMissingGlyphs();
 
+	/* ScanNewGRFFiles now has control over the scanner. */
 	ScanNewGRFFiles(scanner);
+	scanner = NULL;
 
 	_video_driver->MainLoop();
 
@@ -866,19 +877,43 @@ int openttd_main(int argc, char *argv[])
 		SaveToHighScore();
 	}
 
-exit:
 	/* Reset windowing system, stop drivers, free used memory, ... */
 	ShutdownGame();
+	goto exit_normal;
 
+exit_noshutdown:
+	/* These three are normally freed before bootstrap. */
+	free(graphics_set);
+	free(videodriver);
+	free(blitter);
+
+exit_bootstrap:
+	/* These are normally freed before exit, but after bootstrap. */
+	free(sounds_set);
+	free(music_set);
+	free(musicdriver);
+	free(sounddriver);
+
+exit_normal:
 	free(BaseGraphics::ini_set);
 	free(BaseSounds::ini_set);
 	free(BaseMusic::ini_set);
+
 	free(_ini_musicdriver);
 	free(_ini_sounddriver);
 	free(_ini_videodriver);
 	free(_ini_blitter);
 
-	return 0;
+	delete scanner;
+
+#ifdef ENABLE_NETWORK
+	extern FILE *_log_fd;
+	if (_log_fd != NULL) {
+		fclose(_log_fd);
+	}
+#endif /* ENABLE_NETWORK */
+
+	return ret;
 }
 
 void HandleExitGameRequest()
@@ -1317,7 +1352,7 @@ void StateGameLoop()
 	}
 	if (HasModalProgress()) return;
 
-	ClearStorageChanges(false);
+	ClearPersistentStorageChanges(false);
 
 	Layouter::ReduceLineCache();
 
@@ -1325,7 +1360,7 @@ void StateGameLoop()
 		RunTileLoop();
 		CallVehicleTicks();
 		CallLandscapeTick();
-		ClearStorageChanges(true);
+		ClearPersistentStorageChanges(true);
 		UpdateLandscapingLimits();
 
 		CallWindowTickEvent();
@@ -1349,7 +1384,7 @@ void StateGameLoop()
 		RunTileLoop();
 		CallVehicleTicks();
 		CallLandscapeTick();
-		ClearStorageChanges(true);
+		ClearPersistentStorageChanges(true);
 
 		AI::GameLoop();
 		Game::GameLoop();

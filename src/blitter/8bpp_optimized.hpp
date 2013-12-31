@@ -25,13 +25,13 @@ public:
 	};
 
 	/* virtual */ void Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomLevel zoom);
-	/* virtual */ Sprite *Encode(SpriteLoader::Sprite *sprite, AllocatorProc *allocator);
+	/* virtual */ Sprite *Encode(const SpriteLoader::Sprite *sprite, AllocatorProc *allocator);
 
 	/* virtual */ const char *GetName() { return "8bpp-optimized"; }
 };
 
 /** Factory for the 8bpp blitter optimised for speed. */
-class FBlitter_8bppOptimized: public BlitterFactory<FBlitter_8bppOptimized> {
+class FBlitter_8bppOptimized : public BlitterFactory<FBlitter_8bppOptimized> {
 public:
 	/* virtual */ const char *GetName() { return "8bpp-optimized"; }
 	/* virtual */ const char *GetDescription() { return "8bpp Optimized Blitter (compression + all-ZoomLevel cache)"; }

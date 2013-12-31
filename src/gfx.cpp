@@ -162,8 +162,9 @@ void GfxFillRect(int left, int top, int right, int bottom, int colour, FillRectM
  * @param screen_height Height of the screen to check clipping against.
  * @param colour Colour of the line.
  * @param width Width of the line.
+ * @param dash Length of dashes for dashed lines. 0 means solid line.
  */
-static inline void GfxDoDrawLine(void *video, int x, int y, int x2, int y2, int screen_width, int screen_height, uint8 colour, int width)
+static inline void GfxDoDrawLine(void *video, int x, int y, int x2, int y2, int screen_width, int screen_height, uint8 colour, int width, int dash = 0)
 {
 	Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
 
@@ -174,7 +175,7 @@ static inline void GfxDoDrawLine(void *video, int x, int y, int x2, int y2, int 
 		blitter->DrawLine(video,
 				Clamp(x, 0, screen_width), y,
 				Clamp(x2, 0, screen_width), y2,
-				screen_width, screen_height, colour, width);
+				screen_width, screen_height, colour, width, dash);
 		return;
 	}
 	if (x2 == x) {
@@ -182,7 +183,7 @@ static inline void GfxDoDrawLine(void *video, int x, int y, int x2, int y2, int 
 		blitter->DrawLine(video,
 				x, Clamp(y, 0, screen_height),
 				x2, Clamp(y2, 0, screen_height),
-				screen_width, screen_height, colour, width);
+				screen_width, screen_height, colour, width, dash);
 		return;
 	}
 
@@ -212,7 +213,7 @@ static inline void GfxDoDrawLine(void *video, int x, int y, int x2, int y2, int 
 	 * of rounding errors so much additional code has to be run here that in
 	 * the general case the effect is not noticable. */
 
-	blitter->DrawLine(video, x, y, x2, y2, screen_width, screen_height, colour, width);
+	blitter->DrawLine(video, x, y, x2, y2, screen_width, screen_height, colour, width, dash);
 }
 
 /**
@@ -241,11 +242,11 @@ static inline bool GfxPreprocessLine(DrawPixelInfo *dpi, int &x, int &y, int &x2
 	return true;
 }
 
-void GfxDrawLine(int x, int y, int x2, int y2, int colour, int width)
+void GfxDrawLine(int x, int y, int x2, int y2, int colour, int width, int dash)
 {
 	DrawPixelInfo *dpi = _cur_dpi;
 	if (GfxPreprocessLine(dpi, x, y, x2, y2, width)) {
-		GfxDoDrawLine(dpi->dst_ptr, x, y, x2, y2, dpi->width, dpi->height, colour, width);
+		GfxDoDrawLine(dpi->dst_ptr, x, y, x2, y2, dpi->width, dpi->height, colour, width, dash);
 	}
 }
 
@@ -338,12 +339,12 @@ static void SetColourRemap(TextColour colour)
  * @return In case of left or center alignment the right most pixel we have drawn to.
  *         In case of right alignment the left most pixel we have drawn to.
  */
-static int DrawLayoutLine(ParagraphLayout::Line *line, int y, int left, int right, StringAlignment align, bool underline, bool truncation)
+static int DrawLayoutLine(const ParagraphLayouter::Line *line, int y, int left, int right, StringAlignment align, bool underline, bool truncation)
 {
-	if (line->countRuns() == 0) return 0;
+	if (line->CountRuns() == 0) return 0;
 
-	int w = line->getWidth();
-	int h = line->getLeading();
+	int w = line->GetWidth();
+	int h = line->GetLeading();
 
 	/*
 	 * The following is needed for truncation.
@@ -374,7 +375,7 @@ static int DrawLayoutLine(ParagraphLayout::Line *line, int y, int left, int righ
 		 * another size would be chosen it won't have truncated too little for
 		 * the truncation dots.
 		 */
-		FontCache *fc = ((const Font*)line->getVisualRun(0)->getFont())->fc;
+		FontCache *fc = ((const Font*)line->GetVisualRun(0)->GetFont())->fc;
 		GlyphID dot_glyph = fc->MapCharToGlyph('.');
 		dot_width = fc->GetGlyphWidth(dot_glyph);
 		dot_sprite = fc->GetGlyph(dot_glyph);
@@ -417,9 +418,9 @@ static int DrawLayoutLine(ParagraphLayout::Line *line, int y, int left, int righ
 			NOT_REACHED();
 	}
 
-	for (int run_index = 0; run_index < line->countRuns(); run_index++) {
-		const ParagraphLayout::VisualRun *run = line->getVisualRun(run_index);
-		const Font *f = (const Font*)run->getFont();
+	for (int run_index = 0; run_index < line->CountRuns(); run_index++) {
+		const ParagraphLayouter::VisualRun *run = line->GetVisualRun(run_index);
+		const Font *f = (const Font*)run->GetFont();
 
 		FontCache *fc = f->fc;
 		TextColour colour = f->colour;
@@ -431,15 +432,15 @@ static int DrawLayoutLine(ParagraphLayout::Line *line, int y, int left, int righ
 
 		bool draw_shadow = fc->GetDrawGlyphShadow() && colour != TC_BLACK;
 
-		for (int i = 0; i < run->getGlyphCount(); i++) {
-			GlyphID glyph = run->getGlyphs()[i];
+		for (int i = 0; i < run->GetGlyphCount(); i++) {
+			GlyphID glyph = run->GetGlyphs()[i];
 
 			/* Not a valid glyph (empty) */
 			if (glyph == 0xFFFF) continue;
 
-			int begin_x = (int)run->getPositions()[i * 2]     + left - offset_x;
-			int end_x   = (int)run->getPositions()[i * 2 + 2] + left - offset_x  - 1;
-			int top     = (int)run->getPositions()[i * 2 + 1] + y;
+			int begin_x = (int)run->GetPositions()[i * 2]     + left - offset_x;
+			int end_x   = (int)run->GetPositions()[i * 2 + 2] + left - offset_x  - 1;
+			int top     = (int)run->GetPositions()[i * 2 + 1] + y;
 
 			/* Truncated away. */
 			if (truncation && (begin_x < min_x || end_x > max_x)) continue;
@@ -535,9 +536,9 @@ int DrawString(int left, int right, int top, StringID str, TextColour colour, St
  * @param maxw maximum string width
  * @return height of pixels of string when it is drawn
  */
-static int GetStringHeight(const char *str, int maxw)
+int GetStringHeight(const char *str, int maxw, FontSize fontsize)
 {
-	Layouter layout(str, maxw);
+	Layouter layout(str, maxw, TC_FROMSTRING, fontsize);
 	return layout.GetBounds().height;
 }
 
@@ -639,10 +640,10 @@ int DrawStringMultiLine(int left, int right, int top, int bottom, const char *st
 	int last_line = top;
 	int first_line = bottom;
 
-	for (ParagraphLayout::Line **iter = layout.Begin(); iter != layout.End(); iter++) {
-		ParagraphLayout::Line *line = *iter;
+	for (const ParagraphLayouter::Line **iter = layout.Begin(); iter != layout.End(); iter++) {
+		const ParagraphLayouter::Line *line = *iter;
 
-		int line_height = line->getLeading();
+		int line_height = line->GetLeading();
 		if (y >= top && y < bottom) {
 			last_line = y + line_height;
 			if (first_line > y) first_line = y;

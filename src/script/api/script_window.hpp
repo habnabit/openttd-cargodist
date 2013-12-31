@@ -1558,6 +1558,7 @@ public:
 	/** Widgets of the #TextfileWindow class. */
 	enum TextfileWidgets {
 		WID_TF_CAPTION                               = ::WID_TF_CAPTION,                               ///< The caption of the window.
+		WID_TF_WRAPTEXT                              = ::WID_TF_WRAPTEXT,                              ///< Whether or not to wrap the text.
 		WID_TF_BACKGROUND                            = ::WID_TF_BACKGROUND,                            ///< Panel to draw the textfile on.
 		WID_TF_VSCROLLBAR                            = ::WID_TF_VSCROLLBAR,                            ///< Vertical scrollbar to scroll through the textfile up-and-down.
 		WID_TF_HSCROLLBAR                            = ::WID_TF_HSCROLLBAR,                            ///< Horizontal scrollbar to scroll through the textfile left-to-right.
@@ -1767,6 +1768,9 @@ public:
 	enum NewGRFInspectWidgets {
 		WID_NGRFI_CAPTION                            = ::WID_NGRFI_CAPTION,                            ///< The caption bar of course.
 		WID_NGRFI_PARENT                             = ::WID_NGRFI_PARENT,                             ///< Inspect the parent.
+		WID_NGRFI_VEH_PREV                           = ::WID_NGRFI_VEH_PREV,                           ///< Go to previous vehicle in chain.
+		WID_NGRFI_VEH_NEXT                           = ::WID_NGRFI_VEH_NEXT,                           ///< Go to next vehicle in chain.
+		WID_NGRFI_VEH_CHAIN                          = ::WID_NGRFI_VEH_CHAIN,                          ///< Display for vehicle chain.
 		WID_NGRFI_MAINPANEL                          = ::WID_NGRFI_MAINPANEL,                          ///< Panel widget containing the actual data.
 		WID_NGRFI_SCROLLBAR                          = ::WID_NGRFI_SCROLLBAR,                          ///< Scrollbar.
 	};

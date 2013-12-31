@@ -1236,7 +1236,7 @@ STR_CONFIG_SETTING_TOWN_FOUNDING_ALLOWED_CUSTOM_LAYOUT          :tastean, oanpas
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT                         :Bouen fan beamen yn it spul: {STRING}
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_NONE                    :gjin {RED}(brekt houtseachmûne)
 STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_RAINFOREST              :allinech in reinwâld
-STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_ALL                     :oerol
+STR_CONFIG_SETTING_EXTRA_TREE_PLACEMENT_ALL                     :Oerol
 
 STR_CONFIG_SETTING_TOOLBAR_POS                                  :Plak fan de haad wurkbalk: {STRING}
 STR_CONFIG_SETTING_STATUSBAR_POS                                :Posysje fan statusbar: {STRING}
@@ -1994,6 +1994,8 @@ STR_NEWGRF_INVALID_CARGO                                        :<unjildiche fra
 STR_NEWGRF_INVALID_CARGO_ABBREV                                 :??
 STR_NEWGRF_INVALID_ENGINE                                       :<unjildiche wein>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<unjildiche yndustry>
+
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
 
 # NewGRF scanning window
 
@@ -2894,7 +2896,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (Diesel)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (Steam)
@@ -3103,7 +3105,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Chugger-Chug Pa
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Shivershake Passazjier Fearboat
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Yate Guod boat
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Bakewell Guod boat
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Mightymover Guod boat
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :MightyMover Guod boat
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Powernaut Guod boat
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

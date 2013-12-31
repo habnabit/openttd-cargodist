@@ -203,15 +203,20 @@ STR_UNITS_WEIGHT_SHORT_IMPERIAL                                 :{COMMA}t
 STR_UNITS_WEIGHT_SHORT_METRIC                                   :{COMMA}t
 STR_UNITS_WEIGHT_SHORT_SI                                       :{COMMA}kg
 
+STR_UNITS_WEIGHT_LONG_IMPERIAL                                  :{COMMA} ton
 STR_UNITS_WEIGHT_LONG_METRIC                                    :{COMMA} ton
 STR_UNITS_WEIGHT_LONG_SI                                        :{COMMA} kg
 
+STR_UNITS_VOLUME_SHORT_IMPERIAL                                 :{COMMA}gal
 STR_UNITS_VOLUME_SHORT_METRIC                                   :{COMMA}l
 STR_UNITS_VOLUME_SHORT_SI                                       :{COMMA}m³
 
+STR_UNITS_VOLUME_LONG_IMPERIAL                                  :{COMMA} gallon{P "" s}
 STR_UNITS_VOLUME_LONG_METRIC                                    :{COMMA} liter
 STR_UNITS_VOLUME_LONG_SI                                        :{COMMA} m³
 
+STR_UNITS_FORCE_IMPERIAL                                        :{COMMA} lbf
+STR_UNITS_FORCE_METRIC                                          :{COMMA} kgf
 STR_UNITS_FORCE_SI                                              :{COMMA} kN
 
 STR_UNITS_HEIGHT_IMPERIAL                                       :{COMMA} fot
@@ -280,6 +285,8 @@ STR_SORT_BY_LENGTH                                              :Längd
 STR_SORT_BY_LIFE_TIME                                           :Återstående livstid
 STR_SORT_BY_TIMETABLE_DELAY                                     :Tidtabellsförsening
 STR_SORT_BY_FACILITY                                            :Stationstyp
+STR_SORT_BY_WAITING_TOTAL                                       :Väntande gods totalt
+STR_SORT_BY_WAITING_AVAILABLE                                   :Väntande gods tillgängligt
 STR_SORT_BY_RATING_MAX                                          :Högsta värdering av last
 STR_SORT_BY_RATING_MIN                                          :Lägsta värdering av last
 STR_SORT_BY_ENGINE_ID                                           :MotorID (klassisk sortering)
@@ -856,7 +863,7 @@ STR_GAME_OPTIONS_CURRENCY_UNITS_FRAME                           :{BLACK}Valutaen
 STR_GAME_OPTIONS_CURRENCY_UNITS_DROPDOWN_TOOLTIP                :{BLACK}Välj valutaenhet
 
 ############ start of currency region
-STR_GAME_OPTIONS_CURRENCY_GBP                                   :Britiska pund (£)
+STR_GAME_OPTIONS_CURRENCY_GBP                                   :Brittisk pund (£)
 STR_GAME_OPTIONS_CURRENCY_USD                                   :Amerikansk dollar (USD)
 STR_GAME_OPTIONS_CURRENCY_EUR                                   :Euro (EUR)
 STR_GAME_OPTIONS_CURRENCY_JPY                                   :Japansk yen (¥)
@@ -1332,8 +1339,7 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Standardpalett för NewGRF när ingen annan palett är angiven: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Standardpalett att använda med NewGRFer som inte anger vilken palett de behöver
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :DOS-palett
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Windows-palett
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Standardpalett (D)
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Pausa automatiskt vid start av nytt spel: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Om det är aktiverat kommer OpenTTD automatiskt att pausa vid start av ett nytt spel, så att kartan kan studeras noggrannare
@@ -1559,29 +1565,60 @@ STR_CONFIG_SETTING_CITY_SIZE_MULTIPLIER_HELPTEXT                :Storstäders ge
 STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD                        :Ta bort absurda väg-element under vägkonstruktion: {STRING}
 STR_CONFIG_SETTING_MODIFIED_ROAD_REBUILD_HELPTEXT               :Ta bort återvändsgränder vid bekostad vägombyggnad
 
-STR_CONFIG_SETTING_DISTRIBUTION_MANUAL                          :manuell
-STR_CONFIG_SETTING_DISTRIBUTION_ASYMMETRIC                      :asymmetrisk
-STR_CONFIG_SETTING_DISTRIBUTION_SYMMETRIC                       :symmetrisk
+STR_CONFIG_SETTING_LINKGRAPH_TIME                               :Avsätt {STRING} dag{P 0:2 "" ar} för omberäkning av distributionsgraf
+STR_CONFIG_SETTING_LINKGRAPH_TIME_HELPTEXT                      :Den tid varje omberäkning av en länkgrafkomponent tillåts ta. När en omberäkning startas skapas en tråd som tillåts löpa detta antal dagar. Ju kortare du sätter denna, desto mer troligt är det att tråden inte är hinner bli färdig i tid. Då kommer spelet att stanna tills den är klar (vilket gör att det laggar). Ju längre du sätter denna, desto längre tid tar det för distributionen att uppdateras när rutter ändras.
+STR_CONFIG_SETTING_DISTRIBUTION_MANUAL                          :manuellt
+STR_CONFIG_SETTING_DISTRIBUTION_ASYMMETRIC                      :asymmetriskt
+STR_CONFIG_SETTING_DISTRIBUTION_SYMMETRIC                       :symmetriskt
+STR_CONFIG_SETTING_DISTRIBUTION_PAX                             :Distributionssätt för passagerare: {STRING}
+STR_CONFIG_SETTING_DISTRIBUTION_PAX_HELPTEXT                    :"symmetriskt" innebär att ungefär samma antal passagerare färdas från station A till station B som från B till A. "asymmetriskt" innebär att en godtycklig mängd passagerare kan färdas i vardera riktningen. "manuellt" innebär att ingen automatisk distribution av passagerare sker.
+STR_CONFIG_SETTING_DISTRIBUTION_MAIL                            :Distributionssätt för post: {STRING}
+STR_CONFIG_SETTING_DISTRIBUTION_MAIL_HELPTEXT                   :"symmetriskt" innebär att ungefär samma mängd post skickas från station A till station B som från B till A. "asymmetriskt" innebär att en godtycklig mängd post kan skickas i vardera riktningen. "manuellt" innebär att ingen automatisk distribution av post sker.
+STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED                        :Distributionssätt för den BEPANSRADE godsklassen: {STRING}
+STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :Den BEPANSRADE godsklassen innehåller värdesaker i det tempererade, diamanter i det subtropiska eller guld i det subarktiska klimatet. NewGRFer kan ändra detta. "symmetriskt" innebär att ungefär samma mängd av detta gods skickas från station A till station B som från B till A. "asymmetriskt" innebär att en godtycklig mängd av detta gods kan skickas i vardera riktningen. "manuellt" innebär att ingen automatisk distribution av denna godstyp sker. Det är rekommenderat att välja "asymmetriskt" eller "manuellt" vid subarktiskt klimat, då banker inte skickar tillbaka guld till guldgruvor. Vid tempererat och subtropiskt klimat kan även "symmetriskt" väljas, då banker kan skicka tillbaka värdesaker till den bank en viss last av värdesaker kom ifrån.
+STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT                         :Distributionssätt för övriga godsklasser: {STRING}
+STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :"symmetriskt" innebär att ungefär samma mängd gods skickas från station A till station B som från B till A. "asymmetriskt" innebär att en godtycklig mängd gods kan skickas i vardera riktningen. "manuellt" innebär att ingen automatisk distribution av dessa godstyper sker. Det är troligtvis önskvärt att välja "asymmetriskt" eller "manuellt".
+STR_CONFIG_SETTING_LINKGRAPH_ACCURACY                           :Distributionsnoggrannhet: {STRING}
+STR_CONFIG_SETTING_LINKGRAPH_ACCURACY_HELPTEXT                  :Ju högre du sätter denna, desto längre CPU-tid kommer beräkningen av länkgrafen ta. Om det tar för lång tid kan spelet lagga. Om du däremot sätter den till ett lågt värde kommer distributionen att bli inexakt, vilket kan leda till att godset inte skickas dit du förväntar dig.
 STR_CONFIG_SETTING_DEMAND_DISTANCE                              :Avståndets påverkan på efterfrågan: {STRING}
+STR_CONFIG_SETTING_DEMAND_DISTANCE_HELPTEXT                     :Om du sätter denna till ett värde högre än 0 kommer avståndet mellan ursprungsstationen A för en viss last och en möjlig destination B påverka mängden last som skickas från A till B. Ju längre B är ifrån A, desto mindre last kommer att skickas. Ju högre du sätter den, desto mindre last kommer att skickas till avlägsna stationer och desto mer last kommer att skickas till närbelägna stationer.
+STR_CONFIG_SETTING_DEMAND_SIZE                                  :Mängd återsänd last i symmetriskt läge: {STRING}
+STR_CONFIG_SETTING_DEMAND_SIZE_HELPTEXT                         :Genom att sätta denna till mindre än 100% får man den symmetriska distributionen att bete sig mer som den asymmetriska. En mindre andel än vanligt av den last som skickas till en station kommer att skickas tillbaka. Sätter du den till 0% beter sig den symmetriska distributionen precis som den asymmetriska.
 STR_CONFIG_SETTING_SHORT_PATH_SATURATION                        :Belastning av korta ruter innan längre rutter används: {STRING}
 STR_CONFIG_SETTING_SHORT_PATH_SATURATION_HELPTEXT               :Ofta finns det flera rutter mellan två givna stationer. Godsdistributionen kommer att fylla upp den första rutten först och därefter den näst kortaste tills den är mättad osv. Mättnadsgraden bestäms utifrån en uppskattning av kapaciteten och planerad användning. När godsdristributionen har belastat samtliga rutter, och om det finns kvarvarande behov, då kommer samtliga rutter att överbelastas med preferens för rutterna med högst kapacitet. Uppskattningen av kapaciteten kommer oftast inte ske med hög noggrannhet. Denna inställning tillåter dig att ställa in hur många procent som en kort rutt ska belastas innan algoritmen ska välja nästa längre rutt. Sätt värdet till under 100 % om du vill undvika överfulla stationer i händelse av överskattad kapacitet.
 
-STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY                  :Hastighetsenheter: {STRING}
+STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY                  :Hastighetsenhet: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_HELPTEXT         :Närhelst en hastighet visas i användargränssnittet, visa den i den valda enheten
+STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_IMPERIAL         :Brittisk (mph)
+STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_METRIC           :Metrisk (km/h)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY_SI               :SI (m/s)
 
+STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER                     :Enhet för fordons motoreffekt: {STRING}
+STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER_HELPTEXT            :Närhelst ett fordons motoreffekt visas i användargränssnittet, visa den i den valda enheten
+STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER_IMPERIAL            :Brittisk (hk)
+STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER_METRIC              :Metrisk (hk)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_POWER_SI                  :SI (kW)
 
-STR_CONFIG_SETTING_LOCALISATION_UNITS_WEIGHT                    :Viktenheter: {STRING}
+STR_CONFIG_SETTING_LOCALISATION_UNITS_WEIGHT                    :Viktenhet: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_WEIGHT_HELPTEXT           :Närhelst vikter visas i användargränssnittet, visa dem i den valda enheten
+STR_CONFIG_SETTING_LOCALISATION_UNITS_WEIGHT_IMPERIAL           :Brittisk (short t/ton)
+STR_CONFIG_SETTING_LOCALISATION_UNITS_WEIGHT_METRIC             :Metrisk (t/ton)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_WEIGHT_SI                 :SI (kg)
 
-STR_CONFIG_SETTING_LOCALISATION_UNITS_VOLUME                    :Volymenheter: {STRING}
+STR_CONFIG_SETTING_LOCALISATION_UNITS_VOLUME                    :Volymenhet: {STRING}
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VOLUME_HELPTEXT           :Närhelst volymer visas i användargränssnittet, visa dem i den valda enheten
+STR_CONFIG_SETTING_LOCALISATION_UNITS_VOLUME_IMPERIAL           :Brittisk (gal)
+STR_CONFIG_SETTING_LOCALISATION_UNITS_VOLUME_METRIC             :Metrisk (l)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VOLUME_SI                 :SI (m³)
 
+STR_CONFIG_SETTING_LOCALISATION_UNITS_FORCE_IMPERIAL            :Brittisk (lbf)
+STR_CONFIG_SETTING_LOCALISATION_UNITS_FORCE_METRIC              :Metrisk (kgf)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_FORCE_SI                  :SI (kN)
 
+STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT                    :Höjdenhet: {STRING}
+STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_HELPTEXT           :Närhelst höjder visas i användargränssnittet, visa dem i den valda enheten
+STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_IMPERIAL           :Brittisk (ft)
+STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_METRIC             :Metrisk (m)
 STR_CONFIG_SETTING_LOCALISATION_UNITS_HEIGHT_SI                 :SI (m)
 
 STR_CONFIG_SETTING_GUI                                          :{ORANGE}Gränssnitt
@@ -1806,8 +1843,8 @@ STR_FACE_MOUSTACHE                                              :Mustasch:
 STR_FACE_LIPS_MOUSTACHE_TOOLTIP                                 :{BLACK}Ändra läppar eller mustasch
 STR_FACE_CHIN                                                   :Haka:
 STR_FACE_CHIN_TOOLTIP                                           :{BLACK}Ändra haka
-STR_FACE_JACKET                                                 :Jacka:
-STR_FACE_JACKET_TOOLTIP                                         :{BLACK}Ändra jacka
+STR_FACE_JACKET                                                 :Kavaj:
+STR_FACE_JACKET_TOOLTIP                                         :{BLACK}Ändra kavaj
 STR_FACE_COLLAR                                                 :Krage:
 STR_FACE_COLLAR_TOOLTIP                                         :{BLACK}Ändra krage
 STR_FACE_TIE                                                    :Slips:
@@ -1887,7 +1924,7 @@ STR_NETWORK_START_SERVER_COMPANIES_SELECT                       :{BLACK}{NUM} f�
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES                    :{BLACK}Max företag:
 STR_NETWORK_START_SERVER_NUMBER_OF_COMPANIES_TOOLTIP            :{BLACK}Begränsa antalet företag på servern
 STR_NETWORK_START_SERVER_SPECTATORS_SELECT                      :{BLACK}{NUM} åskådare{P "" s}
-STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Max observatörer:
+STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS                   :{BLACK}Max antal åskådare:
 STR_NETWORK_START_SERVER_NUMBER_OF_SPECTATORS_TOOLTIP           :{BLACK}Begränsa antalet observatörer på servern
 STR_NETWORK_START_SERVER_LANGUAGE_SPOKEN                        :{BLACK}Språk som talas:
 STR_NETWORK_START_SERVER_LANGUAGE_TOOLTIP                       :{BLACK}Andra spelare kommer vara medvetna vilket språk som talas på servern.
@@ -1997,9 +2034,10 @@ STR_NETWORK_CLIENTLIST_SPEAK_TO_CLIENT                          :Privat meddelan
 
 STR_NETWORK_SERVER                                              :Server
 STR_NETWORK_CLIENT                                              :Klient
-STR_NETWORK_SPECTATORS                                          :Publik
+STR_NETWORK_SPECTATORS                                          :Åskådare
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Skriv in mängd pengar som du vill ge
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Åskådare
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Spara inte det inmatade lösenordet
@@ -2847,6 +2885,9 @@ STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} av <inv
 STR_NEWGRF_INVALID_ENGINE                                       :<icke giltig fordonstyp>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<icke giltig industri>
 
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<ogiltigt fordon>
+
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Skannar NewGRFer
 STR_NEWGRF_SCAN_MESSAGE                                         :{BLACK}Skannar NewGRFer. Beroende på antal kan det ta en stund...
@@ -2984,6 +3025,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}Föregå
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}Gå till föregående sida
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}Nästa
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}Gå till nästa sida
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Ogiltig målreferens
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Stationsnamn - klicka på ett namn för att centrera huvudvyn på stationen. Ctrl+klick öppnar en ny vy över stationens läge
@@ -3897,6 +3939,8 @@ STR_AI_SETTINGS_START_DELAY                                     :Ungefärligt an
 STR_TEXTFILE_README_CAPTION                                     :{WHITE} {STRING}-manual för {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}Ändringshistorik för {STRING} {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}Licens för {STRING}{STRING}
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}Använd radbrytning
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Bryt rader så att all text får plats i fönstret utan att man behöver skrolla
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Visa manual
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Ändringshistorik
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Licens
@@ -4453,7 +4497,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (Diesel)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (Ånga)
@@ -4662,7 +4706,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Chugger-Chug Pa
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Shivershake Passagerarfärja
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Yate lastfartyg
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Bakewell lastfartyg
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Mightymover lastfartyg
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :MightyMover lastfartyg
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Powernaut lastfartyg
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

@@ -940,26 +940,33 @@ bool IsTileForestIndustry(TileIndex tile)
 
 static const byte _plantfarmfield_type[] = {1, 1, 1, 1, 1, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 6};
 
-static bool IsBadFarmFieldTile(TileIndex tile)
+/**
+ * Check whether the tile can be replaced by a farm field.
+ * @param tile the tile to investigate.
+ * @param allow_fields if true, the method will return true even if
+ * the tile is a farm tile, otherwise the tile may not be a farm tile
+ * @return true if the tile can become a farm field
+ */
+static bool IsSuitableForFarmField(TileIndex tile, bool allow_fields)
 {
 	switch (GetTileType(tile)) {
-		case MP_CLEAR: return IsClearGround(tile, CLEAR_FIELDS) || IsClearGround(tile, CLEAR_SNOW) || IsClearGround(tile, CLEAR_DESERT);
-		case MP_TREES: return (GetTreeGround(tile) == TREE_GROUND_SHORE);
-		default:       return true;
+		case MP_CLEAR: return !IsClearGround(tile, CLEAR_SNOW) && !IsClearGround(tile, CLEAR_DESERT) && (allow_fields || !IsClearGround(tile, CLEAR_FIELDS));
+		case MP_TREES: return GetTreeGround(tile) != TREE_GROUND_SHORE;
+		default:       return false;
 	}
 }
 
-static bool IsBadFarmFieldTile2(TileIndex tile)
+/**
+ * Build farm field fence
+ * @param tile the tile to position the fence on
+ * @param size the size of the field being planted in tiles
+ * @param type type of fence to set
+ * @param side the side of the tile to attempt placement
+ */
+static void SetupFarmFieldFence(TileIndex tile, int size, byte type, DiagDirection side)
 {
-	switch (GetTileType(tile)) {
-		case MP_CLEAR: return IsClearGround(tile, CLEAR_SNOW) || IsClearGround(tile, CLEAR_DESERT);
-		case MP_TREES: return (GetTreeGround(tile) == TREE_GROUND_SHORE);
-		default:       return true;
-	}
-}
+	TileIndexDiff diff = (DiagDirToAxis(side) == AXIS_Y ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
 
-static void SetupFarmFieldFence(TileIndex tile, int size, byte type, Axis direction, bool north)
-{
 	do {
 		tile = TILE_MASK(tile);
 
@@ -968,22 +975,10 @@ static void SetupFarmFieldFence(TileIndex tile, int size, byte type, Axis direct
 
 			if (or_ == 1 && Chance16(1, 7)) or_ = 2;
 
-			if (direction == AXIS_X) {
-				if (north) {
-					SetFenceNW(tile, or_);
-				} else {
-					SetFenceSE(tile, or_);
-				}
-			} else {
-				if (north) {
-					SetFenceNE(tile, or_);
-				} else {
-					SetFenceSW(tile, or_);
-				}
-			}
+			SetFence(tile, side, or_);
 		}
 
-		tile += (direction == AXIS_X ? TileDiffXY(1, 0) : TileDiffXY(0, 1));
+		tile += diff;
 	} while (--size);
 }
 
@@ -1008,9 +1003,9 @@ static void PlantFarmField(TileIndex tile, IndustryID industry)
 	int count = 0;
 	TILE_AREA_LOOP(cur_tile, ta) {
 		assert(cur_tile < MapSize());
-		count += IsBadFarmFieldTile(cur_tile);
+		count += IsSuitableForFarmField(cur_tile, false);
 	}
-	if (count * 2 >= ta.w * ta.h) return;
+	if (count * 2 < ta.w * ta.h) return;
 
 	/* determine type of field */
 	r = Random();
@@ -1020,7 +1015,7 @@ static void PlantFarmField(TileIndex tile, IndustryID industry)
 	/* make field */
 	TILE_AREA_LOOP(cur_tile, ta) {
 		assert(cur_tile < MapSize());
-		if (!IsBadFarmFieldTile2(cur_tile)) {
+		if (IsSuitableForFarmField(cur_tile, true)) {
 			MakeField(cur_tile, field_type, industry);
 			SetClearCounter(cur_tile, counter);
 			MarkTileDirtyByTile(cur_tile);
@@ -1032,10 +1027,10 @@ static void PlantFarmField(TileIndex tile, IndustryID industry)
 		type = _plantfarmfield_type[Random() & 0xF];
 	}
 
-	SetupFarmFieldFence(ta.tile, ta.h, type, AXIS_Y, true);
-	SetupFarmFieldFence(ta.tile, ta.w, type, AXIS_X, true);
-	SetupFarmFieldFence(ta.tile + TileDiffXY(ta.w - 1, 0), ta.h, type, AXIS_Y, false);
-	SetupFarmFieldFence(ta.tile + TileDiffXY(0, ta.h - 1), ta.w, type, AXIS_X, false);
+	SetupFarmFieldFence(ta.tile, ta.h, type, DIAGDIR_NE);
+	SetupFarmFieldFence(ta.tile, ta.w, type, DIAGDIR_NW);
+	SetupFarmFieldFence(ta.tile + TileDiffXY(ta.w - 1, 0), ta.h, type, DIAGDIR_SW);
+	SetupFarmFieldFence(ta.tile + TileDiffXY(0, ta.h - 1), ta.w, type, DIAGDIR_SE);
 }
 
 void PlantRandomFarmField(const Industry *i)
@@ -1386,7 +1381,7 @@ static CommandCost CheckIfIndustryTilesAreFree(TileIndex tile, const IndustryTil
 
 		if (gfx == GFX_WATERTILE_SPECIALCHECK) {
 			if (!IsTileType(cur_tile, MP_WATER) ||
-					GetTileSlope(cur_tile) != SLOPE_FLAT) {
+					!IsTileFlat(cur_tile)) {
 				return_cmd_error(STR_ERROR_SITE_UNSUITABLE);
 			}
 		} else {

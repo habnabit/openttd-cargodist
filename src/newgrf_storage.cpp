@@ -12,18 +12,20 @@
 #include "stdafx.h"
 #include "newgrf_storage.h"
 #include "core/pool_func.hpp"
+#include "core/endian_func.hpp"
+#include "debug.h"
 #include <set>
 
 PersistentStoragePool _persistent_storage_pool("PersistentStorage");
 INSTANTIATE_POOL_METHODS(PersistentStorage)
 
 /** The changed storage arrays */
-static std::set<BaseStorageArray*> *_changed_storage_arrays = new std::set<BaseStorageArray*>;
+static std::set<BasePersistentStorageArray*> *_changed_storage_arrays = new std::set<BasePersistentStorageArray*>;
 
 /**
  * Remove references to use.
  */
-BaseStorageArray::~BaseStorageArray()
+BasePersistentStorageArray::~BasePersistentStorageArray()
 {
 	_changed_storage_arrays->erase(this);
 }
@@ -34,7 +36,7 @@ BaseStorageArray::~BaseStorageArray()
  * arrays, which saves quite a few clears, etc. after callbacks.
  * @param storage the array that has changed
  */
-void AddChangedStorage(BaseStorageArray *storage)
+void AddChangedPersistentStorage(BasePersistentStorageArray *storage)
 {
 	_changed_storage_arrays->insert(storage);
 }
@@ -49,10 +51,13 @@ void AddChangedStorage(BaseStorageArray *storage)
  *  - reverting to the previous version
  * @param keep_changes do we save or revert the changes since the last #ClearChanges?
  */
-void ClearStorageChanges(bool keep_changes)
+void ClearPersistentStorageChanges(bool keep_changes)
 {
 	/* Loop over all changes arrays */
-	for (std::set<BaseStorageArray*>::iterator it = _changed_storage_arrays->begin(); it != _changed_storage_arrays->end(); it++) {
+	for (std::set<BasePersistentStorageArray*>::iterator it = _changed_storage_arrays->begin(); it != _changed_storage_arrays->end(); it++) {
+		if (!keep_changes) {
+			DEBUG(desync, 1, "Discarding persistent storage changes: Feature %d, GrfID %08X, Tile %d", (*it)->feature, BSWAP32((*it)->grfid), (*it)->tile);
+		}
 		(*it)->ClearChanges(keep_changes);
 	}
 

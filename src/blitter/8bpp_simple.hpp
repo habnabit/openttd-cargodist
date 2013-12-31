@@ -19,13 +19,13 @@
 class Blitter_8bppSimple FINAL : public Blitter_8bppBase {
 public:
 	/* virtual */ void Draw(Blitter::BlitterParams *bp, BlitterMode mode, ZoomLevel zoom);
-	/* virtual */ Sprite *Encode(SpriteLoader::Sprite *sprite, AllocatorProc *allocator);
+	/* virtual */ Sprite *Encode(const SpriteLoader::Sprite *sprite, AllocatorProc *allocator);
 
 	/* virtual */ const char *GetName() { return "8bpp-simple"; }
 };
 
 /** Factory for the most trivial 8bpp blitter. */
-class FBlitter_8bppSimple: public BlitterFactory<FBlitter_8bppSimple> {
+class FBlitter_8bppSimple : public BlitterFactory<FBlitter_8bppSimple> {
 public:
 	/* virtual */ const char *GetName() { return "8bpp-simple"; }
 	/* virtual */ const char *GetDescription() { return "8bpp Simple Blitter (relative slow, but never wrong)"; }

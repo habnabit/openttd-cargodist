@@ -126,6 +126,19 @@ void LinkGraphSchedule::SpawnAll()
 }
 
 /**
+ * Shift all dates (join dates and edge annotations) of link graphs and link
+ * graph jobs by the number of days given.
+ * @param interval Number of days to be added or subtracted.
+ */
+void LinkGraphSchedule::ShiftDates(int interval)
+{
+	LinkGraph *lg;
+	FOR_ALL_LINK_GRAPHS(lg) lg->ShiftDates(interval);
+	LinkGraphJob *lgj;
+	FOR_ALL_LINK_GRAPH_JOBS(lgj) lgj->ShiftJoinDate(interval);
+}
+
+/**
  * Create a link graph schedule and initialize its handlers.
  */
 LinkGraphSchedule::LinkGraphSchedule()
@@ -133,9 +146,9 @@ LinkGraphSchedule::LinkGraphSchedule()
 	this->handlers[0] = new InitHandler;
 	this->handlers[1] = new DemandHandler;
 	this->handlers[2] = new MCFHandler<MCF1stPass>;
-	this->handlers[3] = new FlowMapper;
+	this->handlers[3] = new FlowMapper(false);
 	this->handlers[4] = new MCFHandler<MCF2ndPass>;
-	this->handlers[5] = new FlowMapper;
+	this->handlers[5] = new FlowMapper(true);
 }
 
 /**

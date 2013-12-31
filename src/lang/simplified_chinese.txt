@@ -293,7 +293,7 @@ STR_SORT_BY_ENGINE_ID                                           :引擎ID （默
 STR_SORT_BY_COST                                                :售价
 STR_SORT_BY_POWER                                               :功率
 STR_SORT_BY_TRACTIVE_EFFORT                                     :牵引力
-STR_SORT_BY_INTRO_DATE                                          :设计日期
+STR_SORT_BY_INTRO_DATE                                          :面世日期
 STR_SORT_BY_RUNNING_COST                                        :运行费用
 STR_SORT_BY_POWER_VS_RUNNING_COST                               :功率/运行费用 比值
 STR_SORT_BY_CARGO_CAPACITY                                      :运载能力
@@ -1339,8 +1339,8 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :简短形式 (2
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :当NewGRF没有指定调色板时，使用: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :设置当NewGRF没有指定时的默认调色板
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :DOS调色板
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Windows调色板
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :默认使用 (D) 色板
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :旧有 (W) 色板
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :开始新游戏时自动暂停： {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :“打开”时，为了让玩家有时间研究地图，开启新游戏自动暂停游戏
@@ -2042,6 +2042,7 @@ STR_NETWORK_CLIENT                                              :客户端
 STR_NETWORK_SPECTATORS                                          :旁观者
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}请输入您想赠与的资金数
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}旁观者
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}不保存所输入的密码
@@ -2889,6 +2890,9 @@ STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} of <inv
 STR_NEWGRF_INVALID_ENGINE                                       :<invalid vehicle model>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<invalid industry>
 
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<种类不明的运输工具>
+
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}正在扫描 NewGRF
 STR_NEWGRF_SCAN_MESSAGE                                         :{BLACK}正在扫描 NewGRF。 这可能需要一些时间，取决于其数量...
@@ -3026,6 +3030,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}上一�
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}转到上一页
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}下一个
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}转到下一页
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}无效的目标参照
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}车站名称{}点击可将屏幕中心移动到车站所在位置. 单击的同时按住Ctrl会在新视点中显示车站位置
@@ -3939,6 +3944,8 @@ STR_AI_SETTINGS_START_DELAY                                     :当前AI在前�
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}{STRING} {STRING} 的说明
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}{STRING} {STRING} 的更新日志
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}{STRING} {STRING} 的版权信息
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}強迫文字换行
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}強迫宽于窗格的內文自动换行
 STR_TEXTFILE_VIEW_README                                        :{BLACK}查看说明
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}更新日志
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}版权信息
@@ -4495,7 +4502,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (内燃机)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut 内燃机车
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut 内燃机车
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (蒸汽机)
@@ -4704,7 +4711,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Chugger-Chug �
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Shivershake 客轮
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Yate 货轮
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Bakewell 货轮
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Mightymover 货轮
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :MightyMover 货轮
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Powernaut 货轮
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

@@ -843,8 +843,6 @@ static CommandCost CmdRailTrackHelper(TileIndex tile, DoCommandFlag flags, uint3
 	CommandCost ret = ValidateAutoDrag(&trackdir, tile, end_tile);
 	if (ret.Failed()) return ret;
 
-	if ((flags & DC_EXEC) && _settings_client.sound.confirm) SndPlayTileFx(SND_20_SPLAT_2, tile);
-
 	bool had_success = false;
 	CommandCost last_error = CMD_ERROR;
 	for (;;) {
@@ -2572,7 +2570,7 @@ static void TileLoop_Track(TileIndex tile)
 
 			/* Show fences if it's a house, industry, object, road, tunnelbridge or not owned by us. */
 			if (!IsValidTile(tile2) || IsTileType(tile2, MP_HOUSE) || IsTileType(tile2, MP_INDUSTRY) ||
-					IsTileType(tile2, MP_ROAD) || (IsTileType(tile2, MP_OBJECT) && !IsOwnedLand(tile2)) || IsTileType(tile2, MP_TUNNELBRIDGE) || !IsTileOwner(tile2, owner)) {
+					IsTileType(tile2, MP_ROAD) || (IsTileType(tile2, MP_OBJECT) && !IsObjectType(tile2, OBJECT_OWNED_LAND)) || IsTileType(tile2, MP_TUNNELBRIDGE) || !IsTileOwner(tile2, owner)) {
 				fences |= 1 << d;
 			}
 		}

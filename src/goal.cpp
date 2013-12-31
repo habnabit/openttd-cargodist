@@ -19,6 +19,7 @@
 #include "game/game.hpp"
 #include "command_func.h"
 #include "company_base.h"
+#include "story_base.h"
 #include "string_func.h"
 #include "gui.h"
 #include "network/network.h"
@@ -72,6 +73,13 @@ CommandCost CmdCreateGoal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 			if (!Company::IsValidID(p2)) return CMD_ERROR;
 			break;
 
+		case GT_STORY_PAGE: {
+			if (!StoryPage::IsValidID(p2)) return CMD_ERROR;
+			CompanyByte story_company = StoryPage::Get(p2)->company;
+			if (company == INVALID_COMPANY ? story_company != INVALID_COMPANY : story_company != INVALID_COMPANY && story_company != company) return CMD_ERROR;
+			break;
+		}
+
 		default: return CMD_ERROR;
 	}
 
@@ -85,6 +93,7 @@ CommandCost CmdCreateGoal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 		g->completed = false;
 
 		InvalidateWindowData(WC_GOALS_LIST, 0);
+		if (Goal::GetNumItems() == 1) InvalidateWindowData(WC_MAIN_TOOLBAR, 0);
 
 		_new_goal_id = g->index;
 	}
@@ -111,6 +120,7 @@ CommandCost CmdRemoveGoal(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 		delete g;
 
 		InvalidateWindowData(WC_GOALS_LIST, 0);
+		if (Goal::GetNumItems() == 0) InvalidateWindowData(WC_MAIN_TOOLBAR, 0);
 	}
 
 	return CommandCost();

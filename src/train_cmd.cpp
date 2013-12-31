@@ -34,6 +34,7 @@
 #include "newgrf.h"
 #include "order_backup.h"
 #include "zoom_func.h"
+#include "newgrf_debug.h"
 
 #include "table/strings.h"
 #include "table/train_cmd.h"
@@ -48,6 +49,11 @@ static void CheckNextTrainTile(Train *v);
 static const byte _vehicle_initial_x_fract[4] = {10, 8, 4,  8};
 static const byte _vehicle_initial_y_fract[4] = { 8, 4, 8, 10};
 
+template <>
+bool IsValidImageIndex<VEH_TRAIN>(uint8 image_index)
+{
+	return image_index < lengthof(_engine_sprite_base);
+}
 
 /**
  * Determine the side in which the train will leave the tile
@@ -165,6 +171,9 @@ void Train::ConsistChanged(bool same_length)
 		/* Cache wagon override sprite group. NULL is returned if there is none */
 		u->tcache.cached_override = GetWagonOverrideSpriteSet(u->engine_type, u->cargo_type, u->gcache.first_engine);
 
+		/* Reset colour map */
+		u->colourmap = PAL_NONE;
+
 		/* Update powered-wagon-status and visual effect */
 		u->UpdateVisualEffect(true);
 
@@ -242,6 +251,7 @@ void Train::ConsistChanged(bool same_length)
 		SetWindowDirty(WC_VEHICLE_DETAILS, this->index);
 		InvalidateWindowData(WC_VEHICLE_REFIT, this->index, VIWD_CONSIST_CHANGED);
 		InvalidateWindowData(WC_VEHICLE_ORDERS, this->index, VIWD_CONSIST_CHANGED);
+		InvalidateNewGRFInspectWindow(GSF_TRAINS, this->index);
 	}
 }
 
@@ -451,6 +461,7 @@ int Train::GetDisplayImageWidth(Point *offset) const
 
 static SpriteID GetDefaultTrainSprite(uint8 spritenum, Direction direction)
 {
+	assert(IsValidImageIndex<VEH_TRAIN>(spritenum));
 	return ((direction + _engine_sprite_add[spritenum]) & _engine_sprite_and[spritenum]) + _engine_sprite_base[spritenum];
 }
 
@@ -474,6 +485,7 @@ SpriteID Train::GetImage(Direction direction, EngineImageType image_type) const
 		spritenum = this->GetEngine()->original_image_index;
 	}
 
+	assert(IsValidImageIndex<VEH_TRAIN>(spritenum));
 	sprite = GetDefaultTrainSprite(spritenum, direction);
 
 	if (this->cargo.StoredCount() >= this->cargo_cap / 2U) sprite += _wagon_full_adder[spritenum];
@@ -1214,8 +1226,10 @@ CommandCost CmdMoveRailVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 	Train *original_src_head = src_head;
 	Train *original_dst_head = (dst_head == src_head ? NULL : dst_head);
 
-	/* We want this information from before the rearrangement, but execute this after the validation. */
-	bool original_src_head_front_engine = original_src_head != NULL && original_src_head->IsFrontEngine();
+	/* We want this information from before the rearrangement, but execute this after the validation.
+	 * original_src_head can't be NULL; src is by definition != NULL, so src_head can't be NULL as
+	 * src->GetFirst() always yields non-NULL, so eventually original_src_head != NULL as well. */
+	bool original_src_head_front_engine = original_src_head->IsFrontEngine();
 	bool original_dst_head_front_engine = original_dst_head != NULL && original_dst_head->IsFrontEngine();
 
 	/* (Re)arrange the trains in the wanted arrangement. */
@@ -1271,6 +1285,7 @@ CommandCost CmdMoveRailVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, u
 			DeleteWindowById(WC_VEHICLE_REFIT, src->index);
 			DeleteWindowById(WC_VEHICLE_DETAILS, src->index);
 			DeleteWindowById(WC_VEHICLE_TIMETABLE, src->index);
+			DeleteNewGRFInspectWindow(GSF_TRAINS, src->index);
 			SetWindowDirty(WC_COMPANY, _current_company);
 
 			/* Delete orders, group stuff and the unit number as we're not the
@@ -1328,9 +1343,6 @@ CommandCost CmdMoveRailVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, u
  */
 CommandCost CmdSellRailWagon(DoCommandFlag flags, Vehicle *t, uint16 data, uint32 user)
 {
-	/* Check if we deleted a vehicle window */
-	Window *w = NULL;
-
 	/* Sell a chain of vehicles or not? */
 	bool sell_chain = HasBit(data, 0);
 
@@ -1381,9 +1393,6 @@ CommandCost CmdSellRailWagon(DoCommandFlag flags, Vehicle *t, uint16 data, uint3
 			/* Copy other important data from the front engine */
 			new_head->CopyVehicleConfigAndStatistics(first);
 			GroupStatistics::CountVehicle(new_head, 1); // after copying over the profit
-
-			/* If we deleted a window then open a new one for the 'new' train */
-			if (IsLocalCompany() && w != NULL) ShowVehicleViewWindow(new_head);
 		} else if (v->IsPrimaryVehicle() && data & (MAKE_ORDER_BACKUP_FLAG >> 20)) {
 			OrderBackup::Backup(v, user);
 		}
@@ -3146,8 +3155,9 @@ bool TrainController(Train *v, Vehicle *nomove, bool reverse)
 						 * this to one, then if we reach the next signal it is
 						 * decreased to zero and we won't pass that new signal. */
 						Trackdir dir = FindFirstTrackdir(trackdirbits);
-						if (GetSignalType(gp.new_tile, TrackdirToTrack(dir)) != SIGTYPE_PBS ||
-								!HasSignalOnTrackdir(gp.new_tile, ReverseTrackdir(dir))) {
+						if (HasSignalOnTrackdir(gp.new_tile, dir) ||
+								(HasSignalOnTrackdir(gp.new_tile, ReverseTrackdir(dir)) &&
+								GetSignalType(gp.new_tile, TrackdirToTrack(dir)) != SIGTYPE_PBS)) {
 							/* However, we do not want to be stopped by PBS signals
 							 * entered via the back. */
 							v->force_proceed = (v->force_proceed == TFP_SIGNAL) ? TFP_STUCK : TFP_NONE;

@@ -232,7 +232,7 @@ STR_TOOLTIP_CLOSE_WINDOW                                        :{BLACK}Luk vind
 STR_TOOLTIP_WINDOW_TITLE_DRAG_THIS                              :{BLACK}Vinduestitel - træk her for at flytte vinduet
 STR_TOOLTIP_SHADE                                               :{BLACK}Oprul vindue - vis kun titellinien
 STR_TOOLTIP_DEBUG                                               :{BLACK}Vis information om NewGRF fejl
-STR_TOOLTIP_STICKY                                              :{BLACK}Marker dette vindue som ulukkeligt af 'Luk ALLE vinduer' tasten
+STR_TOOLTIP_STICKY                                              :{BLACK}Marker dette vindue som ulukkeligt af 'Luk ALLE vinduer' tasten. Ctrl+Klik for også at gemme tilstand som standart
 STR_TOOLTIP_RESIZE                                              :{BLACK}Klik og træk for at ændre vinduets størrelse
 STR_TOOLTIP_TOGGLE_LARGE_SMALL_WINDOW                           :{BLACK}Skift mellem stort/lille vindue
 STR_TOOLTIP_VSCROLL_BAR_SCROLLS_LIST                            :{BLACK}Scrollbar - scroller listen op/ned
@@ -284,7 +284,7 @@ STR_SORT_BY_POWER                                               :Drivmiddel
 STR_SORT_BY_TRACTIVE_EFFORT                                     :Trækkraft
 STR_SORT_BY_INTRO_DATE                                          :Introduktionsdato
 STR_SORT_BY_RUNNING_COST                                        :Driftsomkostning
-STR_SORT_BY_POWER_VS_RUNNING_COST                               :Drivmiddel/omkostninger
+STR_SORT_BY_POWER_VS_RUNNING_COST                               :Ydelse/Omkostninger
 STR_SORT_BY_CARGO_CAPACITY                                      :Lasteevne
 STR_SORT_BY_RANGE                                               :Interval
 STR_SORT_BY_POPULATION                                          :Indbyggertal
@@ -714,6 +714,8 @@ STR_SMALLMAP_TOOLTIP_ENABLE_ALL_INDUSTRIES                      :{BLACK}Vis alle
 STR_SMALLMAP_TOOLTIP_SHOW_HEIGHT                                :{BLACK}Slå visning af højdekort til/fra
 STR_SMALLMAP_TOOLTIP_DISABLE_ALL_COMPANIES                      :{BLACK}Vis ingen selskabsejendomme på kortet
 STR_SMALLMAP_TOOLTIP_ENABLE_ALL_COMPANIES                       :{BLACK}Vis alle selskabsejendomme på kortet
+STR_SMALLMAP_TOOLTIP_DISABLE_ALL_CARGOS                         :{BLACK}Vis ikke fragt på kortet
+STR_SMALLMAP_TOOLTIP_ENABLE_ALL_CARGOS                          :{BLACK}Hvis alt fragt på kortet
 
 # Status bar messages
 STR_STATUSBAR_TOOLTIP_SHOW_LAST_NEWS                            :{BLACK}Vis seneste besked eller nyhedsrapport
@@ -1059,7 +1061,7 @@ STR_CONFIG_SETTING_RESTRICT_CHANGED_AGAINST_DEFAULT             :Indstillinger m
 STR_CONFIG_SETTING_RESTRICT_CHANGED_AGAINST_NEW                 :Indstillinger med en anden værdi end dine nyt-spil indstillinger
 
 STR_CONFIG_SETTING_TYPE_DROPDOWN_HELPTEXT                       :{BLACK}Begrænser listen nedenfor til at visse indstillingstyper
-STR_CONFIG_SETTING_TYPE_DROPDOWN_ALL                            :Alle indstillinger
+STR_CONFIG_SETTING_TYPE_DROPDOWN_ALL                            :Alle indstillingstyper
 STR_CONFIG_SETTING_TYPE_DROPDOWN_CLIENT                         :Klient indstilling (ikke lagret i gemt spil, påvirker alle spil)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Spil indstilling (lagret i gemt spil, påvirker kun nye spil)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Spil indstilling (lagret i gemt spil, påvirker kun det aktuelt spil)
@@ -1097,9 +1099,9 @@ STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Indstil, hvor m
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Konstruktionspriser: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Indstil prisniveau for køb og konstruktion
 STR_CONFIG_SETTING_RECESSIONS                                   :Kriser: {STRING}
-STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Lavkonjunkturer kan forekomme hvis denne indstilling er slået til. Ved lavkonjunktur falder produktionen markant (produktionen returnerer til tidligere niveau når lavkonjunkturen er ovre)
+STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Lavkonjunkturer forekomme hvert 5. år hvis denne indstilling er slået til. Ved lavkonjunktur falder produktionen markant (produktionen returnerer til tidligere niveau når lavkonjunkturen er ovre)
 STR_CONFIG_SETTING_TRAIN_REVERSING                              :Forbyd toge at køre baglængs i stationer: {STRING}
-STR_CONFIG_SETTING_TRAIN_REVERSING_HELPTEXT                     :Hvis aktiveret, vil tog ikke vende på ikke-endestationer, også selvom der er en kortere rute til deres næste destination ved at vende
+STR_CONFIG_SETTING_TRAIN_REVERSING_HELPTEXT                     :Hvis aktiveret, vil tog ikke vende på stationer der ikke er endestationer, også selvom der er en kortere rute til deres næste destination ved at vende
 STR_CONFIG_SETTING_DISASTERS                                    :Katastrofer: {STRING}
 STR_CONFIG_SETTING_DISASTERS_HELPTEXT                           :Slå katastrofer, som lejlighedsvis kan blokere eller ødelægge køretøjer eller infrastruktur, til og fra
 STR_CONFIG_SETTING_CITY_APPROVAL                                :Byrådets holdning til omstrukturering: {STRING}
@@ -1319,8 +1321,6 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Standard palette NewGRFer uden valgt palette: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Standardpalet til brug af NewGRFs der ikke angiver hvilken en de har brug for
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :DOS palette
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Windows palette
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Sæt automatisk på pause når nyt spil startes: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Når aktiveret, vil spillet automatisk pause når du starter et nyt spil, det giver mulighed for at studerer kortet nærmere
@@ -1357,9 +1357,9 @@ STR_CONFIG_SETTING_SOUND_TICKER_HELPTEXT                        :Afspil lyd for 
 STR_CONFIG_SETTING_SOUND_NEWS                                   :Nyhedsavis: {STRING}
 STR_CONFIG_SETTING_SOUND_NEWS_HELPTEXT                          :Afspil lyd ved visning af aviser
 STR_CONFIG_SETTING_SOUND_NEW_YEAR                               :Årets slutning: {STRING}
-STR_CONFIG_SETTING_SOUND_NEW_YEAR_HELPTEXT                      :Afspil lyd ved årsregnskabet, ved årets afslutning
+STR_CONFIG_SETTING_SOUND_NEW_YEAR_HELPTEXT                      :Afspil lyd ved årsregnskabet, som viser firmaets resultater sammenlignet med det tidligere år
 STR_CONFIG_SETTING_SOUND_CONFIRM                                :Konstruktion: {STRING}
-STR_CONFIG_SETTING_SOUND_CONFIRM_HELPTEXT                       :Afspil lydeffekt efter vellykkede konstruktioner eller andre handlinger
+STR_CONFIG_SETTING_SOUND_CONFIRM_HELPTEXT                       :Afspil lyd efter vellykkede konstruktioner eller andre handlinger
 STR_CONFIG_SETTING_SOUND_CLICK                                  :Knap tryk: {STRING}
 STR_CONFIG_SETTING_SOUND_CLICK_HELPTEXT                         :Bip ved klik på knapperne
 STR_CONFIG_SETTING_SOUND_DISASTER                               :Katastrofer/Ulykker: {STRING}
@@ -1424,7 +1424,7 @@ STR_CONFIG_SETTING_NEWS_ARRIVAL_FIRST_VEHICLE_OWN_HELPTEXT      :Vis en avis nå
 STR_CONFIG_SETTING_NEWS_ARRIVAL_FIRST_VEHICLE_OTHER             :Ankomst af første køretøj til modstanderens station: {STRING}
 STR_CONFIG_SETTING_NEWS_ARRIVAL_FIRST_VEHICLE_OTHER_HELPTEXT    :Vis en avis når det første køretøj ankommer til en konkurrents station
 STR_CONFIG_SETTING_NEWS_ACCIDENTS_DISASTERS                     :Uheld / katastrofer: {STRING}
-STR_CONFIG_SETTING_NEWS_ACCIDENTS_DISASTERS_HELPTEXT            :Vis en avis når ulykker eller katastrofer opstår
+STR_CONFIG_SETTING_NEWS_ACCIDENTS_DISASTERS_HELPTEXT            :Vis en avis når ulykker eller katastrofer forekommer
 STR_CONFIG_SETTING_NEWS_COMPANY_INFORMATION                     :Selskabsinformation: {STRING}
 STR_CONFIG_SETTING_NEWS_COMPANY_INFORMATION_HELPTEXT            :Vis en avis når nye selskaber starter, eller når selskaber er i risiko for at gå konkurs
 STR_CONFIG_SETTING_NEWS_INDUSTRY_OPEN                           :Åbning af industrier: {STRING}
@@ -1444,7 +1444,7 @@ STR_CONFIG_SETTING_NEWS_ADVICE_HELPTEXT                         :Vis meddelelser
 STR_CONFIG_SETTING_NEWS_NEW_VEHICLES                            :Nye køretøjer: {STRING}
 STR_CONFIG_SETTING_NEWS_NEW_VEHICLES_HELPTEXT                   :Vis en avis, når en ny køretøjstype bliver tilgængelig
 STR_CONFIG_SETTING_NEWS_CHANGES_ACCEPTANCE                      :Ændring i accepteret fragt: {STRING}
-STR_CONFIG_SETTING_NEWS_CHANGES_ACCEPTANCE_HELPTEXT             :Vis meddelelser om stationer som ændrer accept af godstyper
+STR_CONFIG_SETTING_NEWS_CHANGES_ACCEPTANCE_HELPTEXT             :Vis meddelelser om stationer som ændrer accept af nogen godstyper
 STR_CONFIG_SETTING_NEWS_SUBSIDIES                               :Tilskudsordninger: {STRING}
 STR_CONFIG_SETTING_NEWS_SUBSIDIES_HELPTEXT                      :Vis en avis om tilskuds relaterede begivenheder
 STR_CONFIG_SETTING_NEWS_GENERAL_INFORMATION                     :Generel information: {STRING}
@@ -1467,7 +1467,7 @@ STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY                         :Når der trækk
 STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY_HELPTEXT                :Indstil afstanden på hvilke signaler vil blive bygget på et spor op til den næste forhindring (signal, kryds), hvis signalerne trækkes
 STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY_VALUE                   :{COMMA} felt{P 0 "" er}
 STR_CONFIG_SETTING_DRAG_SIGNALS_FIXED_DISTANCE                  :Når der trækkes, hold fastlagt afstand mellem signaler: {STRING}
-STR_CONFIG_SETTING_DRAG_SIGNALS_FIXED_DISTANCE_HELPTEXT         :Vælg opførslen på signalplassering ved Ctrl + dragning af signaler. Hvis deaktivert, bliver signaler placeret ved tunneler eller broer for at undgå lange strækninger uden signaler. Hvis aktivert, bliver signalerne placeret for hver N rute, noget som gør justering af signaler på parallelle spor enklere
+STR_CONFIG_SETTING_DRAG_SIGNALS_FIXED_DISTANCE_HELPTEXT         :Vælg opførslen på signalplassering ved Ctrl+trækning af signaler. Hvis deaktivert, bliver signaler placeret ved tunneler eller broer for at undgå lange strækninger uden signaler. Hvis aktivert, bliver signalerne placeret for hver N rute, noget som gør justering af signaler på parallelle spor enklere
 STR_CONFIG_SETTING_SEMAPHORE_BUILD_BEFORE_DATE                  :Byg automatisk semaforer før: {STRING}
 STR_CONFIG_SETTING_SEMAPHORE_BUILD_BEFORE_DATE_HELPTEXT         :Sæt året hvor elektriske signaler vil blive brugt på spor. Før dette år vil ikke-elektriske signaler blive brugt (hvilket har den fuldstændig same funktion, men anderledes udseende)
 STR_CONFIG_SETTING_ENABLE_SIGNAL_GUI                            :Vis signalvælgeren som standard: {STRING}
@@ -1523,7 +1523,7 @@ STR_CONFIG_SETTING_SOFT_LIMIT_DISABLED                          :deaktiveret
 STR_CONFIG_SETTING_ZOOM_MIN                                     :Maksimalt zoom-in niveau: {STRING}
 STR_CONFIG_SETTING_ZOOM_MIN_HELPTEXT                            :Maximalt zoom-in niveau for skærmbilledet. Højere zoom niveau vil øge hukommelseskravet
 STR_CONFIG_SETTING_ZOOM_MAX                                     :Maksimalt zoom-ud niveau: {STRING}
-STR_CONFIG_SETTING_ZOOM_MAX_HELPTEXT                            :Det maksimale udzoomnings-niveau for skærmbilledet. Højere niveauer kan forsage forsinkelser i programmet ved brug
+STR_CONFIG_SETTING_ZOOM_MAX_HELPTEXT                            :Det maksimale niveau man kan zoomes ud. Højere niveauer kan forsage forsinkelser i programmet ved brug
 STR_CONFIG_SETTING_ZOOM_LVL_MIN                                 :4x
 STR_CONFIG_SETTING_ZOOM_LVL_IN_2X                               :2x
 STR_CONFIG_SETTING_ZOOM_LVL_NORMAL                              :Normal
@@ -1783,6 +1783,7 @@ STR_FACE_TIE_EARRING_TOOLTIP                                    :{BLACK}Ændre s
 
 # Network server list
 STR_NETWORK_SERVER_LIST_CAPTION                                 :{WHITE}Netværksspil
+STR_NETWORK_SERVER_LIST_ADVERTISED_NO                           :Nej
 STR_NETWORK_SERVER_LIST_PLAYER_NAME                             :{BLACK}Spiller navn:
 STR_NETWORK_SERVER_LIST_ENTER_NAME_TOOLTIP                      :{BLACK}Dette er det navn, som andre spillere vil kende dig ved
 
@@ -2801,6 +2802,9 @@ STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} af <ikk
 STR_NEWGRF_INVALID_ENGINE                                       :<ugyldig køretøjsmodel>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<ikke gyldig industri type>
 
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<utilgængeligt køretøj>
+
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Scanner NewGRFs
 STR_NEWGRF_SCAN_MESSAGE                                         :{BLACK}Scanner NewGRFs. Afhængig af mængden, vil dette tage noget tid...
@@ -3720,7 +3724,7 @@ STR_TIMETABLE_AUTOFILL_TOOLTIP                                  :{BLACK}Udfyld a
 
 STR_TIMETABLE_EXPECTED                                          :{BLACK}Forventet
 STR_TIMETABLE_SCHEDULED                                         :{BLACK}Planlagt
-STR_TIMETABLE_EXPECTED_TOOLTIP                                  :{BLACK}Skift mellem forventet og planlagt tidsplan
+STR_TIMETABLE_EXPECTED_TOOLTIP                                  :{BLACK}Skift mellem forventet og tidslagt
 
 STR_TIMETABLE_ARRIVAL_ABBREVIATION                              :Ank:
 STR_TIMETABLE_DEPARTURE_ABBREVIATION                            :Afg:
@@ -4364,7 +4368,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (Diesel)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (Damp)
@@ -4573,7 +4577,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Chugger-Chug Pa
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Shivershake Passagerfærge
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Yate Fragtskib
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Bakewell Fragtskib
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Mightymover Fragtskib
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :MightyMover Fragtskib
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Powernaut Fragtskib
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

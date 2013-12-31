@@ -41,6 +41,10 @@ LinkGraphJob::~LinkGraphJob()
 {
 	assert(this->thread == NULL);
 
+	/* Don't update stuff from other pools, when everything is being removed.
+	 * Accessing other pools may be invalid. */
+	if (CleaningPool()) return;
+
 	/* Link graph has been merged into another one. */
 	if (!LinkGraph::IsValidID(this->link_graph.index)) return;
 
@@ -68,7 +72,14 @@ LinkGraphJob::~LinkGraphJob()
 					st2->goods[this->Cargo()].node != it->first ||
 					(*lg)[node_id][it->first].LastUpdate() == INVALID_DATE) {
 				/* Edge has been removed. Delete flows. */
-				flows.DeleteFlows(to);
+				StationIDStack erased = flows.DeleteFlows(to);
+				/* Delete old flows for source stations which have been deleted
+				 * from the new flows. This avoids flow cycles between old and
+				 * new flows. */
+				while (!erased.IsEmpty()) ge.flows.erase(erased.Pop());
+			} else if ((*lg)[node_id][it->first].LastUnrestrictedUpdate() == INVALID_DATE) {
+				/* Edge is fully restricted. */
+				flows.RestrictFlows(to);
 			}
 		}
 
@@ -181,7 +192,7 @@ uint Path::AddFlow(uint new_flow, LinkGraphJob &job, uint max_saturation)
 		}
 		new_flow = this->parent->AddFlow(new_flow, job, max_saturation);
 		if (this->flow == 0 && new_flow > 0) {
-			job[this->parent->node].Paths().push_back(this);
+			job[this->parent->node].Paths().push_front(this);
 		}
 		edge.AddFlow(new_flow);
 	}

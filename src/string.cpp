@@ -608,7 +608,7 @@ char *strcasestr(const char *haystack, const char *needle)
  */
 static const char *SkipGarbage(const char *str)
 {
-	while (*str != '\0' && (*str < 'A' || IsInsideMM(*str, '[', '`' + 1) || IsInsideMM(*str, '{', '~' + 1))) str++;
+	while (*str != '\0' && (*str < '0' || IsInsideMM(*str, ';', '@' + 1) || IsInsideMM(*str, '[', '`' + 1) || IsInsideMM(*str, '{', '~' + 1))) str++;
 	return str;
 }
 
@@ -805,7 +805,7 @@ class DefaultStringIterator : public StringIterator
 	size_t cur_pos;     ///< Current iteration position.
 
 public:
-	DefaultStringIterator() : string(NULL)
+	DefaultStringIterator() : string(NULL), len(0), cur_pos(0)
 	{
 	}
 

@@ -530,7 +530,7 @@ static void TileLoop_Town(TileIndex tile)
 	Backup<CompanyByte> cur_company(_current_company, OWNER_TOWN, FILE_LINE);
 
 	if ((hs->building_flags & BUILDING_HAS_1_TILE) &&
-			HasBit(t->flags, TOWN_IS_FUNDED) &&
+			HasBit(t->flags, TOWN_IS_GROWING) &&
 			CanDeleteHouse(tile) &&
 			GetHouseAge(tile) >= hs->minimum_life &&
 			--t->time_until_rebuild == 0) {
@@ -778,7 +778,7 @@ static bool GrowTown(Town *t);
 
 static void TownTickHandler(Town *t)
 {
-	if (HasBit(t->flags, TOWN_IS_FUNDED)) {
+	if (HasBit(t->flags, TOWN_IS_GROWING)) {
 		int i = t->grow_counter - 1;
 		if (i < 0) {
 			if (GrowTown(t)) {
@@ -1337,7 +1337,7 @@ static int GrowTownAtRoad(Town *t, TileIndex tile)
 
 		/* Exclude the source position from the bitmask
 		 * and return if no more road blocks available */
-		cur_rb &= ~DiagDirToRoadBits(ReverseDiagDir(target_dir));
+		if (IsValidDiagDirection(target_dir)) cur_rb &= ~DiagDirToRoadBits(ReverseDiagDir(target_dir));
 		if (cur_rb == ROAD_NONE) {
 			return _grow_town_result;
 		}
@@ -1431,7 +1431,7 @@ static bool GrowTown(Town *t)
 		tile = t->xy;
 		for (ptr = _town_coord_mod; ptr != endof(_town_coord_mod); ++ptr) {
 			/* Only work with plain land that not already has a house */
-			if (!IsTileType(tile, MP_HOUSE) && GetTileSlope(tile) == SLOPE_FLAT) {
+			if (!IsTileType(tile, MP_HOUSE) && IsTileFlat(tile)) {
 				if (DoCommand(tile, 0, 0, DC_AUTO | DC_NO_WATER, CMD_LANDSCAPE_CLEAR).Succeeded()) {
 					DoCommand(tile, GenRandomRoadBits(), t->index, DC_EXEC | DC_AUTO, CMD_BUILD_ROAD);
 					cur_company.Restore();
@@ -1594,7 +1594,7 @@ static CommandCost TownCanBePlacedHere(TileIndex tile)
 	}
 
 	/* Can only build on clear flat areas, possibly with trees. */
-	if ((!IsTileType(tile, MP_CLEAR) && !IsTileType(tile, MP_TREES)) || GetTileSlope(tile) != SLOPE_FLAT) {
+	if ((!IsTileType(tile, MP_CLEAR) && !IsTileType(tile, MP_TREES)) || !IsTileFlat(tile)) {
 		return_cmd_error(STR_ERROR_SITE_UNSUITABLE);
 	}
 
@@ -1641,14 +1641,17 @@ CommandCost CmdFoundTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 	if (size >= TSZ_END) return CMD_ERROR;
 	if (layout >= NUM_TLS) return CMD_ERROR;
 
-	/* Some things are allowed only in the scenario editor */
-	if (_game_mode != GM_EDITOR) {
+	/* Some things are allowed only in the scenario editor and for game scripts. */
+	if (_game_mode != GM_EDITOR && _current_company != OWNER_DEITY) {
 		if (_settings_game.economy.found_town == TF_FORBIDDEN) return CMD_ERROR;
 		if (size == TSZ_LARGE) return CMD_ERROR;
 		if (random) return CMD_ERROR;
 		if (_settings_game.economy.found_town != TF_CUSTOM_LAYOUT && layout != _settings_game.economy.town_layout) {
 			return CMD_ERROR;
 		}
+	} else if (_current_company == OWNER_DEITY && random) {
+		/* Random parameter is not allowed for Game Scripts. */
+		return CMD_ERROR;
 	}
 
 	if (StrEmpty(text)) {
@@ -1684,7 +1687,7 @@ CommandCost CmdFoundTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 			return CommandCost(EXPENSES_OTHER);
 		}
 
-		_generating_world = true;
+		Backup<bool> old_generating_world(_generating_world, true, FILE_LINE);
 		UpdateNearestTownForRoadTiles(true);
 		Town *t;
 		if (random) {
@@ -1699,7 +1702,7 @@ CommandCost CmdFoundTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 			DoCreateTown(t, tile, townnameparts, size, city, layout, true);
 		}
 		UpdateNearestTownForRoadTiles(false);
-		_generating_world = false;
+		old_generating_world.Restore();
 
 		if (t != NULL && !StrEmpty(text)) {
 			t->name = strdup(text);
@@ -1792,7 +1795,7 @@ static bool FindFurthestFromWater(TileIndex tile, void *user_data)
 	uint dist = GetClosestWaterDistance(tile, true);
 
 	if (IsTileType(tile, MP_CLEAR) &&
-			GetTileSlope(tile) == SLOPE_FLAT &&
+			IsTileFlat(tile) &&
 			IsTileAlignedToGrid(tile, sp->layout) &&
 			dist > sp->max_dist) {
 		sp->tile = tile;
@@ -2211,13 +2214,13 @@ static bool BuildTownHouse(Town *t, TileIndex tile)
 	/* bits 0-4 are used
 	 * bits 11-15 are used
 	 * bits 5-10 are not used. */
-	HouseID houses[HOUSE_MAX];
+	HouseID houses[NUM_HOUSES];
 	uint num = 0;
-	uint probs[HOUSE_MAX];
+	uint probs[NUM_HOUSES];
 	uint probability_max = 0;
 
 	/* Generate a list of all possible houses that can be built. */
-	for (uint i = 0; i < HOUSE_MAX; i++) {
+	for (uint i = 0; i < NUM_HOUSES; i++) {
 		const HouseSpec *hs = HouseSpec::Get(i);
 
 		/* Verify that the candidate house spec matches the current tile status */
@@ -2482,7 +2485,7 @@ CommandCost CmdTownCargoGoal(TileIndex tile, DoCommandFlag flags, uint32 p1, uin
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
 
 	TownEffect te = (TownEffect)GB(p1, 16, 8);
-	if (te < TE_BEGIN || te > TE_END) return CMD_ERROR;
+	if (te < TE_BEGIN || te >= TE_END) return CMD_ERROR;
 
 	uint16 index = GB(p1, 0, 16);
 	Town *t = Town::GetIfValid(index);
@@ -2530,21 +2533,34 @@ CommandCost CmdTownSetText(TileIndex tile, DoCommandFlag flags, uint32 p1, uint3
  * @param tile Unused.
  * @param flags Type of operation.
  * @param p1 Town ID to cargo game of.
- * @param p2 Amount of days between growth.
+ * @param p2 Amount of days between growth, or TOWN_GROW_RATE_CUSTOM_NONE, or 0 to reset custom growth rate.
  * @param text Unused.
  * @return Empty cost or an error.
  */
 CommandCost CmdTownGrowthRate(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 p2, const char *text)
 {
 	if (_current_company != OWNER_DEITY) return CMD_ERROR;
-	if ((p2 & TOWN_GROW_RATE_CUSTOM) != 0) return CMD_ERROR;
+	if ((p2 & TOWN_GROW_RATE_CUSTOM) != 0 && p2 != TOWN_GROW_RATE_CUSTOM_NONE) return CMD_ERROR;
 	if (GB(p2, 16, 16) != 0) return CMD_ERROR;
 
 	Town *t = Town::GetIfValid(p1);
 	if (t == NULL) return CMD_ERROR;
 
 	if (flags & DC_EXEC) {
-		t->growth_rate = (p2 == 0) ? 0 : p2 | TOWN_GROW_RATE_CUSTOM;
+		if (p2 == 0) {
+			/* Clear TOWN_GROW_RATE_CUSTOM, UpdateTownGrowRate will determine a proper value */
+			t->growth_rate = 0;
+		} else {
+			uint old_rate = t->growth_rate & ~TOWN_GROW_RATE_CUSTOM;
+			if (t->grow_counter >= old_rate) {
+				/* This also catches old_rate == 0 */
+				t->grow_counter = p2;
+			} else {
+				/* Scale grow_counter, so half finished houses stay half finished */
+				t->grow_counter = t->grow_counter * p2 / old_rate;
+			}
+			t->growth_rate = p2 | TOWN_GROW_RATE_CUSTOM;
+		}
 		UpdateTownGrowRate(t);
 		InvalidateWindowData(WC_TOWN_VIEW, p1);
 	}
@@ -2652,7 +2668,7 @@ CommandCost CmdDeleteTown(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32
 				} else {
 					Object *o = Object::GetByTile(tile);
 					if (o->town == t) {
-						if (GetObjectType(tile) == OBJECT_STATUE) {
+						if (o->type == OBJECT_STATUE) {
 							/* Statue... always remove. */
 							try_clear = true;
 						} else {
@@ -2830,10 +2846,11 @@ static CommandCost TownActionFundBuildings(Town *t, DoCommandFlag flags)
 	if (flags & DC_EXEC) {
 		/* Build next tick */
 		t->grow_counter = 1;
-		/* If we were not already growing */
-		SetBit(t->flags, TOWN_IS_FUNDED);
 		/* And grow for 3 months */
 		t->fund_buildings_months = 3;
+
+		/* Enable growth (also checking GameScript's opinion) */
+		UpdateTownGrowRate(t);
 
 		SetWindowDirty(WC_TOWN_VIEW, t->index);
 	}
@@ -3031,7 +3048,7 @@ static void UpdateTownRating(Town *t)
 
 static void UpdateTownGrowRate(Town *t)
 {
-	ClrBit(t->flags, TOWN_IS_FUNDED);
+	ClrBit(t->flags, TOWN_IS_GROWING);
 	SetWindowDirty(WC_TOWN_VIEW, t->index);
 
 	if (_settings_game.economy.town_growth_rate == 0 && t->fund_buildings_months == 0) return;
@@ -3054,7 +3071,7 @@ static void UpdateTownGrowRate(Town *t)
 	}
 
 	if ((t->growth_rate & TOWN_GROW_RATE_CUSTOM) != 0) {
-		SetBit(t->flags, TOWN_IS_FUNDED);
+		if (t->growth_rate != TOWN_GROW_RATE_CUSTOM_NONE) SetBit(t->flags, TOWN_IS_GROWING);
 		SetWindowDirty(WC_TOWN_VIEW, t->index);
 		return;
 	}
@@ -3100,7 +3117,7 @@ static void UpdateTownGrowRate(Town *t)
 		t->grow_counter = m;
 	}
 
-	SetBit(t->flags, TOWN_IS_FUNDED);
+	SetBit(t->flags, TOWN_IS_GROWING);
 	SetWindowDirty(WC_TOWN_VIEW, t->index);
 }
 
@@ -3398,7 +3415,7 @@ extern const TileTypeProcs _tile_type_town_procs = {
 };
 
 
-HouseSpec _house_specs[HOUSE_MAX];
+HouseSpec _house_specs[NUM_HOUSES];
 
 void ResetHouses()
 {

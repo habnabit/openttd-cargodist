@@ -51,6 +51,7 @@
 #include "newgrf_house.h"
 #include "company_gui.h"
 #include "linkgraph/linkgraph_base.h"
+#include "linkgraph/refresh.h"
 #include "widgets/station_widget.h"
 
 #include "table/strings.h"
@@ -2591,7 +2592,7 @@ CommandCost CmdBuildDock(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 
 	TileIndex tile_cur = tile + TileOffsByDiagDir(direction);
 
-	if (!IsTileType(tile_cur, MP_WATER) || GetTileSlope(tile_cur) != SLOPE_FLAT) {
+	if (!IsTileType(tile_cur, MP_WATER) || !IsTileFlat(tile_cur)) {
 		return_cmd_error(STR_ERROR_SITE_UNSUITABLE);
 	}
 
@@ -2604,7 +2605,7 @@ CommandCost CmdBuildDock(TileIndex tile, DoCommandFlag flags, uint32 p1, uint32 
 	if (ret.Failed()) return ret;
 
 	tile_cur += TileOffsByDiagDir(direction);
-	if (!IsTileType(tile_cur, MP_WATER) || GetTileSlope(tile_cur) != SLOPE_FLAT) {
+	if (!IsTileType(tile_cur, MP_WATER) || !IsTileFlat(tile_cur)) {
 		return_cmd_error(STR_ERROR_SITE_UNSUITABLE);
 	}
 
@@ -3189,7 +3190,7 @@ static void TileLoop_Station(TileIndex tile)
 			break;
 
 		case STATION_DOCK:
-			if (GetTileSlope(tile) != SLOPE_FLAT) break; // only handle water part
+			if (!IsTileFlat(tile)) break; // only handle water part
 			/* FALL THROUGH */
 		case STATION_OILRIG: //(station part)
 		case STATION_BUOY:
@@ -3256,11 +3257,13 @@ static VehicleEnterTileStatus VehicleEnter_Station(Vehicle *v, TileIndex tile, i
 			if (dir != DIAGDIR_SE && dir != DIAGDIR_SW) x = TILE_SIZE - 1 - x;
 			stop &= TILE_SIZE - 1;
 
-			if (x >= stop) return VETSB_ENTERED_STATION | (VehicleEnterTileStatus)(station_id << VETS_STATION_ID_OFFSET); // enter station
-
-			v->vehstatus |= VS_TRAIN_SLOWING;
-			uint16 spd = max(0, (stop - x) * 20 - 15);
-			if (spd < v->cur_speed) v->cur_speed = spd;
+			if (x == stop) {
+				return VETSB_ENTERED_STATION | (VehicleEnterTileStatus)(station_id << VETS_STATION_ID_OFFSET); // enter station
+			} else if (x < stop) {
+				v->vehstatus |= VS_TRAIN_SLOWING;
+				uint16 spd = max(0, (stop - x) * 20 - 15);
+				if (spd < v->cur_speed) v->cur_speed = spd;
+			}
 		}
 	} else if (v->type == VEH_ROAD) {
 		RoadVehicle *rv = RoadVehicle::From(v);
@@ -3537,13 +3540,52 @@ void DeleteStaleLinks(Station *from)
 			Edge edge = it->second;
 			Station *to = Station::Get((*lg)[it->first].Station());
 			assert(to->goods[c].node == it->first);
-			++it; // Do that before removing the node. Anything else may crash.
+			++it; // Do that before removing the edge. Anything else may crash.
 			assert(_date >= edge.LastUpdate());
-			if ((uint)(_date - edge.LastUpdate()) > LinkGraph::MIN_TIMEOUT_DISTANCE +
-					(DistanceManhattan(from->xy, to->xy) >> 2)) {
-				node.RemoveEdge(to->goods[c].node);
-				ge.flows.DeleteFlows(to->index);
+			uint timeout = LinkGraph::MIN_TIMEOUT_DISTANCE + (DistanceManhattan(from->xy, to->xy) >> 3);
+			if ((uint)(_date - edge.LastUpdate()) > timeout) {
+				/* Have all vehicles refresh their next hops before deciding to
+				 * remove the node. */
+				bool updated = false;
+				OrderList *l;
+				FOR_ALL_ORDER_LISTS(l) {
+					bool found_from = false;
+					bool found_to = false;
+					for (Order *order = l->GetFirstOrder(); order != NULL; order = order->next) {
+						if (!order->IsType(OT_GOTO_STATION) && !order->IsType(OT_IMPLICIT)) continue;
+						if (order->GetDestination() == from->index) {
+							found_from = true;
+							if (found_to) break;
+						} else if (order->GetDestination() == to->index) {
+							found_to = true;
+							if (found_from) break;
+						}
+					}
+					if (!found_to || !found_from) continue;
+					for (Vehicle *v = l->GetFirstSharedVehicle(); !updated && v != NULL; v = v->NextShared()) {
+						/* There is potential for optimization here:
+						 * - Usually consists of the same order list are the same. It's probably better to
+						 *   first check the first of each list, then the second of each list and so on.
+						 * - We could try to figure out if we've seen a consist with the same cargo on the
+						 *   same list already and if the consist can actually carry the cargo we're looking
+						 *   for. With conditional and refit orders this is not quite trivial, though. */
+						LinkRefresher::Run(v, false); // Don't allow merging. Otherwise lg might get deleted.
+						if (edge.LastUpdate() == _date) updated = true;
+					}
+					if (updated) break;
+				}
+				if (!updated) {
+					/* If it's still considered dead remove it. */
+					node.RemoveEdge(to->goods[c].node);
+					ge.flows.DeleteFlows(to->index);
+					RerouteCargo(from, c, to->index, from->index);
+				}
+			} else if (edge.LastUnrestrictedUpdate() != INVALID_DATE && (uint)(_date - edge.LastUnrestrictedUpdate()) > timeout) {
+				edge.Restrict();
+				ge.flows.RestrictFlows(to->index);
 				RerouteCargo(from, c, to->index, from->index);
+			} else if (edge.LastRestrictedUpdate() != INVALID_DATE && (uint)(_date - edge.LastRestrictedUpdate()) > timeout) {
+				edge.Release();
 			}
 		}
 		assert(_date >= lg->LastCompression());
@@ -4177,16 +4219,17 @@ uint FlowStat::GetShare(StationID st) const
 }
 
 /**
- * Get a station a package can be routed to, but exclude the given one.
+ * Get a station a package can be routed to, but exclude the given ones.
  * @param excluded StationID not to be selected.
+ * @param excluded2 Another StationID not to be selected.
  * @return A station ID from the shares map.
  */
 StationID FlowStat::GetVia(StationID excluded, StationID excluded2) const
 {
+	if (this->unrestricted == 0) return INVALID_STATION;
 	assert(!this->shares.empty());
-	uint max = (--this->shares.end())->first - 1;
-	SharesMap::const_iterator it = this->shares.upper_bound(RandomRange(max));
-	assert(it != this->shares.end());
+	SharesMap::const_iterator it = this->shares.upper_bound(RandomRange(this->unrestricted));
+	assert(it != this->shares.end() && it->first <= this->unrestricted);
 	if (it->second != excluded && it->second != excluded2) return it->second;
 
 	/* We've hit one of the excluded stations.
@@ -4195,12 +4238,12 @@ StationID FlowStat::GetVia(StationID excluded, StationID excluded2) const
 	uint end = it->first;
 	uint begin = (it == this->shares.begin() ? 0 : (--it)->first);
 	uint interval = end - begin;
-	if (interval > max) return INVALID_STATION; // Only one station in the map.
-	uint new_max = max - interval;
+	if (interval >= this->unrestricted) return INVALID_STATION; // Only one station in the map.
+	uint new_max = this->unrestricted - interval;
 	uint rand = RandomRange(new_max);
 	SharesMap::const_iterator it2 = (rand < begin) ? this->shares.upper_bound(rand) :
 			this->shares.upper_bound(rand + interval);
-	assert(it2 != this->shares.end());
+	assert(it2 != this->shares.end() && it2->first <= this->unrestricted);
 	if (it2->second != excluded && it2->second != excluded2) return it2->second;
 
 	/* We've hit the second excluded station.
@@ -4209,7 +4252,7 @@ StationID FlowStat::GetVia(StationID excluded, StationID excluded2) const
 	uint end2 = it2->first;
 	uint begin2 = (it2 == this->shares.begin() ? 0 : (--it2)->first);
 	uint interval2 = end2 - begin2;
-	if (interval2 > new_max) return INVALID_STATION; // Only the two excluded stations in the map.
+	if (interval2 >= new_max) return INVALID_STATION; // Only the two excluded stations in the map.
 	new_max -= interval2;
 	if (begin > begin2) {
 		Swap(begin, begin2);
@@ -4217,7 +4260,7 @@ StationID FlowStat::GetVia(StationID excluded, StationID excluded2) const
 		Swap(interval, interval2);
 	}
 	rand = RandomRange(new_max);
-	SharesMap::const_iterator it3 = this->shares.end();
+	SharesMap::const_iterator it3 = this->shares.upper_bound(this->unrestricted);
 	if (rand < begin) {
 		it3 = this->shares.upper_bound(rand);
 	} else if (rand < begin2 - interval) {
@@ -4225,7 +4268,7 @@ StationID FlowStat::GetVia(StationID excluded, StationID excluded2) const
 	} else {
 		it3 = this->shares.upper_bound(rand + interval + interval2);
 	}
-	assert(it3 != this->shares.end());
+	assert(it3 != this->shares.end() && it3->first <= this->unrestricted);
 	return it3->second;
 }
 
@@ -4241,14 +4284,15 @@ void FlowStat::Invalidate()
 	uint i = 0;
 	for (SharesMap::iterator it(this->shares.begin()); it != this->shares.end(); ++it) {
 		new_shares[++i] = it->second;
+		if (it->first == this->unrestricted) this->unrestricted = i;
 	}
 	this->shares.swap(new_shares);
-	assert(!this->shares.empty());
+	assert(!this->shares.empty() && this->unrestricted <= (--this->shares.end())->first);
 }
 
 /**
  * Change share for specified station. By specifing INT_MIN as parameter you
- * can erase a share.
+ * can erase a share. Newly added flows will be unrestricted.
  * @param st Next Hop to be removed.
  * @param flow Share to be added or removed.
  */
@@ -4268,6 +4312,7 @@ void FlowStat::ChangeShare(StationID st, int flow)
 				uint share = it->first - last_share;
 				if (flow == INT_MIN || (uint)(-flow) >= share) {
 					removed_shares += share;
+					if (it->first <= this->unrestricted) this->unrestricted -= share;
 					if (flow != INT_MIN) flow += share;
 					last_share = it->first;
 					continue; // remove the whole share
@@ -4276,6 +4321,7 @@ void FlowStat::ChangeShare(StationID st, int flow)
 			} else {
 				added_shares += (uint)(flow);
 			}
+			if (it->first <= this->unrestricted) this->unrestricted += flow;
 
 			/* If we don't continue above the whole flow has been added or
 			 * removed. */
@@ -4284,7 +4330,98 @@ void FlowStat::ChangeShare(StationID st, int flow)
 		new_shares[it->first + added_shares - removed_shares] = it->second;
 		last_share = it->first;
 	}
-	if (flow > 0) new_shares[last_share + (uint)flow] = st;
+	if (flow > 0) {
+		new_shares[last_share + (uint)flow] = st;
+		if (this->unrestricted < last_share) {
+			this->ReleaseShare(st);
+		} else {
+			this->unrestricted += flow;
+		}
+	}
+	this->shares.swap(new_shares);
+}
+
+/**
+ * Restrict a flow by moving it to the end of the map and decreasing the amount
+ * of unrestricted flow.
+ * @param st Station of flow to be restricted.
+ */
+void FlowStat::RestrictShare(StationID st)
+{
+	assert(!this->shares.empty());
+	uint flow = 0;
+	uint last_share = 0;
+	SharesMap new_shares;
+	for (SharesMap::iterator it(this->shares.begin()); it != this->shares.end(); ++it) {
+		if (flow == 0) {
+			if (it->first > this->unrestricted) return; // Not present or already restricted.
+			if (it->second == st) {
+				flow = it->first - last_share;
+				this->unrestricted -= flow;
+			} else {
+				new_shares[it->first] = it->second;
+			}
+		} else {
+			new_shares[it->first - flow] = it->second;
+		}
+		last_share = it->first;
+	}
+	if (flow == 0) return;
+	new_shares[last_share + flow] = st;
+	this->shares.swap(new_shares);
+	assert(!this->shares.empty());
+}
+
+/**
+ * Release ("unrestrict") a flow by moving it to the begin of the map and
+ * increasing the amount of unrestricted flow.
+ * @param st Station of flow to be released.
+ */
+void FlowStat::ReleaseShare(StationID st)
+{
+	assert(!this->shares.empty());
+	uint flow = 0;
+	uint next_share = 0;
+	bool found = false;
+	for (SharesMap::reverse_iterator it(this->shares.rbegin()); it != this->shares.rend(); ++it) {
+		if (it->first < this->unrestricted) return; // Note: not <= as the share may hit the limit.
+		if (found) {
+			flow = next_share - it->first;
+			this->unrestricted += flow;
+			break;
+		} else {
+			if (it->first == this->unrestricted) return; // !found -> Limit not hit.
+			if (it->second == st) found = true;
+		}
+		next_share = it->first;
+	}
+	if (flow == 0) return;
+	SharesMap new_shares;
+	new_shares[flow] = st;
+	for (SharesMap::iterator it(this->shares.begin()); it != this->shares.end(); ++it) {
+		if (it->second != st) {
+			new_shares[flow + it->first] = it->second;
+		} else {
+			flow = 0;
+		}
+	}
+	this->shares.swap(new_shares);
+	assert(!this->shares.empty());
+}
+
+/**
+ * Scale all shares from link graph's runtime to monthly values.
+ * @param runtime Time the link graph has been running without compression.
+ */
+void FlowStat::ScaleToMonthly(uint runtime)
+{
+	SharesMap new_shares;
+	uint share = 0;
+	for (SharesMap::iterator i = this->shares.begin(); i != this->shares.end(); ++i) {
+		share = max(share + 1, i->first * 30 / runtime);
+		new_shares[share] = i->second;
+		if (this->unrestricted == i->first) this->unrestricted = share;
+	}
 	this->shares.swap(new_shares);
 }
 
@@ -4353,17 +4490,44 @@ void FlowStatMap::FinalizeLocalConsumption(StationID self)
 /**
  * Delete all flows at a station for specific cargo and destination.
  * @param via Remote station of flows to be deleted.
+ * @return IDs of source stations for which the complete FlowStat, not only a
+ *         share, has been erased.
  */
-void FlowStatMap::DeleteFlows(StationID via)
+StationIDStack FlowStatMap::DeleteFlows(StationID via)
 {
+	StationIDStack ret;
 	for (FlowStatMap::iterator f_it = this->begin(); f_it != this->end();) {
 		FlowStat &s_flows = f_it->second;
 		s_flows.ChangeShare(via, INT_MIN);
 		if (s_flows.GetShares()->empty()) {
+			ret.Push(f_it->first);
 			this->erase(f_it++);
 		} else {
 			++f_it;
 		}
+	}
+	return ret;
+}
+
+/**
+ * Restrict all flows at a station for specific cargo and destination.
+ * @param via Remote station of flows to be restricted.
+ */
+void FlowStatMap::RestrictFlows(StationID via)
+{
+	for (FlowStatMap::iterator it = this->begin(); it != this->end(); ++it) {
+		it->second.RestrictShare(via);
+	}
+}
+
+/**
+ * Release all flows at a station for specific cargo and destination.
+ * @param via Remote station of flows to be released.
+ */
+void FlowStatMap::ReleaseFlows(StationID via)
+{
+	for (FlowStatMap::iterator it = this->begin(); it != this->end(); ++it) {
+		it->second.ReleaseShare(via);
 	}
 }
 

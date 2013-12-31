@@ -389,9 +389,9 @@ STR_SORT_BY_ENGINE_ID                                           :MotorID (standa
 STR_SORT_BY_COST                                                :Cijena
 STR_SORT_BY_POWER                                               :Snaga
 STR_SORT_BY_TRACTIVE_EFFORT                                     :Vučna sila
-STR_SORT_BY_INTRO_DATE                                          :Datum početka
-STR_SORT_BY_RUNNING_COST                                        :Trošak uporabe
-STR_SORT_BY_POWER_VS_RUNNING_COST                               :Snaga/trošak uporabe
+STR_SORT_BY_INTRO_DATE                                          :Datum uvođenja
+STR_SORT_BY_RUNNING_COST                                        :Tekući trošak
+STR_SORT_BY_POWER_VS_RUNNING_COST                               :Snaga/Tekući trošak
 STR_SORT_BY_CARGO_CAPACITY                                      :Nosivost tereta
 STR_SORT_BY_RANGE                                               :Domet
 STR_SORT_BY_POPULATION                                          :Stanovništvo
@@ -1435,8 +1435,8 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Osnovna paleta će biti postavljena za NewGRFove koji ne odrede paletu: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Osnovna paleta koju će koristiti NewGRF-ovi koji nemaju specificirano koju paletu trebaju
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :DOS paleta
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Windows paleta
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Osnovna (D) paleta boja
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Legacy (W) paleta boja
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Automatski pauziraj prilikom pokretanja nove igre: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Kada je uključeno, igra će se automatski pauzirati priliko pokretanja nove igre, dozvoljavajući bolje proučavanje mape
@@ -2138,6 +2138,7 @@ STR_NETWORK_CLIENT                                              :Klijent
 STR_NETWORK_SPECTATORS                                          :Promatrači
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Unesite iznos novca koji želite dati
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Gledatelj
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Nemoj spremiti upisanu zaporku
@@ -2985,6 +2986,9 @@ STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} od <pog
 STR_NEWGRF_INVALID_ENGINE                                       :<pogrešan model vozila>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<pogrešna industrija>
 
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<nepostojeće vozilo>
+
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Tražim NewGRFove
 STR_NEWGRF_SCAN_MESSAGE                                         :{BLACK}Tražim NewGRFove. Ovisno o količini ovo može malo potrajati...
@@ -3122,6 +3126,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}Prethodn
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}Prethodna stranica
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}Sljedeće
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}Sljedeća stranica
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Neispravna referenca cilja
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Imena postaja - klikni na ime kako bi centrirao glavni pogled na postaju. Ctrl+klik otvara novi prozor sa lokacijom postaje
@@ -4035,6 +4040,8 @@ STR_AI_SETTINGS_START_DELAY                                     :Broj dana za st
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}{STRING} "pročitaj me" datoteka od {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}{STRING} zapis izmjena od {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}{STRING} licenca od {STRING}
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}Posloži tekst
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Posloži tekst u prozorima tako da cijeli stane bez potrebe za skrolanjem
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Pogledaj "pročitaj me" datoteku
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Zapis izmjena
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Licenca
@@ -4628,7 +4635,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (Diesel)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (parni)
@@ -4837,7 +4844,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Putnički traje
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Putnički trajekt Shivershake
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Teretni brod Yate
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Teretni brod Bakewell
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Teretni brod Mightymover
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Teretni brod MightyMover
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Teretni brod Powernaut
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

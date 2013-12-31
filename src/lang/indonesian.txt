@@ -1220,7 +1220,7 @@ STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD                      :Ijinkan termina
 STR_CONFIG_SETTING_STOP_ON_COMPETITOR_ROAD_HELPTEXT             :Membolehkan konstruksi halte di jalan yang dimiliki perusahaan lain
 STR_CONFIG_SETTING_ADJACENT_STATIONS                            :Ijinkan membangun stasiun berdampingan: {STRING}
 STR_CONFIG_SETTING_ADJACENT_STATIONS_HELPTEXT                   :Membolehkan stasiun berbeda untuk berhubungan satu sama lain
-STR_CONFIG_SETTING_DYNAMIC_ENGINES                              :Aktifkan beberapa pengaturan mesin NewGRF : {STRING}
+STR_CONFIG_SETTING_DYNAMIC_ENGINES                              :Aktifkan beberapa pengaturan mesin NewGRF: {STRING}
 STR_CONFIG_SETTING_DYNAMIC_ENGINES_HELPTEXT                     :Pilihan kompatibilitas untuk NewGRF lama. Jangan mematikan ini, sampai anda tahu apa yang anda lakukan!
 STR_CONFIG_SETTING_DYNAMIC_ENGINES_EXISTING_VEHICLES            :{WHITE}Tidak diijinkan mengubah setting ini karena kendaraan sudah ada
 STR_CONFIG_SETTING_INFRASTRUCTURE_MAINTENANCE                   :Perawaran Infrastruktur: {STRING}
@@ -1339,8 +1339,8 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Palette standard digunakan untuk NewGRFs yang tidak punya setting: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Palet standar digunakan untuk NewGRF yang tidak menentukan yang mana itu perlu
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :DOS palette
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Windows palette
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Palet standar (D)
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Palet warisan (W)
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Selalu hentikan sementara permainan saat memulai : {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Jika diaktifkan, permainan akan berhenti sejenak secara otomatis ketika permainan baru dimulai, memungkinkan untuk lebih mempelajari peta
@@ -1578,7 +1578,7 @@ STR_CONFIG_SETTING_DISTRIBUTION_PAX_HELPTEXT                    :"simetris" bera
 STR_CONFIG_SETTING_DISTRIBUTION_MAIL                            :Modus distribusi untuk barang pos: {STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_MAIL_HELPTEXT                   :"simetris" berarti kira-kira jumlah barang pos yang sama akan pergi dari stasiun A ke stasiun B sebagaimana dari B ke A. "asimetris" berarti jumlah barang pos yang pergi ke kedua arah bisa berbeda-beda. "manual" berarti bahwa tidak ada distribusi otomatis akan dilakukan untuk barang pos.
 STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED                        :Modus distribusi untuk kelas kargo BERLAPIS BAJA: {STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :Kelas kargo BERLAPIS BAJA mengandung barang berharga di temperata, intan di sub tropis atau emas di iklim sub arktik. NewGRFs mungkin mengubah itu. "simetris" berarti bahwa kira-kira sama jumlah kargo itu akan pergi dari stasiun A ke stasiun B sebagai dari B ke A. "asimetris" berarti sewenang-wenang jumlah kargo itu bisa pergi di kedua arah. "manual" berarti bahwa tidak ada distribusi otomatis akan dilakukan untuk kargo itu. Disarankan untuk diaturkan ini ke asimetris atau manual ketika bermain sub arktik, sebagai bank tidak mengirim emas apapun kembali ke tambang emas. Untuk temperata dan sub tropis anda juga bisah pilih simetris sebagian bank akan mengirim barang berharga kembali ke bank orisinil dari beberapa banyak barang berharga.
+STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :Kelas kargo BERLAPIS BAJA mengandung barang berharga di iklim sedang, intan di sub tropis atau emas di iklim sub arktik. NewGRFs mungkin mengubah itu. "simetris" berarti bahwa kira-kira sama jumlah kargo itu akan pergi dari stasiun A ke stasiun B sebagai dari B ke A. "asimetris" berarti sewenang-wenang jumlah kargo itu bisa pergi di kedua arah. "manual" berarti bahwa tidak ada distribusi otomatis akan dilakukan untuk kargo itu. Disarankan untuk diaturkan ini ke asimetris atau manual ketika bermain sub arktik, sebagai bank tidak mengirim emas apapun kembali ke tambang emas. Untuk iklim sedang dan sub tropis anda juga bisah pilih simetris sebagian bank akan mengirim barang berharga kembali ke bank orisinil dari beberapa banyak barang berharga.
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT                         :Modus distribusi untuk kelas kargo yang lain: {STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :"simetris" berarti bahwa kira-kira sama jumlah kargo akan pergi dari stasiun A ke stasiun B sebagai dari B ke A. "asimetris" berarti sewenang-wenang jumlah kargo bisa pergi di kedua arah. "manual" berarti bahwa tidak ada distribusi otomatis akan dilakukan untuk kargo. Anda mungkin mau mengaturkan ini untuk "asimetris" atau manual.
 STR_CONFIG_SETTING_LINKGRAPH_ACCURACY                           :Ketepatan distribusi: {STRING}
@@ -1755,7 +1755,7 @@ STR_CHEAT_CHANGE_COMPANY                                        :{LTBLUE}Bermain
 STR_CHEAT_EXTRA_DYNAMITE                                        :{LTBLUE}Buldozer ajaib (hancurkan industri, objek tidak bergerak): {ORANGE}{STRING}
 STR_CHEAT_CROSSINGTUNNELS                                       :{LTBLUE}Terowongan boleh menerobos terowongan lain: {ORANGE}{STRING}
 STR_CHEAT_NO_JETCRASH                                           :{LTBLUE}Pesawat tak akan (sering) celaka di bandara kecil: {ORANGE} {STRING}
-STR_CHEAT_SWITCH_CLIMATE_TEMPERATE_LANDSCAPE                    :Lanskap 'Temperata'
+STR_CHEAT_SWITCH_CLIMATE_TEMPERATE_LANDSCAPE                    :Lanskap 'Sedang'
 STR_CHEAT_SWITCH_CLIMATE_SUB_ARCTIC_LANDSCAPE                   :Lansekap 'Sub Arktik'
 STR_CHEAT_SWITCH_CLIMATE_SUB_TROPICAL_LANDSCAPE                 :Lansekap 'Sub Tropis'
 STR_CHEAT_SWITCH_CLIMATE_TOYLAND_LANDSCAPE                      :Lansekap 'Taman Bermain'
@@ -2042,6 +2042,7 @@ STR_NETWORK_CLIENT                                              :Klien
 STR_NETWORK_SPECTATORS                                          :Penonton
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Masukkan jumlah uang yang akan diberikan
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Pengamat
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Jangan simpan kata sandi yang telah dimasukkan
@@ -2889,6 +2890,9 @@ STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} dari <k
 STR_NEWGRF_INVALID_ENGINE                                       :<model kendaraan tidak valid>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<industri tidak valid>
 
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<kendaraan tidak berlaku>
+
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Memindai NewGRFs
 STR_NEWGRF_SCAN_MESSAGE                                         :{BLACK}Memindai berkas NewGRF. Lamanya waktu tergantung dari jumlah berkas...
@@ -3026,6 +3030,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}Sebelumn
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}Menuju ke halaman sebelumnya
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}Berikutnya
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}Menuju ke halaman berikutnya
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Referensi sasaran yang tidak berlaku
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Nama-nama stasiun - klik pada nama untuk mengarahkan pandangan utama pada stasiun. Ctrl+Click akan membuka viewport baru pada lokasi stasiun
@@ -3569,7 +3574,7 @@ STR_VEHICLE_INFO_MAX_SPEED_RANGE                                :{BLACK}Kecepata
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED                         :{BLACK}Berat: {LTBLUE}{WEIGHT_SHORT} {BLACK}Tenaga: {LTBLUE}{POWER}{BLACK} Kec. Max: {LTBLUE}{VELOCITY}
 STR_VEHICLE_INFO_WEIGHT_POWER_MAX_SPEED_MAX_TE                  :{BLACK}Berat: {LTBLUE}{WEIGHT_SHORT} {BLACK}Tenaga: {LTBLUE}{POWER}{BLACK} Kec. Max: {LTBLUE}{VELOCITY} {BLACK}Max. T.E.: {LTBLUE}{FORCE}
 
-STR_VEHICLE_INFO_PROFIT_THIS_YEAR_LAST_YEAR                     :{BLACK}Keuntungan thn ini: {LTBLUE}{CURRENCY_LONG} (thn lalu: {CURRENCY_LONG})
+STR_VEHICLE_INFO_PROFIT_THIS_YEAR_LAST_YEAR                     :{BLACK}Keuntungan tahun ini: {LTBLUE}{CURRENCY_LONG} (tahun lalu: {CURRENCY_LONG})
 STR_VEHICLE_INFO_RELIABILITY_BREAKDOWNS                         :{BLACK}Reliabilitas: {LTBLUE}{COMMA}%  {BLACK}Mogok sejak perbaikan terakhir : {LTBLUE}{COMMA} kali
 
 STR_VEHICLE_INFO_BUILT_VALUE                                    :{LTBLUE}{ENGINE} {BLACK}Dibuat: {LTBLUE}{NUM}{BLACK} Nilai: {LTBLUE}{CURRENCY_LONG}
@@ -3939,6 +3944,8 @@ STR_AI_SETTINGS_START_DELAY                                     :Jalankan AI set
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}keterangan {STRING} dari {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}Catatan perubahan {STRING} dari {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}Lisensi {STRING} dari {STRING}
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}Mengebatkan teks
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Mengebatkan teks dari jendela sehingga akan muat tanpa menggulir
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Lihat readme
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Catatan Perubahan
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Lisensi
@@ -4495,7 +4502,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS '250' (Diesel)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (Uap)

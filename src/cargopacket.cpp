@@ -409,6 +409,29 @@ void VehicleCargoList::SetTransferLoadPlace(TileIndex xy)
 }
 
 /**
+ * Choose action to be performed with the given cargo packet.
+ * @param cp The packet.
+ * @param cargo_next Next hop the cargo wants to pass.
+ * @param current_station Current station of the vehicle carrying the cargo.
+ * @param accepted If the cargo is accepted at the current station.
+ * @param next_station Next station(s) the vehicle may stop at.
+ * @return MoveToAction to be performed.
+ */
+/* static */ VehicleCargoList::MoveToAction VehicleCargoList::ChooseAction(const CargoPacket *cp, StationID cargo_next,
+		StationID current_station, bool accepted, StationIDStack next_station)
+{
+	if (cargo_next == INVALID_STATION) {
+		return (accepted && cp->source != current_station) ? MTA_DELIVER : MTA_KEEP;
+	} else if (cargo_next == current_station) {
+		return MTA_DELIVER;
+	} else if (next_station.Contains(cargo_next)) {
+		return MTA_KEEP;
+	} else {
+		return MTA_TRANSFER;
+	}
+}
+
+/**
  * Stages cargo for unloading. The cargo is sorted so that packets to be
  * transferred, delivered or kept are in consecutive chunks in the list. At the
  * same time the designation_counts are updated to reflect the size of those
@@ -421,7 +444,7 @@ void VehicleCargoList::SetTransferLoadPlace(TileIndex xy)
  * @param payment Payment object for registering transfers.
  * return If any cargo will be unloaded.
  */
-bool VehicleCargoList::Stage(bool accepted, StationID current_station, StationID next_station, uint8 order_flags, const GoodsEntry *ge, CargoPayment *payment)
+bool VehicleCargoList::Stage(bool accepted, StationID current_station, StationIDStack next_station, uint8 order_flags, const GoodsEntry *ge, CargoPayment *payment)
 {
 	this->AssertCountConsistency();
 	assert(this->action_counts[MTA_LOAD] == 0);
@@ -446,24 +469,43 @@ bool VehicleCargoList::Stage(bool accepted, StationID current_station, StationID
 			action = MTA_DELIVER;
 		} else if (force_transfer) {
 			action = MTA_TRANSFER;
-			cargo_next = ge->GetVia(cp->source, current_station, next_station);
-			assert((cargo_next != next_station || cargo_next == INVALID_STATION) &&
-					cargo_next != current_station);
+			/* We cannot send the cargo to any of the possible next hops and
+			 * also not to the current station. */
+			FlowStatMap::const_iterator flow_it(ge->flows.find(cp->source));
+			if (flow_it == ge->flows.end()) {
+				cargo_next = INVALID_STATION;
+			} else {
+				FlowStat new_shares = flow_it->second;
+				new_shares.ChangeShare(current_station, INT_MIN);
+				StationIDStack excluded = next_station;
+				while (!excluded.IsEmpty() && !new_shares.GetShares()->empty()) {
+					new_shares.ChangeShare(excluded.Pop(), INT_MIN);
+				}
+				if (new_shares.GetShares()->empty()) {
+					cargo_next = INVALID_STATION;
+				} else {
+					cargo_next = new_shares.GetVia();
+				}
+			}
 		} else {
 			/* Rewrite an invalid source station to some random other one to
 			 * avoid keeping the cargo in the vehicle forever. */
 			if (cp->source == INVALID_STATION && !ge->flows.empty()) {
 				cp->source = ge->flows.begin()->first;
 			}
-			cargo_next = ge->GetVia(cp->source);
-			if (cargo_next == INVALID_STATION) {
-				action = (accepted && cp->source != current_station) ? MTA_DELIVER : MTA_KEEP;
-			} else if (cargo_next == current_station) {
-				action = MTA_DELIVER;
-			} else if (cargo_next == next_station) {
-				action = MTA_KEEP;
+			bool restricted = false;
+			FlowStatMap::const_iterator flow_it(ge->flows.find(cp->source));
+			if (flow_it == ge->flows.end()) {
+				cargo_next = INVALID_STATION;
 			} else {
-				action = MTA_TRANSFER;
+				cargo_next = flow_it->second.GetViaWithRestricted(restricted);
+			}
+			action = VehicleCargoList::ChooseAction(cp, cargo_next, current_station, accepted, next_station);
+			if (restricted && action == MTA_TRANSFER) {
+				/* If the flow is restricted we can't transfer to it. Choose an
+				 * unrestricted one instead. */
+				cargo_next = flow_it->second.GetVia();
+				action = VehicleCargoList::ChooseAction(cp, cargo_next, current_station, accepted, next_station);
 			}
 		}
 		Money share;
@@ -667,10 +709,14 @@ bool StationCargoList::ShiftCargo(Taction &action, StationID next)
  * @return Amount of cargo actually moved.
  */
 template <class Taction>
-uint StationCargoList::ShiftCargo(Taction action, StationID next, bool include_invalid)
+uint StationCargoList::ShiftCargo(Taction action, StationIDStack next, bool include_invalid)
 {
 	uint max_move = action.MaxMove();
-	if (this->ShiftCargo(action, next) && include_invalid && action.MaxMove() > 0) {
+	while (!next.IsEmpty()) {
+		this->ShiftCargo(action, next.Pop());
+		if (action.MaxMove() == 0) break;
+	}
+	if (include_invalid && action.MaxMove() > 0) {
 		this->ShiftCargo(action, INVALID_STATION);
 	}
 	return max_move - action.MaxMove();
@@ -735,10 +781,10 @@ uint StationCargoList::Truncate(uint max_move, StationCargoAmountMap *cargo_per_
  * @param max_move Maximum amount of cargo to reserve.
  * @param dest VehicleCargoList to reserve for.
  * @param load_place Tile index of the current station.
- * @param next_station Next station the loading vehicle will visit.
+ * @param next_station Next station(s) the loading vehicle will visit.
  * @return Amount of cargo actually reserved.
  */
-uint StationCargoList::Reserve(uint max_move, VehicleCargoList *dest, TileIndex load_place, StationID next_station)
+uint StationCargoList::Reserve(uint max_move, VehicleCargoList *dest, TileIndex load_place, StationIDStack next_station)
 {
 	return this->ShiftCargo(CargoReservation(this, dest, max_move, load_place), next_station, true);
 }
@@ -749,13 +795,13 @@ uint StationCargoList::Reserve(uint max_move, VehicleCargoList *dest, TileIndex 
  * @param max_move Amount of cargo to load.
  * @param dest Vehicle cargo list where the cargo resides.
  * @param load_place The new loaded_at_xy to be assigned to packets being moved.
- * @param next_station Next station the loading vehicle will visit.
+ * @param next_station Next station(s) the loading vehicle will visit.
  * @return Amount of cargo actually loaded.
  * @note Vehicles may or may not reserve, depending on their orders. The two
  *       modes of loading are exclusive, though. If cargo is reserved we don't
  *       need to load unreserved cargo.
  */
-uint StationCargoList::Load(uint max_move, VehicleCargoList *dest, TileIndex load_place, StationID next_station)
+uint StationCargoList::Load(uint max_move, VehicleCargoList *dest, TileIndex load_place, StationIDStack next_station)
 {
 	uint move = min(dest->ActionCount(VehicleCargoList::MTA_LOAD), max_move);
 	if (move > 0) {

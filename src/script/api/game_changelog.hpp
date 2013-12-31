@@ -20,6 +20,8 @@
  * 1.4.0 is not yet released. The following changes are not set in stone yet.
  *
  * API additions:
+ * \li GSCompany::ChangeBankBalance
+ * \li GSGoal::GT_STORY_PAGE
  * \li GSGoal::IsCompleted
  * \li GSGoal::SetCompleted
  * \li GSGoal::SetProgress
@@ -27,11 +29,29 @@
  * \li GSStation::HasCargoRating
  * \li GSStoryPage
  * \li GSTile::GetTerrainType
+ * \li GSTown::FoundTown
+ * \li GSTown::GetFundBuildingsDuration
+ * \li GSTown::SetName
+ * \li GSTown::TOWN_GROWTH_NONE
+ * \li GSTown::TOWN_GROWTH_NORMAL
  *
  * Other changes:
  * \li GSGoal::New can now create up to 64000 concurrent goals. The old limit was 256 goals.
  * \li GSStation::GetCargoRating does return -1 for cargo-station combinations that
  *     do not have a rating yet instead of returning 69.
+ *
+ * \b 1.3.3
+ *
+ * No changes
+ *
+ * \b 1.3.2
+ *
+ * No changes
+ *
+ * \b 1.3.1
+ *
+ * API additions:
+ * \li GSTile::GetTerrainType
  *
  * \b 1.3.0
  *
