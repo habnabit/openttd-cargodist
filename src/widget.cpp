@@ -147,7 +147,9 @@ void ScrollbarClickHandler(Window *w, NWidgetCore *nw, int x, int y)
 		mi = nw->pos_y;
 		ma = nw->pos_y + nw->current_y;
 	}
-	ScrollbarClickPositioning(w, dynamic_cast<NWidgetScrollbar*>(nw), x, y, mi, ma);
+	NWidgetScrollbar *scrollbar = dynamic_cast<NWidgetScrollbar*>(nw);
+	assert(scrollbar != NULL);
+	ScrollbarClickPositioning(w, scrollbar, x, y, mi, ma);
 }
 
 /**
@@ -567,16 +569,18 @@ static inline void DrawButtonDropdown(const Rect &r, Colours colour, bool clicke
 {
 	int text_offset = max(0, ((int)(r.bottom - r.top + 1) - FONT_HEIGHT_NORMAL) / 2); // Offset for rendering the text vertically centered
 
+	int dd_width = NWidgetLeaf::dropdown_dimension.width;
+
 	if (_current_text_dir == TD_LTR) {
-		DrawFrameRect(r.left, r.top, r.right - 12, r.bottom, colour, clicked_button ? FR_LOWERED : FR_NONE);
-		DrawFrameRect(r.right - 11, r.top, r.right, r.bottom, colour, clicked_dropdown ? FR_LOWERED : FR_NONE);
-		DrawString(r.right - (clicked_dropdown ? 10 : 11), r.right, r.top + (clicked_dropdown ? 2 : 1), DOWNARROW, TC_BLACK, SA_HOR_CENTER);
-		if (str != STR_NULL) DrawString(r.left + WD_DROPDOWNTEXT_LEFT + clicked_button, r.right - WD_DROPDOWNTEXT_RIGHT + clicked_button, r.top + text_offset + clicked_button, str, TC_BLACK);
+		DrawFrameRect(r.left, r.top, r.right - dd_width, r.bottom, colour, clicked_button ? FR_LOWERED : FR_NONE);
+		DrawFrameRect(r.right + 1 - dd_width, r.top, r.right, r.bottom, colour, clicked_dropdown ? FR_LOWERED : FR_NONE);
+		DrawString(r.right - dd_width + (clicked_dropdown ? 2 : 1), r.right, r.top + (clicked_dropdown ? 2 : 1), DOWNARROW, TC_BLACK, SA_HOR_CENTER);
+		if (str != STR_NULL) DrawString(r.left + WD_DROPDOWNTEXT_LEFT + clicked_button, r.right - dd_width - WD_DROPDOWNTEXT_RIGHT + clicked_button, r.top + text_offset + clicked_button, str, TC_BLACK);
 	} else {
-		DrawFrameRect(r.left + 12, r.top, r.right, r.bottom, colour, clicked_button ? FR_LOWERED : FR_NONE);
-		DrawFrameRect(r.left, r.top, r.left + 11, r.bottom, colour, clicked_dropdown ? FR_LOWERED : FR_NONE);
-		DrawString(r.left + clicked_dropdown, r.left + 11, r.top + (clicked_dropdown ? 2 : 1), DOWNARROW, TC_BLACK, SA_HOR_CENTER);
-		if (str != STR_NULL) DrawString(r.left + WD_DROPDOWNTEXT_RIGHT + clicked_button, r.right - WD_DROPDOWNTEXT_LEFT + clicked_button, r.top + text_offset + clicked_button, str, TC_BLACK);
+		DrawFrameRect(r.left + dd_width, r.top, r.right, r.bottom, colour, clicked_button ? FR_LOWERED : FR_NONE);
+		DrawFrameRect(r.left, r.top, r.left + dd_width - 1, r.bottom, colour, clicked_dropdown ? FR_LOWERED : FR_NONE);
+		DrawString(r.left + (clicked_dropdown ? 2 : 1), r.left + dd_width, r.top + (clicked_dropdown ? 2 : 1), DOWNARROW, TC_BLACK, SA_HOR_CENTER);
+		if (str != STR_NULL) DrawString(r.left + dd_width + WD_DROPDOWNTEXT_LEFT + clicked_button, r.right - WD_DROPDOWNTEXT_RIGHT + clicked_button, r.top + text_offset + clicked_button, str, TC_BLACK);
 	}
 }
 
@@ -1251,12 +1255,12 @@ void NWidgetHorizontal::AssignSizePosition(SizingType sizing, uint x, uint y, ui
 	NWidgetBase *child_wid = this->head;
 	while (child_wid != NULL) {
 		uint child_width = child_wid->current_x;
-		uint child_x = x + position + (rtl ? -child_width - child_wid->padding_left : child_wid->padding_left);
+		uint child_x = x + (rtl ? position - child_width - child_wid->padding_left : position + child_wid->padding_left);
 		uint child_y = y + child_wid->padding_top;
 
 		child_wid->AssignSizePosition(sizing, child_x, child_y, child_width, child_wid->current_y, rtl);
 		uint padded_child_width = child_width + child_wid->padding_right + child_wid->padding_left;
-		position += rtl ? -padded_child_width : padded_child_width;
+		position = rtl ? position - padded_child_width : position + padded_child_width;
 
 		child_wid = child_wid->next;
 	}
@@ -1524,7 +1528,9 @@ void NWidgetMatrix::SetupSmallestSize(Window *w, bool init_array)
 	}
 
 	/* Reset the widget number. */
-	SB(dynamic_cast<NWidgetCore *>(this->head)->index, 16, 16, 0);
+	NWidgetCore *nw = dynamic_cast<NWidgetCore *>(this->head);
+	assert(nw != NULL);
+	SB(nw->index, 16, 16, 0);
 	this->head->SetupSmallestSize(w, init_array);
 
 	Dimension padding = {this->pip_pre + this->pip_post, this->pip_pre + this->pip_post};
@@ -1593,6 +1599,7 @@ NWidgetCore *NWidgetMatrix::GetWidgetFromPos(int x, int y)
 	if (sub_wid >= this->count) return NULL;
 
 	NWidgetCore *child = dynamic_cast<NWidgetCore *>(this->head);
+	assert(child != NULL);
 	child->AssignSizePosition(ST_RESIZE,
 			this->pos_x + (rtl ? this->pip_post - widget_col * this->widget_w : this->pip_pre + widget_col * this->widget_w) + base_offs_x,
 			this->pos_y + this->pip_pre + widget_row * this->widget_h + base_offs_y,
@@ -1617,6 +1624,7 @@ NWidgetCore *NWidgetMatrix::GetWidgetFromPos(int x, int y)
 
 	/* Get the appropriate offsets so we can draw the right widgets. */
 	NWidgetCore *child = dynamic_cast<NWidgetCore *>(this->head);
+	assert(child != NULL);
 	int start_x, start_y, base_offs_x, base_offs_y;
 	this->GetScrollOffsets(start_x, start_y, base_offs_x, base_offs_y);
 
@@ -2061,19 +2069,22 @@ Dimension NWidgetScrollbar::horizontal_dimension = {0, 0};
 /** Reset the cached dimensions. */
 /* static */ void NWidgetLeaf::InvalidateDimensionCache()
 {
-	shadebox_dimension.width  = shadebox_dimension.height  = 0;
-	debugbox_dimension.width  = debugbox_dimension.height  = 0;
-	stickybox_dimension.width = stickybox_dimension.height = 0;
-	resizebox_dimension.width = resizebox_dimension.height = 0;
-	closebox_dimension.width  = closebox_dimension.height  = 0;
+	shadebox_dimension.width   = shadebox_dimension.height   = 0;
+	debugbox_dimension.width   = debugbox_dimension.height   = 0;
+	defsizebox_dimension.width = defsizebox_dimension.height = 0;
+	stickybox_dimension.width  = stickybox_dimension.height  = 0;
+	resizebox_dimension.width  = resizebox_dimension.height  = 0;
+	closebox_dimension.width   = closebox_dimension.height   = 0;
+	dropdown_dimension.width   = dropdown_dimension.height   = 0;
 }
 
-Dimension NWidgetLeaf::shadebox_dimension  = {0, 0};
-Dimension NWidgetLeaf::debugbox_dimension  = {0, 0};
+Dimension NWidgetLeaf::shadebox_dimension   = {0, 0};
+Dimension NWidgetLeaf::debugbox_dimension   = {0, 0};
 Dimension NWidgetLeaf::defsizebox_dimension = {0, 0};
-Dimension NWidgetLeaf::stickybox_dimension = {0, 0};
-Dimension NWidgetLeaf::resizebox_dimension = {0, 0};
-Dimension NWidgetLeaf::closebox_dimension  = {0, 0};
+Dimension NWidgetLeaf::stickybox_dimension  = {0, 0};
+Dimension NWidgetLeaf::resizebox_dimension  = {0, 0};
+Dimension NWidgetLeaf::closebox_dimension   = {0, 0};
+Dimension NWidgetLeaf::dropdown_dimension   = {0, 0};
 
 /**
  * Nested leaf widget.
@@ -2333,8 +2344,14 @@ void NWidgetLeaf::SetupSmallestSize(Window *w, bool init_array)
 		case WWT_DROPDOWN:
 		case NWID_BUTTON_DROPDOWN:
 		case NWID_PUSHBUTTON_DROPDOWN: {
-			static const Dimension extra = {WD_DROPDOWNTEXT_LEFT + WD_DROPDOWNTEXT_RIGHT, WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM};
+			static Dimension extra = {WD_DROPDOWNTEXT_LEFT + WD_DROPDOWNTEXT_RIGHT, WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM};
 			padding = &extra;
+			if (NWidgetLeaf::dropdown_dimension.width == 0) {
+				NWidgetLeaf::dropdown_dimension = GetSpriteSize(SPR_ARROW_DOWN);
+				NWidgetLeaf::dropdown_dimension.width += WD_DROPDOWNTEXT_LEFT + WD_DROPDOWNTEXT_RIGHT;
+				NWidgetLeaf::dropdown_dimension.height += WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM;
+				extra.width = WD_DROPDOWNTEXT_LEFT + WD_DROPDOWNTEXT_RIGHT + NWidgetLeaf::dropdown_dimension.width;
+			}
 			if (this->index >= 0) w->SetStringParameters(this->index);
 			Dimension d2 = GetStringBoundingBox(this->widget_data);
 			d2.width += extra.width;
@@ -2404,6 +2421,7 @@ void NWidgetLeaf::Draw(const Window *w)
 				default: NOT_REACHED();
 			}
 			DrawImageButtons(r, WWT_PUSHIMGBTN, this->colour, clicked, sprite);
+			break;
 		}
 
 		case WWT_LABEL:
@@ -2819,6 +2837,7 @@ NWidgetContainer *MakeWindowNWidgetTree(const NWidgetPart *parts, int count, int
  */
 NWidgetBase *MakeCompanyButtonRows(int *biggest_index, int widget_first, int widget_last, int max_length, StringID button_tooltip)
 {
+	assert(max_length >= 1);
 	NWidgetVertical *vert = NULL; // Storage for all rows.
 	NWidgetHorizontal *hor = NULL; // Storage for buttons in one row.
 	int hor_length = 0;
@@ -2842,7 +2861,7 @@ NWidgetBase *MakeCompanyButtonRows(int *biggest_index, int widget_first, int wid
 
 		NWidgetBackground *panel = new NWidgetBackground(WWT_PANEL, COLOUR_GREY, widnum);
 		panel->SetMinimalSize(sprite_size.width, sprite_size.height);
-		panel->SetFill(1, 0);
+		panel->SetFill(1, 1);
 		panel->SetResize(1, 0);
 		panel->SetDataTip(0x0, button_tooltip);
 		hor->Add(panel);
@@ -2854,7 +2873,7 @@ NWidgetBase *MakeCompanyButtonRows(int *biggest_index, int widget_first, int wid
 	if (hor_length > 0 && hor_length < max_length) {
 		/* Last row is partial, add a spacer at the end to force all buttons to the left. */
 		NWidgetSpacer *spc = new NWidgetSpacer(sprite_size.width, sprite_size.height);
-		spc->SetFill(1, 0);
+		spc->SetFill(1, 1);
 		spc->SetResize(1, 0);
 		hor->Add(spc);
 	}

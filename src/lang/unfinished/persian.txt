@@ -1059,7 +1059,6 @@ STR_CONFIG_SETTING_TYPE_GAME_MENU                               :تنظیمات 
 STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :تنظیمات بازی ( در ذخیره سازی اعمال میشود و فقط در بازی فعلی تاثیر دارد)
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :تنظیمات شرکت ( در ذخیره سازی ها اعمال میشود و در بازی فعلی موثر است)
 
-STR_CONFIG_SETTING_RESTRICT_LABEL                               :{BLACK}نمایش:
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :تنظیمات پایه
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :تنظیمات پیشرفته
 STR_CONFIG_SETTING_RESTRICT_ALL                                 :تنظیمات حرفه ای/ همه تنظیمات
@@ -2333,7 +2332,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :زمین خری
 STR_ABOUT_OPENTTD                                               :{WHITE}OpenTTD در باره ی
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Original copyright {COPYRIGHT} 1995 Chris Sawyer, All rights reserved
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD ویرایش {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2013 The OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2014 The OpenTTD team
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}ذخیره ی بازی
@@ -2569,6 +2568,9 @@ STR_NEWGRF_INVALID_CARGO_ABBREV                                 :؟؟
 STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} از «بار نامعتبر»
 STR_NEWGRF_INVALID_ENGINE                                       :«مدل وسیله نقلیه نامعتبر»
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :«صنایع نامعتبر»
+
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :وسیله نقلیه نامعتبر
 
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}چک کردن برای فایل های NewGRF
@@ -3594,7 +3596,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (دیزل)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut دیزل
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (بخار)
@@ -3803,7 +3805,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :اتوبوس Ch
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :اتوبوس Shivershake
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :کشتی حمل بار Yate
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :کشتی حمل بار Bakewell
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :کشتی حمل بار Mightymover
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :کشتی حمل بار MightyMover
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :کشتی حمل بار Powernaut
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

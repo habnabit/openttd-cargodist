@@ -50,6 +50,8 @@
 #include "tunnel_map.h"
 #include "depot_map.h"
 #include "gamelog.h"
+#include "linkgraph/linkgraph.h"
+#include "linkgraph/refresh.h"
 
 #include "table/strings.h"
 
@@ -1364,7 +1366,7 @@ void VehicleEnterDepot(Vehicle *v)
 			t->wait_counter = 0;
 			t->force_proceed = TFP_NONE;
 			ClrBit(t->flags, VRF_TOGGLE_REVERSE);
-			t->ConsistChanged(true);
+			t->ConsistChanged(CCF_ARRANGE);
 			break;
 		}
 
@@ -2022,8 +2024,7 @@ void Vehicle::BeginLoading()
 						}
 					}
 				} else if (!suppress_implicit_orders &&
-						((this->orders.list == NULL && OrderList::CanAllocateItem()) ||
-						this->orders.list->GetNumOrders() < MAX_VEH_ORDER_ID) &&
+						((this->orders.list == NULL ? OrderList::CanAllocateItem() : this->orders.list->GetNumOrders() < MAX_VEH_ORDER_ID)) &&
 						Order::CanAllocateItem()) {
 					/* Insert new implicit order */
 					Order *implicit_order = new Order();
@@ -2108,7 +2109,7 @@ void Vehicle::LeaveStation()
 			 * during the stop and that refit_cap == cargo_cap for each vehicle in
 			 * the consist. */
 			this->ResetRefitCaps();
-			this->RefreshNextHopsStats();
+			LinkRefresher::Run(this);
 
 			/* if the vehicle could load here or could stop with cargo loaded set the last loading station */
 			this->last_loading_station = this->last_station_visited;
@@ -2135,6 +2136,8 @@ void Vehicle::LeaveStation()
 
 		SetBit(Train::From(this)->flags, VRF_LEAVING_STATION);
 	}
+
+	this->MarkDirty();
 }
 
 /**
@@ -2143,190 +2146,6 @@ void Vehicle::LeaveStation()
 void Vehicle::ResetRefitCaps()
 {
 	for (Vehicle *v = this; v != NULL; v = v->Next()) v->refit_cap = v->cargo_cap;
-}
-
-/**
- * Predict a vehicle's course from its current state and refresh all links it
- * will visit.
- * @param capacities Current added capacities per cargo ID in the consist.
- * @param refit_capacities Current state of capacity remaining from previous
- *        refits versus overall capacity per vehicle in the consist.
- * @param first Order that was checked first in the overall run. If this is
- *        encountered again the refreshing is considered finished.
- * @param cur Last stop where the consist could interact with cargo.
- * @param next Next order to be checked. This can be the same as \a cur, the
- *        next order will then be calculated from \a cur.
- * @param hops Number of hops already used up. If more than two times the
- *        number of orders in the list have been checked refreshing is stopped.
- * @param was_refit If the consist was refit since the last stop where it could
- *        interact with cargo.
- * @param has_cargo If the consist could leave the last stop where it could
- *        interact with cargo carrying cargo
- *        (i.e. not an "unload all" + "no loading" order).
- */
-void Vehicle::RefreshNextHopsStats(CapacitiesMap &capacities,
-			RefitList &refit_capacities, const Order *first, const Order *cur,
-			const Order *next, uint hops, bool was_refit, bool has_cargo)
-{
-	bool skip_first_inc = (cur != next);
-	while (next != NULL) {
-
-		/* If the refit cargo is CT_AUTO_REFIT, we're optimistic and assume the
-		 * cargo will stay the same. The point of this method is to avoid
-		 * deadlocks due to vehicles waiting for cargo that isn't being routed,
-		 * yet. That situation will not occur if the vehicle is actually
-		 * carrying a different cargo in the end. */
-		if ((next->IsType(OT_GOTO_DEPOT) || next->IsType(OT_GOTO_STATION)) &&
-				next->IsRefit() && !next->IsAutoRefit()) {
-			was_refit = true;
-			CargoID new_cid = next->GetRefitCargo();
-			RefitList::iterator refit_it = refit_capacities.begin();
-			for (Vehicle *v = this; v != NULL; v = v->Next()) {
-				const Engine *e = Engine::Get(v->engine_type);
-				if (!HasBit(e->info.refit_mask, new_cid)) {
-					++refit_it;
-					continue;
-				}
-
-				/* Back up the vehicle's cargo type */
-				CargoID temp_cid = v->cargo_type;
-				byte temp_subtype = v->cargo_subtype;
-				v->cargo_type = new_cid;
-				v->cargo_subtype = GetBestFittingSubType(v, v, new_cid);
-
-				uint16 mail_capacity = 0;
-				uint amount = e->DetermineCapacity(v, &mail_capacity);
-
-				/* Restore the original cargo type */
-				v->cargo_type = temp_cid;
-				v->cargo_subtype = temp_subtype;
-
-				/* Skip on next refit. */
-				if (new_cid != refit_it->cargo && refit_it->remaining > 0) {
-					capacities[refit_it->cargo] -= refit_it->remaining;
-					refit_it->remaining = 0;
-				} else if (amount < refit_it->remaining) {
-					capacities[refit_it->cargo] -= refit_it->remaining - amount;
-					refit_it->remaining = amount;
-				}
-				refit_it->capacity = amount;
-				refit_it->cargo = new_cid;
-
-				++refit_it;
-
-				/* Special case for aircraft with mail. */
-				if (v->type == VEH_AIRCRAFT) {
-					if (mail_capacity < refit_it->remaining) {
-						capacities[refit_it->cargo] -= refit_it->remaining - mail_capacity;
-						refit_it->remaining = mail_capacity;
-					}
-					refit_it->capacity = mail_capacity;
-					break; // aircraft have only one vehicle
-				}
-			}
-		}
-
-		/* Only reset the refit capacities if the "previous" next is a station,
-		 * meaning that either the vehicle was refit at the previous station or
-		 * it wasn't at all refit during the current hop. */
-		bool reset_refit = was_refit && (next->IsType(OT_GOTO_STATION) || next->IsType(OT_IMPLICIT));
-
-		/* Resolve conditionals by recursion. */
-		do {
-			if (next->IsType(OT_CONDITIONAL)) {
-				const Order *skip_to = this->orders.list->GetNextDecisionNode(
-						this->orders.list->GetOrderAt(next->GetConditionSkipToOrder()),
-						hops / 2);
-
-				if (skip_to != NULL) {
-					/* Make copies of capacity tracking lists. */
-					CapacitiesMap skip_capacities = capacities;
-					RefitList skip_refit_capacities = refit_capacities;
-					this->RefreshNextHopsStats(skip_capacities,
-							skip_refit_capacities, first, cur, skip_to, hops + 1,
-							was_refit, has_cargo);
-				}
-			}
-			if (skip_first_inc) {
-				/* First incrementation has to be skipped if a "real" next hop,
-				 * different from cur, was given. */
-				skip_first_inc = false;
-			} else {
-				++hops;
-				/* Reassign next with the following stop. This can be a station or a
-				 * depot. Allow the order list to be walked twice so that we can
-				 * reassign "first" below without afterwards terminating early here. */
-				next = this->orders.list->GetNextDecisionNode(
-						this->orders.list->GetNext(next), hops / 2);
-			}
-		} while (next != NULL && next->IsType(OT_CONDITIONAL));
-		if (next == NULL) break;
-
-		if (next->IsType(OT_GOTO_STATION) || next->IsType(OT_IMPLICIT)) {
-			if (reset_refit) {
-				/* Restore remaining capacities as vehicle might have been able to load now. */
-				for (RefitList::iterator it(refit_capacities.begin()); it != refit_capacities.end(); ++it) {
-					if (it->remaining == it->capacity) continue;
-					capacities[it->cargo] += it->capacity - it->remaining;
-					it->remaining = it->capacity;
-				}
-				reset_refit = false;
-				was_refit = false;
-			}
-
-			if (cur->IsType(OT_GOTO_STATION) || cur->IsType(OT_IMPLICIT)) {
-				has_cargo = cur->CanLeaveWithCargo(has_cargo);
-				if (has_cargo) {
-					StationID next_station = next->GetDestination();
-					Station *st = Station::GetIfValid(cur->GetDestination());
-					if (st != NULL && next_station != INVALID_STATION && next_station != st->index) {
-						for (CapacitiesMap::const_iterator i = capacities.begin(); i != capacities.end(); ++i) {
-							/* Refresh the link and give it a minimum capacity. */
-							if (i->second > 0) IncreaseStats(st, i->first, next_station, i->second, UINT_MAX);
-						}
-					}
-				}
-			}
-
-			/* "cur" is only assigned here if the stop is a station so that
-			 * whenever stats are to be increased two stations can be found.
-			 * However, "first" can be a depot stop. If that is the case
-			 * reassign it to make sure we end up with a station for the last
-			 * link. */
-			cur = next;
-			if (cur == first) break;
-			if (!first->IsType(OT_GOTO_STATION) && !first->IsType(OT_IMPLICIT)) {
-				first = cur;
-			}
-		}
-	}
-}
-
-/**
- * Predict a vehicle's course from its current state and refresh all links it
- * will visit.
- */
-void Vehicle::RefreshNextHopsStats()
-{
-	/* Assemble list of capacities and set last loading stations to 0. */
-	CapacitiesMap capacities;
-	RefitList refit_capacities;
-	for (Vehicle *v = this; v != NULL; v = v->Next()) {
-		refit_capacities.push_back(RefitDesc(v->cargo_type, v->cargo_cap, v->refit_cap));
-		if (v->refit_cap > 0) capacities[v->cargo_type] += v->refit_cap;
-	}
-
-	/* If orders were deleted while loading, we're done here.*/
-	if (this->orders.list == NULL) return;
-
-	const Order *first = this->GetOrder(this->cur_implicit_order_index);
-
-	/* Make sure the first order is a useful order. */
-	first = this->orders.list->GetNextDecisionNode(first, 0);
-	if (first == NULL) return;
-
-	this->RefreshNextHopsStats(capacities, refit_capacities, first, first,
-			first, 0, false, this->last_loading_station != INVALID_STATION);
 }
 
 /**

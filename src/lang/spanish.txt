@@ -294,9 +294,9 @@ STR_SORT_BY_ENGINE_ID                                           :ID Motor (orden
 STR_SORT_BY_COST                                                :Coste
 STR_SORT_BY_POWER                                               :Potencia
 STR_SORT_BY_TRACTIVE_EFFORT                                     :Fuerza de tracción
-STR_SORT_BY_INTRO_DATE                                          :Fecha Introducción
-STR_SORT_BY_RUNNING_COST                                        :Coste Operación
-STR_SORT_BY_POWER_VS_RUNNING_COST                               :Potencia/Coste Operación
+STR_SORT_BY_INTRO_DATE                                          :Fecha introducción
+STR_SORT_BY_RUNNING_COST                                        :Coste operación
+STR_SORT_BY_POWER_VS_RUNNING_COST                               :Potencia/coste operación
 STR_SORT_BY_CARGO_CAPACITY                                      :Capacidad de carga
 STR_SORT_BY_RANGE                                               :Alcance
 STR_SORT_BY_POPULATION                                          :Población
@@ -1071,7 +1071,8 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Opción de part
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Opción de empresa (se almacena en las partidas guardadas, afecta solamente a las nuevas partidas)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Opción de empresa (almacenada en la partida guardada, afecta solamente a la empresa actual)
 
-STR_CONFIG_SETTING_RESTRICT_LABEL                               :{BLACK}Mostrar:
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Categoría:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Tipo:
 STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Muestra solamente las opciones modificadas en la lista
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Opciones básicas
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Opciones avanzadas
@@ -1086,6 +1087,10 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Opciones de jue
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Opciones de juego (se almacena en las partidas guardadas, afecta solamente a la partida actual)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Opciones de empresa (se almacena en las partidas guardadas, afecta solamente a partidas nuevas)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Opciones de empresa (se almacena en las partidas guardadas, afecta solamente a la compañía actual)
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Mostrar todos los resultados por opción de configuración{}{SILVER}Categoría {BLACK}a {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Mostrar todos los resultados por opción de configuración{}{SILVER}Tipo {BLACK}a {WHITE}Todos los tipos de opción
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Mostrar todos los resultados por opción de configuración{}{SILVER}Categoría {BLACK}a {WHITE}{STRING} {BLACK}y {SILVER}Tipo {BLACK}a {WHITE}Todos los tipos de opción
+STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Ninguno -
 
 STR_CONFIG_SETTING_OFF                                          :No
 STR_CONFIG_SETTING_ON                                           :Sí
@@ -1118,7 +1123,7 @@ STR_CONFIG_SETTING_SUBSIDY_MULTIPLIER_HELPTEXT                  :Permite fijar a
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS                           :Costes de construcción: {STRING}
 STR_CONFIG_SETTING_CONSTRUCTION_COSTS_HELPTEXT                  :Fija el nivel de los costes de construcción y compra
 STR_CONFIG_SETTING_RECESSIONS                                   :Recesiones: {STRING}
-STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Si se activa, ocurrirán recesiones cada pocos años. Durante una recesión, toda la producción es significante menor (volverá a su nivel anterior una vez acabe la recesión)
+STR_CONFIG_SETTING_RECESSIONS_HELPTEXT                          :Si se activa, ocurrirán recesiones cada pocos años. Durante una recesión, toda la producción es significativamente menor (volverá a su nivel anterior una vez acabe la recesión)
 STR_CONFIG_SETTING_TRAIN_REVERSING                              :Prohibir cambio de dirección de trenes en estaciones: {STRING}
 STR_CONFIG_SETTING_TRAIN_REVERSING_HELPTEXT                     :Si se activa, los trenes no se darán la vuelta en estaciones no finales en el caso de que haya un camino más cercano si se dan la vuelta
 STR_CONFIG_SETTING_DISASTERS                                    :Desastres: {STRING}
@@ -1292,7 +1297,7 @@ STR_CONFIG_SETTING_SERVICEATHELIPAD_HELPTEXT                    :Dar servicio a 
 STR_CONFIG_SETTING_LINK_TERRAFORM_TOOLBAR                       :Une la barra de terreno a la barra de construcción: {STRING}
 STR_CONFIG_SETTING_LINK_TERRAFORM_TOOLBAR_HELPTEXT              :Cuando se abre una barra de herramientas de construcción, se abre también la barra de terraformación
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR                         :Color de terreno usado en el mapa: {STRING}
-STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_HELPTEXT                :Color que usar para el terreno en el mapa
+STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_HELPTEXT                :Color a usar para el terreno en el mapa
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_GREEN                   :Verde
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_DARK_GREEN              :Verde oscuro
 STR_CONFIG_SETTING_SMALLMAP_LAND_COLOUR_VIOLET                  :Violeta
@@ -1340,8 +1345,8 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Paleta por defecto a asumir para NewGRF que no especifiquen una paleta: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Paleta a usar por defecto para NewGRFs que no especifican la paleta que necesitan
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Paleta DOS
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Paleta Windows
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Paleta por defecto (D)
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Paleta antigua (W)
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Pausar automáticamente al comenzar un juego nuevo: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Si se activa, el juego se pausará automáticamente al comenzar nuevas partidas para permitir revisar el mapa
@@ -1411,7 +1416,7 @@ STR_CONFIG_SETTING_AI_BUILDS_SHIPS                              :Desactivar barc
 STR_CONFIG_SETTING_AI_BUILDS_SHIPS_HELPTEXT                     :Activar esta opción deshabilita la construcción de barcos para IAs
 
 STR_CONFIG_SETTING_AI_PROFILE                                   :Perfil por defecto: {STRING}
-STR_CONFIG_SETTING_AI_PROFILE_HELPTEXT                          :Permite decidir el perfil a emplear apra IAs aleatorias o para los valores iniciales al añadir una nueva IA o un script de juego
+STR_CONFIG_SETTING_AI_PROFILE_HELPTEXT                          :Permite decidir el perfil a emplear para IAs aleatorias o para los valores iniciales al añadir una nueva IA o un script de juego
 STR_CONFIG_SETTING_AI_PROFILE_EASY                              :Fácil
 STR_CONFIG_SETTING_AI_PROFILE_MEDIUM                            :Intermedio
 STR_CONFIG_SETTING_AI_PROFILE_HARD                              :Difícil
@@ -1481,7 +1486,7 @@ STR_CONFIG_SETTING_STARTING_YEAR                                :Fecha de inicio
 STR_CONFIG_SETTING_SMOOTH_ECONOMY                               :Activar economía suave (cambios más pequeños): {STRING}
 STR_CONFIG_SETTING_SMOOTH_ECONOMY_HELPTEXT                      :Si se activa, se producirán cambios de producción en las industrias más frecuentemente y en pasos menores. Si se usa un NewGRF para proveer industrias, esta opción generalmente no tiene efecto
 STR_CONFIG_SETTING_ALLOW_SHARES                                 :Permitir comprar acciones de otras empresas: {STRING}
-STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Cuando se activa, permite comprar y vender acciones de empresas. Las acciones de una empresa solamente estarán disponibles cuando la empresa una edad determinada
+STR_CONFIG_SETTING_ALLOW_SHARES_HELPTEXT                        :Cuando se activa, permite comprar y vender acciones de empresas. Las acciones de una empresa solamente estarán disponibles cuando la empresa cumpla una edad determinada
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE                         :Porcentaje del beneficio total a pagar en transferencias: {STRING}
 STR_CONFIG_SETTING_FEEDER_PAYMENT_SHARE_HELPTEXT                :Porcentaje de los beneficios dados a los transportes intermedios en sistemas de transferencias, dando un mayor control sobre el beneficio de cada vehículo
 STR_CONFIG_SETTING_DRAG_SIGNALS_DENSITY                         :Al arrastrar, colocar señales cada: {STRING}
@@ -1558,7 +1563,7 @@ STR_CONFIG_SETTING_TOWN_GROWTH_SLOW                             :Lenta
 STR_CONFIG_SETTING_TOWN_GROWTH_NORMAL                           :Normal
 STR_CONFIG_SETTING_TOWN_GROWTH_FAST                             :Rápida
 STR_CONFIG_SETTING_TOWN_GROWTH_VERY_FAST                        :Muy rápida
-STR_CONFIG_SETTING_LARGER_TOWNS                                 :Proporción de pueblos que se convertirá en ciudades: {STRING}
+STR_CONFIG_SETTING_LARGER_TOWNS                                 :Proporción de pueblos que se convertirán en ciudades: {STRING}
 STR_CONFIG_SETTING_LARGER_TOWNS_HELPTEXT                        :Número de pueblos que se convertirán en ciudades. Las ciudades comienzan siendo más grandes y crecen más rápido
 STR_CONFIG_SETTING_LARGER_TOWNS_VALUE                           :1 de cada {COMMA}
 STR_CONFIG_SETTING_LARGER_TOWNS_DISABLED                        :Ninguna
@@ -2043,6 +2048,7 @@ STR_NETWORK_CLIENT                                              :Cliente
 STR_NETWORK_SPECTATORS                                          :Espectadores
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Introduce la cantidad de dinero que deseas dar
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Espectador
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}No guardar la contraseña introducida
@@ -2547,6 +2553,7 @@ STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: 
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Carga aceptada: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Límite de velocidad del ferrocarril: {LTBLUE}{VELOCITY}
+STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Límite de velocidad de carretera: {LTBLUE}{VELOCITY}
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :Rocas
@@ -2643,7 +2650,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Terreno propied
 STR_ABOUT_OPENTTD                                               :{WHITE}Acerca de OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Copyright Original {COPYRIGHT} 1995 Chris Sawyer, Todos los derechos reservados
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versión {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2013 El equipo OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2014 El equipo OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Guardar Juego
@@ -2672,7 +2679,7 @@ STR_SAVELOAD_OSKTITLE                                           :{BLACK}Introduc
 # World generation
 STR_MAPGEN_WORLD_GENERATION_CAPTION                             :{WHITE}Generación de mundo
 STR_MAPGEN_MAPSIZE                                              :{BLACK}Tamaño del mapa:
-STR_MAPGEN_MAPSIZE_TOOLTIP                                      :{BLACK}Permite seleccionar el tamaño del mapa en casillas. El numero de casillas disponible en el mapa será ligeramente inferior
+STR_MAPGEN_MAPSIZE_TOOLTIP                                      :{BLACK}Permite seleccionar el tamaño del mapa en casillas. El número de casillas disponible en el mapa será ligeramente inferior
 STR_MAPGEN_BY                                                   :{BLACK}*
 STR_MAPGEN_NUMBER_OF_TOWNS                                      :{BLACK}No. de pueblos:
 STR_MAPGEN_DATE                                                 :{BLACK}Fecha:
@@ -2876,6 +2883,7 @@ STR_NEWGRF_LIST_MISSING                                         :{RED}Ficheros q
 STR_NEWGRF_BROKEN                                               :{WHITE}Es probable que el funcionamiento del NewGRF '{0:STRING}' cause desincronizaciones o fallos
 STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}Ha cambiado el estado 'vagón con potencia' para '{1:ENGINE}' fuera de un depósito
 STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}Ha cambiado la longitud del vehículo para '{1:ENGINE}' cuando no está dentro de un depósito
+STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}Ha cambiado la capacidad del vehículo para '{1:ENGINE}' fuera de un depósito o mientras no se estaba remodelando
 STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}Tren '{VEHICLE}' perteneciente a '{COMPANY}' tiene una longitud incorrecta. Puede ser debido a problemas con los NewGRF. El juego puede fallar
 
 STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF '{STRING}' da información incorrecta
@@ -2889,6 +2897,9 @@ STR_NEWGRF_INVALID_CARGO_ABBREV                                 :??
 STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} de <carga incorrecta>
 STR_NEWGRF_INVALID_ENGINE                                       :<modelo de vehículo incorrecto>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<industria incorrecta>
+
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<vehículo inválido>
 
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Comprobando NewGRFs
@@ -3027,6 +3038,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}Anterior
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}Ir a la página anterior
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}Siguiente
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}Ir a la siguiente página
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Referencia de metas inválida
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Nombres de estación - Click sobre un nombre para centrar la vista principal en la estación. Ctrl+Click abre un punto de vista en dicha posición
@@ -3940,6 +3952,8 @@ STR_AI_SETTINGS_START_DELAY                                     :Número de día
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}Leeme del {STRING} {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}Registro de cambios del {STRING} {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}Licencia del {STRING} {STRING}
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}Unir texto
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Unir el texto de la ventana para que quepa sin tener que usar el scroll
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Ver leeme
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Registro de cambios
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Licencia
@@ -4496,7 +4510,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (Diesel)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (Vapor)
@@ -4705,7 +4719,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Ferry de Pasaje
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Ferry de Pasajeros Shivershake
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Barco de Mercancías Yate
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Barco de Mercancías Bakewell
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Barco de Mercancías Mightymover
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Barco de Mercancías MightyMover
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Barco de Mercancías Powernaut
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

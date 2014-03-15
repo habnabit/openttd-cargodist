@@ -79,7 +79,7 @@ static void GetCargoSuffix(uint cargo, CargoSuffixType cst, const Industry *ind,
 		if (callback > 0x400) {
 			ErrorUnknownCallbackResult(indspec->grf_prop.grffile->grfid, CBID_INDUSTRY_CARGO_SUFFIX, callback);
 		} else if (indspec->grf_prop.grffile->grf_version >= 8 || GB(callback, 0, 8) != 0xFF) {
-			StartTextRefStackUsage(6);
+			StartTextRefStackUsage(indspec->grf_prop.grffile, 6);
 			GetString(suffix, GetGRFStringID(indspec->grf_prop.grffile->grfid, 0xD000 + callback), suffix_last);
 			StopTextRefStackUsage();
 		}
@@ -471,7 +471,7 @@ public:
 						} else {
 							str = GetGRFStringID(indsp->grf_prop.grffile->grfid, 0xD000 + callback_res);  // No. here's the new string
 							if (str != STR_UNDEFINED) {
-								StartTextRefStackUsage(6);
+								StartTextRefStackUsage(indsp->grf_prop.grffile, 6);
 								DrawStringMultiLine(left, right, y, bottom, str, TC_YELLOW);
 								StopTextRefStackUsage();
 							}
@@ -800,7 +800,7 @@ public:
 					if (message != STR_NULL && message != STR_UNDEFINED) {
 						y += WD_PAR_VSEP_WIDE;
 
-						StartTextRefStackUsage(6);
+						StartTextRefStackUsage(ind->grf_prop.grffile, 6);
 						/* Use all the available space left from where we stand up to the
 						 * end of the window. We ALSO enlarge the window if needed, so we
 						 * can 'go' wild with the bottom of the window. */
@@ -1961,7 +1961,7 @@ struct CargoesRow {
 		assert(cargo_fld->type == CFT_CARGO && label_fld->type == CFT_EMPTY);
 		for (uint i = 0; i < cargo_fld->u.cargo.num_cargoes; i++) {
 			int col = cargo_fld->ConnectCargo(cargo_fld->u.cargo.vertical_cargoes[i], !accepting);
-			cargoes[col] = cargo_fld->u.cargo.vertical_cargoes[i];
+			if (col >= 0) cargoes[col] = cargo_fld->u.cargo.vertical_cargoes[i];
 		}
 		label_fld->MakeCargoLabel(cargoes, lengthof(cargoes), accepting);
 	}
@@ -1996,7 +1996,7 @@ struct CargoesRow {
 		} else {
 			/* Houses only display what is demanded. */
 			for (uint i = 0; i < cargo_fld->u.cargo.num_cargoes; i++) {
-				for (uint h = 0; h < HOUSE_MAX; h++) {
+				for (uint h = 0; h < NUM_HOUSES; h++) {
 					HouseSpec *hs = HouseSpec::Get(h);
 					if (!hs->enabled) continue;
 
@@ -2188,7 +2188,7 @@ struct IndustryCargoesWindow : public Window {
 		for (uint i = 0; i < length; i++) {
 			if (cargoes[i] == INVALID_CARGO) continue;
 
-			for (uint h = 0; h < HOUSE_MAX; h++) {
+			for (uint h = 0; h < NUM_HOUSES; h++) {
 				HouseSpec *hs = HouseSpec::Get(h);
 				if (!hs->enabled || !(hs->building_availability & climate_mask)) continue;
 
@@ -2590,9 +2590,9 @@ struct IndustryCargoesWindow : public Window {
 				DropDownList *lst = new DropDownList;
 				const CargoSpec *cs;
 				FOR_ALL_SORTED_STANDARD_CARGOSPECS(cs) {
-					lst->push_back(new DropDownListStringItem(cs->name, cs->Index(), false));
+					*lst->Append() = new DropDownListStringItem(cs->name, cs->Index(), false);
 				}
-				if (lst->size() == 0) {
+				if (lst->Length() == 0) {
 					delete lst;
 					break;
 				}
@@ -2607,9 +2607,9 @@ struct IndustryCargoesWindow : public Window {
 					IndustryType ind = _sorted_industry_types[i];
 					const IndustrySpec *indsp = GetIndustrySpec(ind);
 					if (!indsp->enabled) continue;
-					lst->push_back(new DropDownListStringItem(indsp->name, ind, false));
+					*lst->Append() = new DropDownListStringItem(indsp->name, ind, false);
 				}
-				if (lst->size() == 0) {
+				if (lst->Length() == 0) {
 					delete lst;
 					break;
 				}

@@ -123,7 +123,7 @@ static void InitPalette()
 static void CheckPaletteAnim()
 {
 	if (_cur_palette.count_dirty != 0) {
-		Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
+		Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 
 		switch (blitter->UsePaletteAnimation()) {
 			case Blitter::PALETTE_ANIMATION_VIDEO_BACKEND:
@@ -270,7 +270,7 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 {
 	SDL_Surface *newscreen, *icon;
 	char caption[50];
-	int bpp = BlitterFactoryBase::GetCurrentBlitter()->GetScreenDepth();
+	int bpp = BlitterFactory::GetCurrentBlitter()->GetScreenDepth();
 	bool want_hwpalette;
 
 	GetAvailableVideoMode(&w, &h);
@@ -398,7 +398,7 @@ bool VideoDriver_SDL::CreateMainSurface(uint w, uint h)
 	 * appropriate event to know this. */
 	if (_fullscreen) _cursor.in_window = true;
 
-	Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
+	Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 	blitter->PostResize();
 
 	InitPalette();
@@ -817,27 +817,34 @@ void VideoDriver_SDL::MainLoop()
 
 bool VideoDriver_SDL::ChangeResolution(int w, int h)
 {
-	if (_draw_mutex != NULL) _draw_mutex->BeginCritical();
+	if (_draw_mutex != NULL) _draw_mutex->BeginCritical(true);
 	bool ret = CreateMainSurface(w, h);
-	if (_draw_mutex != NULL) _draw_mutex->EndCritical();
+	if (_draw_mutex != NULL) _draw_mutex->EndCritical(true);
 	return ret;
 }
 
 bool VideoDriver_SDL::ToggleFullscreen(bool fullscreen)
 {
+	if (_draw_mutex != NULL) _draw_mutex->BeginCritical(true);
 	_fullscreen = fullscreen;
 	GetVideoModes(); // get the list of available video modes
-	if (_num_resolutions == 0 || !CreateMainSurface(_cur_resolution.width, _cur_resolution.height)) {
+	bool ret = _num_resolutions != 0 && CreateMainSurface(_cur_resolution.width, _cur_resolution.height);
+
+	if (!ret) {
 		/* switching resolution failed, put back full_screen to original status */
 		_fullscreen ^= true;
-		return false;
 	}
-	return true;
+
+	if (_draw_mutex != NULL) _draw_mutex->EndCritical(true);
+	return ret;
 }
 
 bool VideoDriver_SDL::AfterBlitterChange()
 {
-	return this->ChangeResolution(_screen.width, _screen.height);
+	if (_draw_mutex != NULL) _draw_mutex->BeginCritical(true);
+	bool ret = CreateMainSurface(_screen.width, _screen.height);
+	if (_draw_mutex != NULL) _draw_mutex->EndCritical(true);
+	return ret;
 }
 
 #endif /* WITH_SDL */

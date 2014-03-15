@@ -192,8 +192,8 @@ const char *GetStringPtr(StringID string)
 {
 	switch (GB(string, TAB_COUNT_OFFSET, TAB_COUNT_BITS)) {
 		case GAME_TEXT_TAB: return GetGameStringPtr(GB(string, TAB_SIZE_OFFSET, TAB_SIZE_BITS));
-		/* GetGRFStringPtr doesn't handle 0xD4xx ids, we need to convert those to 0xD0xx. */
-		case 26: return GetStringPtr(GetGRFStringID(0, 0xD000 + GB(string, TAB_SIZE_OFFSET, 10)));
+		/* 0xD0xx and 0xD4xx IDs have been converted earlier. */
+		case 26: NOT_REACHED();
 		case 28: return GetGRFStringPtr(GB(string, TAB_SIZE_OFFSET, TAB_SIZE_BITS));
 		case 29: return GetGRFStringPtr(GB(string, TAB_SIZE_OFFSET, TAB_SIZE_BITS) + 0x0800);
 		case 30: return GetGRFStringPtr(GB(string, TAB_SIZE_OFFSET, TAB_SIZE_BITS) + 0x1000);
@@ -233,18 +233,16 @@ char *GetStringWithArgs(char *buffr, StringID string, StringParameters *args, co
 
 		case 15:
 			/* Old table for custom names. This is no longer used */
-			error("Incorrect conversion of custom name string.");
+			if (!game_script) {
+				error("Incorrect conversion of custom name string.");
+			}
+			break;
 
 		case GAME_TEXT_TAB:
 			return FormatString(buffr, GetGameStringPtr(index), args, last, case_index, true);
 
 		case 26:
-			/* Include string within newgrf text (format code 81) */
-			if (HasBit(index, 10)) {
-				StringID string = GetGRFStringID(0, 0xD000 + GB(index, 0, 10));
-				return GetStringWithArgs(buffr, string, args, last, case_index);
-			}
-			break;
+			NOT_REACHED();
 
 		case 28:
 			return FormatString(buffr, GetGRFStringPtr(index), args, last, case_index);
@@ -254,9 +252,6 @@ char *GetStringWithArgs(char *buffr, StringID string, StringParameters *args, co
 
 		case 30:
 			return FormatString(buffr, GetGRFStringPtr(index + 0x1000), args, last, case_index);
-
-		case 31:
-			NOT_REACHED();
 	}
 
 	if (index >= _langtab_num[tab]) {
@@ -274,14 +269,6 @@ char *GetString(char *buffr, StringID string, const char *last)
 	_global_string_params.ClearTypeInformation();
 	_global_string_params.offset = 0;
 	return GetStringWithArgs(buffr, string, &_global_string_params, last);
-}
-
-
-char *InlineString(char *buf, StringID string)
-{
-	buf += Utf8Encode(buf, SCC_STRING_ID);
-	buf += Utf8Encode(buf, string);
-	return buf;
 }
 
 
@@ -801,7 +788,7 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 		/* We have to restore the original offset here to to read the correct values. */
 		args->offset = orig_offset;
 	}
-	WChar b;
+	WChar b = '\0';
 	uint next_substr_case_index = 0;
 	char *buf_start = buff;
 	std::stack<const char *> str_stack;
@@ -817,7 +804,7 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 		if (SCC_NEWGRF_FIRST <= b && b <= SCC_NEWGRF_LAST) {
 			/* We need to pass some stuff as it might be modified; oh boy. */
 			//todo: should argve be passed here too?
-			b = RemapNewGRFStringControlCode(b, buf_start, &buff, &str, (int64 *)args->GetDataPointer(), dry_run);
+			b = RemapNewGRFStringControlCode(b, buf_start, &buff, &str, (int64 *)args->GetDataPointer(), args->GetDataLeft(), dry_run);
 			if (b == 0) continue;
 		}
 
@@ -1017,11 +1004,6 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 				buff = strecpy(buff, _openttd_revision, last);
 				break;
 
-			case SCC_STRING_ID: // {STRINL}
-				if (game_script) break;
-				buff = GetStringWithArgs(buff, Utf8Consume(&str), args, last);
-				break;
-
 			case SCC_RAW_STRING_POINTER: { // {RAW_STRING}
 				if (game_script) break;
 				const char *str = (const char *)(size_t)args->GetInt64(SCC_RAW_STRING_POINTER);
@@ -1035,7 +1017,7 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 				/* WARNING. It's prohibited for the included string to consume any arguments.
 				 * For included strings that consume argument, you should use STRING1, STRING2 etc.
 				 * To debug stuff you can set argv to NULL and it will tell you */
-				StringParameters tmp_params(args->GetDataPointer(), args->num_param - args->offset, NULL);
+				StringParameters tmp_params(args->GetDataPointer(), args->GetDataLeft(), NULL);
 				buff = GetStringWithArgs(buff, str, &tmp_params, last, next_substr_case_index, game_script);
 				next_substr_case_index = 0;
 				break;
@@ -1052,7 +1034,7 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 				StringID str = args->GetInt32(b);
 				if (game_script && GB(str, TAB_COUNT_OFFSET, TAB_COUNT_BITS) != GAME_TEXT_TAB) break;
 				uint size = b - SCC_STRING1 + 1;
-				if (game_script && size > args->num_param - args->offset) {
+				if (game_script && size > args->GetDataLeft()) {
 					buff = strecat(buff, "(too many parameters)", last);
 				} else {
 					StringParameters sub_args(*args, size);
@@ -1489,7 +1471,7 @@ static char *FormatString(char *buff, const char *str_arg, StringParameters *arg
 
 					StringID str;
 					switch (v->type) {
-						default: NOT_REACHED();
+						default:           str = STR_INVALID_VEHICLE; break;
 						case VEH_TRAIN:    str = STR_SV_TRAIN_NAME; break;
 						case VEH_ROAD:     str = STR_SV_ROAD_VEHICLE_NAME; break;
 						case VEH_SHIP:     str = STR_SV_SHIP_NAME; break;
@@ -1763,7 +1745,12 @@ bool ReadLanguagePack(const LanguageMetadata *lang)
 
 	uint count = 0;
 	for (uint i = 0; i < TAB_COUNT; i++) {
-		uint num = lang_pack->offsets[i];
+		uint16 num = lang_pack->offsets[i];
+		if (num > TAB_SIZE) {
+			free(lang_pack);
+			return false;
+		}
+
 		_langtab_start[i] = count;
 		_langtab_num[i] = num;
 		count += num;

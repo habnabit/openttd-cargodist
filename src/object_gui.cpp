@@ -82,8 +82,8 @@ public:
 		NWidgetMatrix *matrix = this->GetWidget<NWidgetMatrix>(WID_BO_SELECT_MATRIX);
 		matrix->SetScrollbar(this->GetScrollbar(WID_BO_SELECT_SCROLL));
 
+		this->SelectOtherClass(_selected_object_class);
 		if (this->CanRestoreSelectedObject()) {
-			this->SelectOtherClass(_selected_object_class),
 			this->SelectOtherObject(_selected_object_index);
 		} else {
 			this->SelectFirstAvailableObject(true);
@@ -286,7 +286,7 @@ public:
 						} else {
 							StringID message = GetGRFStringID(spec->grf_prop.grffile->grfid, 0xD000 + callback_res);
 							if (message != STR_NULL && message != STR_UNDEFINED) {
-								StartTextRefStackUsage(6);
+								StartTextRefStackUsage(spec->grf_prop.grffile, 6);
 								/* Use all the available space left from where we stand up to the
 								 * end of the window. We ALSO enlarge the window if needed, so we
 								 * can 'go' wild with the bottom of the window. */

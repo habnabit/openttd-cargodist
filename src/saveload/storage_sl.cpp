@@ -27,7 +27,7 @@ static void Load_PSAC()
 
 	while ((index = SlIterateArray()) != -1) {
 		assert(PersistentStorage::CanAllocateItem());
-		PersistentStorage *ps = new (index) PersistentStorage(0);
+		PersistentStorage *ps = new (index) PersistentStorage(0, 0, 0);
 		SlObject(ps, _storage_desc);
 	}
 }
@@ -39,6 +39,7 @@ static void Save_PSAC()
 
 	/* Write the industries */
 	FOR_ALL_STORAGES(ps) {
+		ps->ClearChanges();
 		SlSetArrayIndex(ps->index);
 		SlObject(ps, _storage_desc);
 	}

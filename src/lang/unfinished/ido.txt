@@ -773,7 +773,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_HEADQUARTERS                 :Stabeyo di komp
 
 # About OpenTTD window
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versiono {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2013 La kruo OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2014 La kruo OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_DETAIL_CAPTION                                     :{BLACK}Ludo Detali
@@ -832,6 +832,8 @@ STR_NEWGRF_LIST_NONE                                            :Nulo
 
 # 'User removed essential NewGRFs'-placeholders for stuff without specs
 STR_NEWGRF_INVALID_CARGO_ABBREV                                 :??
+
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
 
 # NewGRF scanning window
 

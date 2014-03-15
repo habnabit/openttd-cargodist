@@ -109,7 +109,7 @@ static DropDownList *BuiltSetDropDownList(int *selected_index)
 
 	DropDownList *list = new DropDownList();
 	for (int i = 0; i < n; i++) {
-		list->push_back(new DropDownListCharStringItem(T::GetSet(i)->name, i, (_game_mode == GM_MENU) ? false : (*selected_index != i)));
+		*list->Append() = new DropDownListCharStringItem(T::GetSet(i)->name, i, (_game_mode == GM_MENU) ? false : (*selected_index != i));
 	}
 
 	return list;
@@ -187,13 +187,13 @@ struct GameOptionsWindow : Window {
 				/* Add non-custom currencies; sorted naturally */
 				for (uint i = 0; i < CURRENCY_END; items++, i++) {
 					if (i == CURRENCY_CUSTOM) continue;
-					list->push_back(new DropDownListStringItem(*items, i, HasBit(disabled, i)));
+					*list->Append() = new DropDownListStringItem(*items, i, HasBit(disabled, i));
 				}
-				list->sort(DropDownListStringItem::NatSortFunc);
+				QSortT(list->Begin(), list->Length(), DropDownListStringItem::NatSortFunc);
 
 				/* Append custom currency at the end */
-				list->push_back(new DropDownListItem(-1, false)); // separator line
-				list->push_back(new DropDownListStringItem(STR_GAME_OPTIONS_CURRENCY_CUSTOM, CURRENCY_CUSTOM, HasBit(disabled, CURRENCY_CUSTOM)));
+				*list->Append() = new DropDownListItem(-1, false); // separator line
+				*list->Append() = new DropDownListStringItem(STR_GAME_OPTIONS_CURRENCY_CUSTOM, CURRENCY_CUSTOM, HasBit(disabled, CURRENCY_CUSTOM));
 				break;
 			}
 
@@ -211,7 +211,7 @@ struct GameOptionsWindow : Window {
 				}
 
 				for (uint i = 0; *items != INVALID_STRING_ID; items++, i++) {
-					list->push_back(new DropDownListStringItem(*items, i, HasBit(disabled, i)));
+					*list->Append() = new DropDownListStringItem(*items, i, HasBit(disabled, i));
 				}
 				break;
 			}
@@ -222,25 +222,25 @@ struct GameOptionsWindow : Window {
 
 				int enabled_item = (_game_mode == GM_MENU || Town::GetNumItems() == 0) ? -1 : *selected_index;
 
-				/* Add and sort original townnames generators */
-				for (int i = 0; i < _nb_orig_names; i++) {
-					list->push_back(new DropDownListStringItem(STR_GAME_OPTIONS_TOWN_NAME_ORIGINAL_ENGLISH + i, i, enabled_item != i && enabled_item >= 0));
-				}
-				list->sort(DropDownListStringItem::NatSortFunc);
-
 				/* Add and sort newgrf townnames generators */
-				DropDownList newgrf_names;
 				for (int i = 0; i < _nb_grf_names; i++) {
 					int result = _nb_orig_names + i;
-					newgrf_names.push_back(new DropDownListStringItem(_grf_names[i], result, enabled_item != result && enabled_item >= 0));
+					*list->Append() = new DropDownListStringItem(_grf_names[i], result, enabled_item != result && enabled_item >= 0);
 				}
-				newgrf_names.sort(DropDownListStringItem::NatSortFunc);
+				QSortT(list->Begin(), list->Length(), DropDownListStringItem::NatSortFunc);
 
+				int newgrf_size = list->Length();
 				/* Insert newgrf_names at the top of the list */
-				if (newgrf_names.size() > 0) {
-					newgrf_names.push_back(new DropDownListItem(-1, false)); // separator line
-					list->splice(list->begin(), newgrf_names);
+				if (newgrf_size > 0) {
+					*list->Append() = new DropDownListItem(-1, false); // separator line
+					newgrf_size++;
 				}
+
+				/* Add and sort original townnames generators */
+				for (int i = 0; i < _nb_orig_names; i++) {
+					*list->Append() = new DropDownListStringItem(STR_GAME_OPTIONS_TOWN_NAME_ORIGINAL_ENGLISH + i, i, enabled_item != i && enabled_item >= 0);
+				}
+				QSortT(list->Begin() + newgrf_size, list->Length() - newgrf_size, DropDownListStringItem::NatSortFunc);
 				break;
 			}
 
@@ -249,7 +249,7 @@ struct GameOptionsWindow : Window {
 				*selected_index = _settings_client.gui.autosave;
 				const StringID *items = _autosave_dropdown;
 				for (uint i = 0; *items != INVALID_STRING_ID; items++, i++) {
-					list->push_back(new DropDownListStringItem(*items, i, false));
+					*list->Append() = new DropDownListStringItem(*items, i, false);
 				}
 				break;
 			}
@@ -258,9 +258,9 @@ struct GameOptionsWindow : Window {
 				list = new DropDownList();
 				for (uint i = 0; i < _languages.Length(); i++) {
 					if (&_languages[i] == _current_language) *selected_index = i;
-					list->push_back(new DropDownListStringItem(SPECSTR_LANGUAGE_START + i, i, false));
+					*list->Append() = new DropDownListStringItem(SPECSTR_LANGUAGE_START + i, i, false);
 				}
-				list->sort(DropDownListStringItem::NatSortFunc);
+				QSortT(list->Begin(), list->Length(), DropDownListStringItem::NatSortFunc);
 				break;
 			}
 
@@ -268,7 +268,7 @@ struct GameOptionsWindow : Window {
 				list = new DropDownList();
 				*selected_index = GetCurRes();
 				for (int i = 0; i < _num_resolutions; i++) {
-					list->push_back(new DropDownListStringItem(SPECSTR_RESOLUTION_START + i, i, false));
+					*list->Append() = new DropDownListStringItem(SPECSTR_RESOLUTION_START + i, i, false);
 				}
 				break;
 
@@ -276,8 +276,8 @@ struct GameOptionsWindow : Window {
 				list = new DropDownList();
 				*selected_index = _cur_screenshot_format;
 				for (uint i = 0; i < _num_screenshot_formats; i++) {
-					if (!GetScreenshotFormatSupports_32bpp(i) && BlitterFactoryBase::GetCurrentBlitter()->GetScreenDepth() == 32) continue;
-					list->push_back(new DropDownListStringItem(SPECSTR_SCREENSHOT_START + i, i, false));
+					if (!GetScreenshotFormatSupports_32bpp(i) && BlitterFactory::GetCurrentBlitter()->GetScreenDepth() == 32) continue;
+					*list->Append() = new DropDownListStringItem(SPECSTR_SCREENSHOT_START + i, i, false);
 				}
 				break;
 
@@ -392,14 +392,12 @@ struct GameOptionsWindow : Window {
 				DropDownList *list = this->BuildDropDownList(widget, &selected);
 				if (list != NULL) {
 					/* Find the biggest item for the default size. */
-					for (DropDownList::iterator it = list->begin(); it != list->end(); it++) {
-						static const Dimension extra = {WD_DROPDOWNTEXT_LEFT + WD_DROPDOWNTEXT_RIGHT, WD_DROPDOWNTEXT_TOP + WD_DROPDOWNTEXT_BOTTOM};
+					for (const DropDownListItem * const *it = list->Begin(); it != list->End(); it++) {
 						Dimension string_dim;
 						int width = (*it)->Width();
-						string_dim.width = width + extra.width;
-						string_dim.height = (*it)->Height(width) + extra.height;
+						string_dim.width = width + padding.width;
+						string_dim.height = (*it)->Height(width) + padding.height;
 						*size = maxdim(*size, string_dim);
-						delete *it;
 					}
 					delete list;
 				}
@@ -696,12 +694,15 @@ enum RestrictionMode {
 	RM_CHANGED_AGAINST_NEW,              ///< Show only settings which are different compared to the user's new game setting values.
 	RM_END,                              ///< End for iteration.
 };
+DECLARE_POSTFIX_INCREMENT(RestrictionMode)
 
 /** Filter for settings list. */
 struct SettingFilter {
 	StringFilter string;     ///< Filter string.
+	RestrictionMode min_cat; ///< Minimum category needed to display all filtered strings (#RM_BASIC, #RM_ADVANCED, or #RM_ALL).
+	bool type_hides;         ///< Whether the type hides filtered strings.
 	RestrictionMode mode;    ///< Filter based on category.
-	SettingType type;       ///< Filter based on type.
+	SettingType type;        ///< Filter based on type.
 };
 
 /** Data structure describing a single setting in a tab */
@@ -1053,8 +1054,16 @@ bool SettingEntry::UpdateFilterState(SettingFilter &filter, bool force_visible)
 
 				visible = filter.string.GetState();
 			}
-			if (filter.type != ST_ALL) visible = visible && sd->GetType() == filter.type;
-			visible = visible && this->IsVisibleByRestrictionMode(filter.mode);
+			if (visible) {
+				if (filter.type != ST_ALL && sd->GetType() != filter.type) {
+					filter.type_hides = true;
+					visible = false;
+				}
+				if (!this->IsVisibleByRestrictionMode(filter.mode)) {
+					while (filter.min_cat < RM_ALL && (filter.min_cat == filter.mode || !this->IsVisibleByRestrictionMode(filter.min_cat))) filter.min_cat++;
+					visible = false;
+				}
+			}
 			break;
 		}
 		case SEF_SUBTREE_KIND: {
@@ -1716,6 +1725,15 @@ static const StringID _game_settings_restrict_dropdown[] = {
 };
 assert_compile(lengthof(_game_settings_restrict_dropdown) == RM_END);
 
+/** Warnings about hidden search results. */
+enum WarnHiddenResult {
+	WHR_NONE,          ///< Nothing was filtering matches away.
+	WHR_CATEGORY,      ///< Category setting filtered matches away.
+	WHR_TYPE,          ///< Type setting filtered matches away.
+	WHR_CATEGORY_TYPE, ///< Both category and type settings filtered matches away.
+};
+
+/** Window to edit settings of the game. */
 struct GameSettingsWindow : Window {
 	static const int SETTINGTREE_LEFT_OFFSET   = 5; ///< Position of left edge of setting values
 	static const int SETTINGTREE_RIGHT_OFFSET  = 5; ///< Position of right edge of setting values
@@ -1733,6 +1751,8 @@ struct GameSettingsWindow : Window {
 	SettingFilter filter;              ///< Filter for the list.
 	QueryString filter_editbox;        ///< Filter editbox;
 	bool manually_changed_folding;     ///< Whether the user expanded/collapsed something manually.
+	WarnHiddenResult warn_missing;     ///< Whether and how to warn about missing search results.
+	int warn_lines;                    ///< Number of lines used for warning about missing search results.
 
 	Scrollbar *vscroll;
 
@@ -1740,9 +1760,13 @@ struct GameSettingsWindow : Window {
 	{
 		static bool first_time = true;
 
-		filter.mode = (RestrictionMode)_settings_client.gui.settings_restriction_mode;
-		filter.type = ST_ALL;
-		settings_ptr = &GetGameSettings();
+		this->warn_missing = WHR_NONE;
+		this->warn_lines = 0;
+		this->filter.mode = (RestrictionMode)_settings_client.gui.settings_restriction_mode;
+		this->filter.min_cat = RM_ALL;
+		this->filter.type = ST_ALL;
+		this->filter.type_hides = false;
+		this->settings_ptr = &GetGameSettings();
 
 		/* Build up the dynamic settings-array only once per OpenTTD session */
 		if (first_time) {
@@ -1795,6 +1819,11 @@ struct GameSettingsWindow : Window {
 				break;
 			}
 
+			case WID_GS_RESTRICT_CATEGORY:
+			case WID_GS_RESTRICT_TYPE:
+				size->width = max(GetStringBoundingBox(STR_CONFIG_SETTING_RESTRICT_CATEGORY).width, GetStringBoundingBox(STR_CONFIG_SETTING_RESTRICT_TYPE).width);
+				break;
+
 			default:
 				break;
 		}
@@ -1808,7 +1837,37 @@ struct GameSettingsWindow : Window {
 			this->valuedropdown_entry->SetButtons(0);
 			this->valuedropdown_entry = NULL;
 		}
+
+		/* Reserve the correct number of lines for the 'some search results are hidden' notice in the central settings display panel. */
+		const NWidgetBase *panel = this->GetWidget<NWidgetBase>(WID_GS_OPTIONSPANEL);
+		StringID warn_str = STR_CONFIG_SETTING_CATEGORY_HIDES - 1 + this->warn_missing;
+		int new_warn_lines;
+		if (this->warn_missing == WHR_NONE) {
+			new_warn_lines = 0;
+		} else {
+			SetDParam(0, _game_settings_restrict_dropdown[this->filter.min_cat]);
+			new_warn_lines = GetStringLineCount(warn_str, panel->current_x);
+		}
+		if (this->warn_lines != new_warn_lines) {
+			this->vscroll->SetCount(this->vscroll->GetCount() - this->warn_lines + new_warn_lines);
+			this->warn_lines = new_warn_lines;
+		}
+
 		this->DrawWidgets();
+
+		/* Draw the 'some search results are hidden' notice. */
+		if (this->warn_missing != WHR_NONE) {
+			const int left = panel->pos_x;
+			const int right = left + panel->current_x - 1;
+			const int top = panel->pos_y;
+			SetDParam(0, _game_settings_restrict_dropdown[this->filter.min_cat]);
+			if (this->warn_lines == 1) {
+				/* If the warning fits at one line, center it. */
+				DrawString(left + WD_FRAMETEXT_LEFT, right - WD_FRAMETEXT_RIGHT, top + WD_FRAMETEXT_TOP, warn_str, TC_FROMSTRING, SA_HOR_CENTER);
+			} else {
+				DrawStringMultiLine(left + WD_FRAMERECT_LEFT, right - WD_FRAMERECT_RIGHT, top + WD_FRAMERECT_TOP, INT32_MAX, warn_str);
+			}
+		}
 	}
 
 	virtual void SetStringParameters(int widget) const
@@ -1841,16 +1900,16 @@ struct GameSettingsWindow : Window {
 					 * we don't want to allow comparing with new game's settings. */
 					bool disabled = mode == RM_CHANGED_AGAINST_NEW && settings_ptr == &_settings_newgame;
 
-					list->push_back(new DropDownListStringItem(_game_settings_restrict_dropdown[mode], mode, disabled));
+					*list->Append() = new DropDownListStringItem(_game_settings_restrict_dropdown[mode], mode, disabled);
 				}
 				break;
 
 			case WID_GS_TYPE_DROPDOWN:
 				list = new DropDownList();
-				list->push_back(new DropDownListStringItem(STR_CONFIG_SETTING_TYPE_DROPDOWN_ALL, ST_ALL, false));
-				list->push_back(new DropDownListStringItem(_game_mode == GM_MENU ? STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU : STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME, ST_GAME, false));
-				list->push_back(new DropDownListStringItem(_game_mode == GM_MENU ? STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU : STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME, ST_COMPANY, false));
-				list->push_back(new DropDownListStringItem(STR_CONFIG_SETTING_TYPE_DROPDOWN_CLIENT, ST_CLIENT, false));
+				*list->Append() = new DropDownListStringItem(STR_CONFIG_SETTING_TYPE_DROPDOWN_ALL, ST_ALL, false);
+				*list->Append() = new DropDownListStringItem(_game_mode == GM_MENU ? STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU : STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME, ST_GAME, false);
+				*list->Append() = new DropDownListStringItem(_game_mode == GM_MENU ? STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU : STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME, ST_COMPANY, false);
+				*list->Append() = new DropDownListStringItem(STR_CONFIG_SETTING_TYPE_DROPDOWN_CLIENT, ST_CLIENT, false);
 				break;
 		}
 		return list;
@@ -1859,10 +1918,14 @@ struct GameSettingsWindow : Window {
 	virtual void DrawWidget(const Rect &r, int widget) const
 	{
 		switch (widget) {
-			case WID_GS_OPTIONSPANEL:
-				_settings_main_page.Draw(settings_ptr, r.left + SETTINGTREE_LEFT_OFFSET, r.right - SETTINGTREE_RIGHT_OFFSET, r.top + SETTINGTREE_TOP_OFFSET,
-						this->vscroll->GetPosition(), this->vscroll->GetPosition() + this->vscroll->GetCapacity(), this->last_clicked);
+			case WID_GS_OPTIONSPANEL: {
+				int top_pos = r.top + SETTINGTREE_TOP_OFFSET + 1 + this->warn_lines * FONT_HEIGHT_NORMAL;
+				uint last_row = this->vscroll->GetPosition() + this->vscroll->GetCapacity() - this->warn_lines;
+				int next_row = _settings_main_page.Draw(settings_ptr, r.left + SETTINGTREE_LEFT_OFFSET, r.right - SETTINGTREE_RIGHT_OFFSET, top_pos,
+						this->vscroll->GetPosition(), last_row, this->last_clicked);
+				if (next_row == 0) DrawString(r.left + SETTINGTREE_LEFT_OFFSET, r.right - SETTINGTREE_RIGHT_OFFSET, top_pos, STR_CONFIG_SETTINGS_NONE);
 				break;
+			}
 
 			case WID_GS_HELP_TEXT:
 				if (this->last_clicked != NULL) {
@@ -1937,7 +2000,8 @@ struct GameSettingsWindow : Window {
 		if (widget != WID_GS_OPTIONSPANEL) return;
 
 		uint btn = this->vscroll->GetScrolledRowFromWidget(pt.y, this, WID_GS_OPTIONSPANEL, SETTINGTREE_TOP_OFFSET);
-		if (btn == INT_MAX) return;
+		if (btn == INT_MAX || (int)btn < this->warn_lines) return;
+		btn -= this->warn_lines;
 
 		uint cur_row = 0;
 		SettingEntry *pe = _settings_main_page.FindEntry(btn, &cur_row);
@@ -2000,7 +2064,7 @@ struct GameSettingsWindow : Window {
 
 					DropDownList *list = new DropDownList();
 					for (int i = sdb->min; i <= (int)sdb->max; i++) {
-						list->push_back(new DropDownListStringItem(sdb->str_val + i - sdb->min, i, false));
+						*list->Append() = new DropDownListStringItem(sdb->str_val + i - sdb->min, i, false);
 					}
 
 					ShowDropDownListAt(this, list, value, -1, wi_rect, COLOUR_ORANGE, true);
@@ -2185,9 +2249,20 @@ struct GameSettingsWindow : Window {
 	{
 		if (!gui_scope) return;
 
+		/* Update which settings are to be visible. */
+		RestrictionMode min_level = (this->filter.mode <= RM_ALL) ? this->filter.mode : RM_BASIC;
+		this->filter.min_cat = min_level;
+		this->filter.type_hides = false;
 		_settings_main_page.UpdateFilterState(this->filter, false);
 
-		this->vscroll->SetCount(_settings_main_page.Length());
+		if (this->filter.string.IsEmpty()) {
+			this->warn_missing = WHR_NONE;
+		} else if (min_level < this->filter.min_cat) {
+			this->warn_missing = this->filter.type_hides ? WHR_CATEGORY_TYPE : WHR_CATEGORY;
+		} else {
+			this->warn_missing = this->filter.type_hides ? WHR_TYPE : WHR_NONE;
+		}
+		this->vscroll->SetCount(_settings_main_page.Length() + this->warn_lines);
 
 		if (this->last_clicked != NULL && !_settings_main_page.IsVisible(this->last_clicked)) {
 			this->SetDisplayedHelpText(NULL);
@@ -2228,11 +2303,13 @@ static const NWidgetPart _nested_settings_selection_widgets[] = {
 		NWidget(WWT_DEFSIZEBOX, COLOUR_MAUVE),
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_MAUVE),
-		NWidget(NWID_HORIZONTAL), SetPadding(WD_TEXTPANEL_TOP, 0, WD_TEXTPANEL_BOTTOM, 0),
-				SetPIP(WD_FRAMETEXT_LEFT, WD_FRAMETEXT_RIGHT, WD_FRAMETEXT_RIGHT),
-			NWidget(WWT_TEXT, COLOUR_MAUVE, WID_GS_RESTRICT_LABEL), SetDataTip(STR_CONFIG_SETTING_RESTRICT_LABEL, STR_NULL),
-			NWidget(NWID_VERTICAL), SetPIP(0, WD_PAR_VSEP_NORMAL, 0),
+		NWidget(NWID_VERTICAL), SetPIP(0, WD_PAR_VSEP_NORMAL, 0), SetPadding(WD_TEXTPANEL_TOP, 0, WD_TEXTPANEL_BOTTOM, 0),
+			NWidget(NWID_HORIZONTAL), SetPIP(WD_FRAMETEXT_LEFT, WD_FRAMETEXT_RIGHT, WD_FRAMETEXT_RIGHT),
+				NWidget(WWT_TEXT, COLOUR_MAUVE, WID_GS_RESTRICT_CATEGORY), SetDataTip(STR_CONFIG_SETTING_RESTRICT_CATEGORY, STR_NULL),
 				NWidget(WWT_DROPDOWN, COLOUR_MAUVE, WID_GS_RESTRICT_DROPDOWN), SetMinimalSize(100, 12), SetDataTip(STR_BLACK_STRING, STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT), SetFill(1, 0), SetResize(1, 0),
+			EndContainer(),
+			NWidget(NWID_HORIZONTAL), SetPIP(WD_FRAMETEXT_LEFT, WD_FRAMETEXT_RIGHT, WD_FRAMETEXT_RIGHT),
+				NWidget(WWT_TEXT, COLOUR_MAUVE, WID_GS_RESTRICT_TYPE), SetDataTip(STR_CONFIG_SETTING_RESTRICT_TYPE, STR_NULL),
 				NWidget(WWT_DROPDOWN, COLOUR_MAUVE, WID_GS_TYPE_DROPDOWN), SetMinimalSize(100, 12), SetDataTip(STR_BLACK_STRING, STR_CONFIG_SETTING_TYPE_DROPDOWN_HELPTEXT), SetFill(1, 0), SetResize(1, 0),
 			EndContainer(),
 		EndContainer(),

@@ -1265,7 +1265,8 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :žaidimo (įra�
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :kompanijos (įrašoma pradedant naują žaidimą)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :kompanijos (įrašoma kiekvieną kartą išsaugant žaidimą. Galioja tik šiuo metu aktyviai kompanijai)
 
-STR_CONFIG_SETTING_RESTRICT_LABEL                               :{BLACK}Rodyti:
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategorija:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Tipas:
 STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Rodyti tik tam tikros rūšies nuostatas
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Pagrindines nuostatas
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Sudėtingesnes nuostatas
@@ -1280,6 +1281,10 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Žaidimo (įra�
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Žaidimo (įrašoma kiekvieną kartą išsaugant žaidimą. Galioja tik aktyviam žaidimui)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Kompanijos (įrašoma pradedant naują žaidimą)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Kompanijos (įrašoma kiekvieną kartą išsaugant žaidimą. Galioja tik šiuo metu aktyviai kompanijai)
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Rodyti visus paeiškos rezultatus nustatant{}{SILVER}kategoriją{BLACK}į {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Rodyti visus paeiškos rezultatus nustatant{}{SILVER}tipą {BLACK}į {WHITE}„Visos nuostatos“
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Rodyti visus paieškos rezultatus nustatant{}{SILVER}kategoriją {BLACK}į {WHITE}{STRING} {BLACK}bei {SILVER}tipą {BLACK}į {WHITE}„Visos nuostatos“
+STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Nėra -
 
 STR_CONFIG_SETTING_OFF                                          :Ne
 STR_CONFIG_SETTING_ON                                           :Taip
@@ -1534,8 +1539,8 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Įprastinė paletė taikoma NewGRF, nenurodžius paletės: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Numatytoji spalvų paletė tiems NewGRF objektams, kurie nenurodo, kokios konkrečiai paletės jiems reikia
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :DOS paletė
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Windows paletė
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Numatytoji (D) paletė
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Pasenusi (W) paletė
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Automatinė pauzė paleidžiant naują žaidimą: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Pradėjus naują žaidimą, laiko tėkmė bus pristabdyta, taip suteikiant progą atidžiau išstudijuoti žemėlapį
@@ -2251,6 +2256,7 @@ STR_NETWORK_CLIENT                                              :Žaidėjas
 STR_NETWORK_SPECTATORS                                          :Stebėtojai
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Įveskite kiekį pinigų, kurį norite gauti
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Stebėtojas
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Neišsaugotas įvestas slaptažodis
@@ -2755,6 +2761,7 @@ STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: 
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Krovinys priimtas: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Geležinkelių greičio limitas: {LTBLUE}{VELOCITY}
+STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Kelio greičio limitas: {LTBLUE}{VELOCITY}
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :Akmenys
@@ -2851,7 +2858,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Kompanijos žem
 STR_ABOUT_OPENTTD                                               :{WHITE}Apie OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Pradinės versijos teisės priklauso {COPYRIGHT} 1995 Chris Sawyer, Visos teisės saugomos
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versija {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2013 OpenTTD komanda
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2014 OpenTTD komanda
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Išsaugoti žaidimą
@@ -3084,6 +3091,7 @@ STR_NEWGRF_LIST_MISSING                                         :{RED}Trūkstamo
 STR_NEWGRF_BROKEN                                               :{WHITE}NewGRF elgesys '{0:STRING}' gali desinchronizuoti ir/arba nutraukti žaidimą
 STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}Tai pakeitė varomo vagono būseną '{1:ENGINE}' kai ji nėra depe.
 STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}Tai pakeitė transporto priemonės '{1:ENGINE}' ilgį kai ji nėra depe
+STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}Transporto priemonės '{1:ENGINE}' talpa pasikeitė jai nesant depe
 STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}Traukinys '{VEHICLE}' priklausantis '{COMPANY}' yra netinkamo ilgio. Tai tikriausiai nutiko dėl netinkamo NewGRF. Žaidimas gali būti išsinchronizuotas arba išjungtas
 
 STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF '{0:STRING}' teikia neteisingą informaciją
@@ -3097,6 +3105,9 @@ STR_NEWGRF_INVALID_CARGO_ABBREV                                 :??
 STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} vnt. <netinkamo krovinio>
 STR_NEWGRF_INVALID_ENGINE                                       :<netinkamas variklis>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<netinkama industrija>
+
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<neteisinga transporto priemonė>
 
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Tikrinami NewGRF
@@ -3235,6 +3246,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}Buvęs
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}Į ankstesnį puslapį
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}Kitas
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}Į kitą puslapį
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Klaidinga tikslo nuoroda
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Stotelių pavadinimai - paspausk ant stotelės pavadinimo, kad pamatytum ją ekrano centre. Ctrl+Paspaudimas atidaro naują langą su stotelės vaizdu
@@ -4204,6 +4216,8 @@ STR_AI_SETTINGS_START_DELAY                                     :Dienų skaičiu
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}{STRING} aprašymas {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}{STRING} pasikeitimai {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}{STRING} licencija {STRING}
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}Skaidyti tekstą
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Skaidyti tekstą taip, kad jis visas tilpų lange
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Peržiūrėti SKAITYKMANE
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Pasikeitimai
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Licencija
@@ -5019,7 +5033,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (Dyzelis)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Dyzelis
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Dyzelis
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (Garai)
@@ -5228,7 +5242,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Chugger-Chug ke
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Shivershake keleivių keltas
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Yate krovininis laivas
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Bakewell krovininis laivas
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Mightymover krovininis laivas
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :MightyMover krovininis laivas
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Powernaut krovininis laivas
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

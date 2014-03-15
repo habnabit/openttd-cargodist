@@ -1134,7 +1134,6 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Játék beáll�
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Vállalat beállítás (mentésben tárolva; csak az új játékokat befolyásolja)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Vállalat beállítás (mentésben tárolva; csak a jelenlegi vállalatot befolyásolja)
 
-STR_CONFIG_SETTING_RESTRICT_LABEL                               :{BLACK}Mutat:
 STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Leszűkíti a listát a módosított értékekkel rendelkező opciókra
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Alapbeállítások
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Haladó beállítások
@@ -1403,8 +1402,8 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Alapértelmezett paletta NewGRF-eknek ha nincs meghatározva: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Alapértelmezett paletta, melyet a NewGRF-ek használnak amennyiben nincs meghatározva, hogy melyikre van szükségük
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :DOS paletta
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Windows paletta
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Alapértelmezett (D) paletta
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Hagyományos (W) paletta
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Automatikus szünettel kezdés új játék esetén: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Bekapcsolva a játék szünettel kezdődik, időt hagyva a térkép közelebbi tanulmányozására
@@ -2106,6 +2105,7 @@ STR_NETWORK_CLIENT                                              :Kliens
 STR_NETWORK_SPECTATORS                                          :Megfigyelők
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Add meg a küldeni kívánt pénz mennyiségét
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Megfigyelő
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Ne mentsd el a megadott jelszót
@@ -2706,7 +2706,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Vállalat álta
 STR_ABOUT_OPENTTD                                               :{WHITE}Az OpenTTD-ről
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Eredeti copyright {COPYRIGHT} 1995 Chris Sawyer, Minden jog fenntartva
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD {REV} verzió
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2013 Az OpenTTD csapat
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2014 Az OpenTTD csapat
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Játék mentése
@@ -2953,6 +2953,9 @@ STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} of <ér
 STR_NEWGRF_INVALID_ENGINE                                       :<érvénytelen jármű modell>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<érvénytelen gazdasági épület>
 
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<érvénytelen jármű>
+
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}NewGRF-ek beolvasása
 STR_NEWGRF_SCAN_MESSAGE                                         :{BLACK}NewGRF-ek beolvasása. Mennyiségtől függően eltarthat egy ideig...
@@ -3090,6 +3093,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}Előző
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}Előző oldal
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}Következő
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}Következő oldal
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Érvénytelen cél referencia
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Állomásnevek - kattints egy névre az állomás megnézéséhez. Ctrl+kattintásra új látképet nyit az állomás pozíciójára
@@ -4003,6 +4007,8 @@ STR_AI_SETTINGS_START_DELAY                                     :Az előző MI i
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}{STRING} {STRING} readme-je
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}A(z) {STRING} {STRING} változásainak listája
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}A(z) {STRING} {STRING} licence
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}Szöveg törése
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Szöveg törése az ablakban, hogy minden kiférjen és ne kelljen görgetni
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Readme megtekintése
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Változások listája
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Licenc

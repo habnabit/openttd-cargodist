@@ -1071,7 +1071,8 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Maatskappy inst
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Maatskappy instelling (word gestoor in Spaarspeletjies; raak net nuwe speletjies)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Maatskappy instelling (word gestoor in spaarspeletjie; raak net die huidige maatskappy)
 
-STR_CONFIG_SETTING_RESTRICT_LABEL                               :{BLACK}Vertoon:
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategorie:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Tipe:
 STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Beperk die lys hier onder tot slegs veranderde verstellings
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Basiese verstellings
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Gevorderde verstellings
@@ -1086,6 +1087,10 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Spel instelling
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Spel instelling (word gestoor in spaarspeletjie; raak net die huidige speletjie)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Maatskappy instelling (word gestoor in spaarspeletjies; raak slegs nuwe speletjies)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Maatskappy instelling (word gestoor in spaarspeletjie; raak net die huidige maatskappy)
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Wys alle soekresultate deur oprigting{}{SILVER}Kategorie {BLACK}tot {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Wys alle soekresultate deur oprigting{}{SILVER}Tik {BLACK}tot {WHITE}Alle opstel tipes
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Wys alle soekresultate deur oprigting{}{SILVER}Kategorie {BLACK}tot {WHITE}{STRING} {BLACK}en {SILVER}Tik {BLACK}tot {WHITE}Alle opstel tipes
+STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Geen -
 
 STR_CONFIG_SETTING_OFF                                          :Af
 STR_CONFIG_SETTING_ON                                           :Aan
@@ -1340,8 +1345,8 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Standaard palet word aangeneem vir NewGRFs geen palet gespesifiseer: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Verstek kleurskema om te gebruik vir NewGRFs wat nie spesifeer watter kleurskema benodig word nie
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :DOS palet
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Windows palet
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Verstek (D) kleur skakering
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Tradisionele (W) kleur skakering
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Outomaties pouse wanneer om te begin 'n nuwe speletjie: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :As hierdie opsie geaktiveer is, sal die spel gepousseer wees wanneer die spel begin.
@@ -2043,6 +2048,7 @@ STR_NETWORK_CLIENT                                              :Klient
 STR_NETWORK_SPECTATORS                                          :Aanskouers
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Sleutel die bedrag geld in wat u wil gee
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Toeskouer
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Moenie die ingesleutelde wagwoord bewaar nie
@@ -2547,6 +2553,7 @@ STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NuweGRF:
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Vrag aangeneem: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Spoorlyn spoed limiet: {LTBLUE}{VELOCITY}
+STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Pad spoedgrens: {LTBLUE}{VELOCITY}
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :Rotse
@@ -2643,7 +2650,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Maatskappy-besi
 STR_ABOUT_OPENTTD                                               :{WHITE}Oor OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Oorspronklike kopiereg {COPYRIGHT} 1995 Chris Sawyer, Alle regte voorbehou
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD uitgawe {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2013 Die OpenTTD span
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2014 Die OpenTTD span
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Spaar Spel
@@ -2876,6 +2883,7 @@ STR_NEWGRF_LIST_MISSING                                         :{RED}Vermiste l
 STR_NEWGRF_BROKEN                                               :{WHITE}Die gedrag van NewGRF '{0:STRING}' kan moontlik sinkroniesasie probleme of program ongelukke veroorsaak
 STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}Dit het die aangedrewe-wa staat vir '{1:ENGINE}' wanneer nie in 'n depot verander
 STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}Het lengte van voertuig verander '{1:ENGINE}' wanneer dit nie in 'n diensstasie is nie
+STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}Dit verander voertuig kapasiteit vir '{1:ENGINE}' wanneer nie binne 'n diensstasie is nie of herstelwerk word gedoen
 STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}Trein '{VEHICLE}' wat aan '{COMPANY}' behoort se lengte is ongeldig. Dit is waarskynlik veroorsaak deur 'n NewGRF. Spel kan verongeluk of sinchronisasie verloor
 
 STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF '{0:STRING}' verskaf foutiewe inligting.
@@ -2889,6 +2897,9 @@ STR_NEWGRF_INVALID_CARGO_ABBREV                                 :??
 STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} van <ongeldige vrag>
 STR_NEWGRF_INVALID_ENGINE                                       :<ongeldige voertuig model>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<ongeldige industrie>
+
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<ongeldige voertuig>
 
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Skandeer NewGRFs
@@ -3027,6 +3038,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}Vorige
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}Vorige bladsy
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}Volgende
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}Volgende bladsy
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Ongeldige doelwit verwysing
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Stasiename - klik op 'n naam om skerm na stasie te skuif. Ctrl+klik maak 'n nuwe venster vir die stastie oop
@@ -3940,6 +3952,8 @@ STR_AI_SETTINGS_START_DELAY                                     :Aantal Dae om d
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}{STRING} readme van {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}{STRING} veranderinge-log van {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}{STRING} lisensie van {STRING}
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}Teksomvouing
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Omvou die teks in die venster sodat alles pas en dit nie nodig is om te rol nie
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Besigtig readme
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Veranderinge-log
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Lisensie
@@ -4496,7 +4510,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (Diesel)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (Stoom)
@@ -4705,7 +4719,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Chugger-Chug Pa
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Shivershake Passasier Veerboot
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Yate vragskip
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Bakewell vragskip
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Mightymover vragskip
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :MightyMover vragskip
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Powernaut vragskip
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

@@ -1558,6 +1558,7 @@ public:
 	/** Widgets of the #TextfileWindow class. */
 	enum TextfileWidgets {
 		WID_TF_CAPTION                               = ::WID_TF_CAPTION,                               ///< The caption of the window.
+		WID_TF_WRAPTEXT                              = ::WID_TF_WRAPTEXT,                              ///< Whether or not to wrap the text.
 		WID_TF_BACKGROUND                            = ::WID_TF_BACKGROUND,                            ///< Panel to draw the textfile on.
 		WID_TF_VSCROLLBAR                            = ::WID_TF_VSCROLLBAR,                            ///< Vertical scrollbar to scroll through the textfile up-and-down.
 		WID_TF_HSCROLLBAR                            = ::WID_TF_HSCROLLBAR,                            ///< Horizontal scrollbar to scroll through the textfile left-to-right.
@@ -1767,6 +1768,9 @@ public:
 	enum NewGRFInspectWidgets {
 		WID_NGRFI_CAPTION                            = ::WID_NGRFI_CAPTION,                            ///< The caption bar of course.
 		WID_NGRFI_PARENT                             = ::WID_NGRFI_PARENT,                             ///< Inspect the parent.
+		WID_NGRFI_VEH_PREV                           = ::WID_NGRFI_VEH_PREV,                           ///< Go to previous vehicle in chain.
+		WID_NGRFI_VEH_NEXT                           = ::WID_NGRFI_VEH_NEXT,                           ///< Go to next vehicle in chain.
+		WID_NGRFI_VEH_CHAIN                          = ::WID_NGRFI_VEH_CHAIN,                          ///< Display for vehicle chain.
 		WID_NGRFI_MAINPANEL                          = ::WID_NGRFI_MAINPANEL,                          ///< Panel widget containing the actual data.
 		WID_NGRFI_SCROLLBAR                          = ::WID_NGRFI_SCROLLBAR,                          ///< Scrollbar.
 	};
@@ -2122,7 +2126,8 @@ public:
 		WID_GS_HELP_TEXT                             = ::WID_GS_HELP_TEXT,                             ///< Information area to display help text of the selected option.
 		WID_GS_EXPAND_ALL                            = ::WID_GS_EXPAND_ALL,                            ///< Expand all button.
 		WID_GS_COLLAPSE_ALL                          = ::WID_GS_COLLAPSE_ALL,                          ///< Collapse all button.
-		WID_GS_RESTRICT_LABEL                        = ::WID_GS_RESTRICT_LABEL,                        ///< Label upfront to drop down box to restrict the list of settings to show
+		WID_GS_RESTRICT_CATEGORY                     = ::WID_GS_RESTRICT_CATEGORY,                     ///< Label upfront to the category drop-down box to restrict the list of settings to show
+		WID_GS_RESTRICT_TYPE                         = ::WID_GS_RESTRICT_TYPE,                         ///< Label upfront to the type drop-down box to restrict the list of settings to show
 		WID_GS_RESTRICT_DROPDOWN                     = ::WID_GS_RESTRICT_DROPDOWN,                     ///< The drop down box to restrict the list of settings
 		WID_GS_TYPE_DROPDOWN                         = ::WID_GS_TYPE_DROPDOWN,                         ///< The drop down box to choose client/game/company/all settings
 	};

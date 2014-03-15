@@ -189,6 +189,18 @@ public:
 static GrfProcessingState _cur;
 
 
+/**
+ * Helper to check whether an image index is valid for a particular NewGRF vehicle.
+ * @param <T> The type of vehicle.
+ * @param image_index The image index to check.
+ * @return True iff the image index is valid, or 0xFD (use new graphics).
+ */
+template <VehicleType T>
+static inline bool IsValidNewGRFImageIndex(uint8 image_index)
+{
+	return image_index == 0xFD || IsValidImageIndex<T>(image_index);
+}
+
 class OTTDByteReaderSignal { };
 
 /** Class to read from a NewGRF file */
@@ -280,7 +292,7 @@ public:
 
 typedef void (*SpecialSpriteHandler)(ByteReader *buf);
 
-static const uint MAX_STATIONS = 256;
+static const uint NUM_STATIONS_PER_GRF = 255; ///< Number of StationSpecs per NewGRF; limited to 255 to allow extending Action3 with an extended byte later on.
 
 /** Temporary engine data used when loading only */
 struct GRFTempEngineData {
@@ -438,9 +450,94 @@ static GRFError *DisableGrf(StringID message = STR_NULL, GRFConfig *config = NUL
 	return config->error;
 }
 
+/**
+ * Information for mapping static StringIDs.
+ */
+struct StringIDMapping {
+	uint32 grfid;     ///< Source NewGRF.
+	StringID source;  ///< Source StringID (GRF local).
+	StringID *target; ///< Destination for mapping result.
+};
+typedef SmallVector<StringIDMapping, 16> StringIDMappingVector;
+static StringIDMappingVector _string_to_grf_mapping;
 
-typedef std::map<StringID *, uint32> StringIDToGRFIDMapping;
-static StringIDToGRFIDMapping _string_to_grf_mapping;
+/**
+ * Record a static StringID for getting translated later.
+ * @param source Source StringID (GRF local).
+ * @param target Destination for the mapping result.
+ */
+static void AddStringForMapping(StringID source, StringID *target)
+{
+	*target = STR_UNDEFINED;
+	StringIDMapping *item = _string_to_grf_mapping.Append();
+	item->grfid = _cur.grffile->grfid;
+	item->source = source;
+	item->target = target;
+}
+
+/**
+ * Perform a mapping from TTDPatch's string IDs to OpenTTD's
+ * string IDs, but only for the ones we are aware off; the rest
+ * like likely unused and will show a warning.
+ * @param str the string ID to convert
+ * @return the converted string ID
+ */
+static StringID TTDPStringIDToOTTDStringIDMapping(StringID str)
+{
+	/* StringID table for TextIDs 0x4E->0x6D */
+	static const StringID units_volume[] = {
+		STR_ITEMS,      STR_PASSENGERS, STR_TONS,       STR_BAGS,
+		STR_LITERS,     STR_ITEMS,      STR_CRATES,     STR_TONS,
+		STR_TONS,       STR_TONS,       STR_TONS,       STR_BAGS,
+		STR_TONS,       STR_TONS,       STR_TONS,       STR_BAGS,
+		STR_TONS,       STR_TONS,       STR_BAGS,       STR_LITERS,
+		STR_TONS,       STR_LITERS,     STR_TONS,       STR_ITEMS,
+		STR_BAGS,       STR_LITERS,     STR_TONS,       STR_ITEMS,
+		STR_TONS,       STR_ITEMS,      STR_LITERS,     STR_ITEMS
+	};
+
+	/* A string straight from a NewGRF; this was already translated by MapGRFStringID(). */
+	assert(!IsInsideMM(str, 0xD000, 0xD7FF));
+
+#define TEXTID_TO_STRINGID(begin, end, stringid, stringend) \
+	assert_compile(stringend - stringid == end - begin); \
+	if (str >= begin && str <= end) return str + (stringid - begin)
+
+	/* We have some changes in our cargo strings, resulting in some missing. */
+	TEXTID_TO_STRINGID(0x000E, 0x002D, STR_CARGO_PLURAL_NOTHING,                      STR_CARGO_PLURAL_FIZZY_DRINKS);
+	TEXTID_TO_STRINGID(0x002E, 0x004D, STR_CARGO_SINGULAR_NOTHING,                    STR_CARGO_SINGULAR_FIZZY_DRINK);
+	if (str >= 0x004E && str <= 0x006D) return units_volume[str - 0x004E];
+	TEXTID_TO_STRINGID(0x006E, 0x008D, STR_QUANTITY_NOTHING,                          STR_QUANTITY_FIZZY_DRINKS);
+	TEXTID_TO_STRINGID(0x008E, 0x00AD, STR_ABBREV_NOTHING,                            STR_ABBREV_FIZZY_DRINKS);
+	TEXTID_TO_STRINGID(0x00D1, 0x00E0, STR_COLOUR_DARK_BLUE,                          STR_COLOUR_WHITE);
+
+	/* Map building names according to our lang file changes. There are several
+	 * ranges of house ids, all of which need to be remapped to allow newgrfs
+	 * to use original house names. */
+	TEXTID_TO_STRINGID(0x200F, 0x201F, STR_TOWN_BUILDING_NAME_TALL_OFFICE_BLOCK_1,    STR_TOWN_BUILDING_NAME_OLD_HOUSES_1);
+	TEXTID_TO_STRINGID(0x2036, 0x2041, STR_TOWN_BUILDING_NAME_COTTAGES_1,             STR_TOWN_BUILDING_NAME_SHOPPING_MALL_1);
+	TEXTID_TO_STRINGID(0x2059, 0x205C, STR_TOWN_BUILDING_NAME_IGLOO_1,                STR_TOWN_BUILDING_NAME_PIGGY_BANK_1);
+
+	/* Same thing for industries */
+	TEXTID_TO_STRINGID(0x4802, 0x4826, STR_INDUSTRY_NAME_COAL_MINE,                   STR_INDUSTRY_NAME_SUGAR_MINE);
+	TEXTID_TO_STRINGID(0x482D, 0x482E, STR_NEWS_INDUSTRY_CONSTRUCTION,                STR_NEWS_INDUSTRY_PLANTED);
+	TEXTID_TO_STRINGID(0x4832, 0x4834, STR_NEWS_INDUSTRY_CLOSURE_GENERAL,             STR_NEWS_INDUSTRY_CLOSURE_LACK_OF_TREES);
+	TEXTID_TO_STRINGID(0x4835, 0x4838, STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_GENERAL, STR_NEWS_INDUSTRY_PRODUCTION_INCREASE_FARM);
+	TEXTID_TO_STRINGID(0x4839, 0x483A, STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_GENERAL, STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_FARM);
+
+	switch (str) {
+		case 0x4830: return STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY;
+		case 0x4831: return STR_ERROR_FOREST_CAN_ONLY_BE_PLANTED;
+		case 0x483B: return STR_ERROR_CAN_ONLY_BE_POSITIONED;
+	}
+#undef TEXTID_TO_STRINGID
+
+	if (str == STR_NULL) return STR_EMPTY;
+
+	DEBUG(grf, 0, "Unknown StringID 0x%04X remapped to STR_EMPTY. Please open a Feature Request if you need it", str);
+
+	return STR_EMPTY;
+}
 
 /**
  * Used when setting an object's property to map to the GRF's strings
@@ -1006,12 +1103,18 @@ static ChangeInfoResult RailVehicleChangeInfo(uint engine, int numinfo, int prop
 
 			case 0x12: { // Sprite ID
 				uint8 spriteid = buf->ReadByte();
+				uint8 orig_spriteid = spriteid;
 
 				/* TTD sprite IDs point to a location in a 16bit array, but we use it
 				 * as an array index, so we need it to be half the original value. */
 				if (spriteid < 0xFD) spriteid >>= 1;
 
-				rvi->image_index = spriteid;
+				if (IsValidNewGRFImageIndex<VEH_TRAIN>(spriteid)) {
+					rvi->image_index = spriteid;
+				} else {
+					grfmsg(1, "RailVehicleChangeInfo: Invalid Sprite %d specified, ignoring", orig_spriteid);
+					rvi->image_index = 0;
+				}
 				break;
 			}
 
@@ -1252,13 +1355,19 @@ static ChangeInfoResult RoadVehicleChangeInfo(uint engine, int numinfo, int prop
 
 			case 0x0E: { // Sprite ID
 				uint8 spriteid = buf->ReadByte();
+				uint8 orig_spriteid = spriteid;
 
 				/* cars have different custom id in the GRF file */
 				if (spriteid == 0xFF) spriteid = 0xFD;
 
 				if (spriteid < 0xFD) spriteid >>= 1;
 
-				rvi->image_index = spriteid;
+				if (IsValidNewGRFImageIndex<VEH_ROAD>(spriteid)) {
+					rvi->image_index = spriteid;
+				} else {
+					grfmsg(1, "RoadVehicleChangeInfo: Invalid Sprite %d specified, ignoring", orig_spriteid);
+					rvi->image_index = 0;
+				}
 				break;
 			}
 
@@ -1422,13 +1531,19 @@ static ChangeInfoResult ShipVehicleChangeInfo(uint engine, int numinfo, int prop
 		switch (prop) {
 			case 0x08: { // Sprite ID
 				uint8 spriteid = buf->ReadByte();
+				uint8 orig_spriteid = spriteid;
 
 				/* ships have different custom id in the GRF file */
 				if (spriteid == 0xFF) spriteid = 0xFD;
 
 				if (spriteid < 0xFD) spriteid >>= 1;
 
-				svi->image_index = spriteid;
+				if (IsValidNewGRFImageIndex<VEH_SHIP>(spriteid)) {
+					svi->image_index = spriteid;
+				} else {
+					grfmsg(1, "ShipVehicleChangeInfo: Invalid Sprite %d specified, ignoring", orig_spriteid);
+					svi->image_index = 0;
+				}
 				break;
 			}
 
@@ -1588,13 +1703,19 @@ static ChangeInfoResult AircraftVehicleChangeInfo(uint engine, int numinfo, int 
 		switch (prop) {
 			case 0x08: { // Sprite ID
 				uint8 spriteid = buf->ReadByte();
+				uint8 orig_spriteid = spriteid;
 
 				/* aircraft have different custom id in the GRF file */
 				if (spriteid == 0xFF) spriteid = 0xFD;
 
 				if (spriteid < 0xFD) spriteid >>= 1;
 
-				avi->image_index = spriteid;
+				if (IsValidNewGRFImageIndex<VEH_AIRCRAFT>(spriteid)) {
+					avi->image_index = spriteid;
+				} else {
+					grfmsg(1, "AircraftVehicleChangeInfo: Invalid Sprite %d specified, ignoring", orig_spriteid);
+					avi->image_index = 0;
+				}
 				break;
 			}
 
@@ -1726,13 +1847,13 @@ static ChangeInfoResult StationChangeInfo(uint stid, int numinfo, int prop, Byte
 {
 	ChangeInfoResult ret = CIR_SUCCESS;
 
-	if (stid + numinfo > MAX_STATIONS) {
-		grfmsg(1, "StationChangeInfo: Station %u is invalid, max %u, ignoring", stid + numinfo, MAX_STATIONS);
+	if (stid + numinfo > NUM_STATIONS_PER_GRF) {
+		grfmsg(1, "StationChangeInfo: Station %u is invalid, max %u, ignoring", stid + numinfo, NUM_STATIONS_PER_GRF);
 		return CIR_INVALID_ID;
 	}
 
 	/* Allocate station specs if necessary */
-	if (_cur.grffile->stations == NULL) _cur.grffile->stations = CallocT<StationSpec*>(MAX_STATIONS);
+	if (_cur.grffile->stations == NULL) _cur.grffile->stations = CallocT<StationSpec*>(NUM_STATIONS_PER_GRF);
 
 	for (int i = 0; i < numinfo; i++) {
 		StationSpec *statspec = _cur.grffile->stations[stid + i];
@@ -2183,14 +2304,14 @@ static ChangeInfoResult TownHouseChangeInfo(uint hid, int numinfo, int prop, Byt
 {
 	ChangeInfoResult ret = CIR_SUCCESS;
 
-	if (hid + numinfo > HOUSE_MAX) {
-		grfmsg(1, "TownHouseChangeInfo: Too many houses loaded (%u), max (%u). Ignoring.", hid + numinfo, HOUSE_MAX);
+	if (hid + numinfo > NUM_HOUSES_PER_GRF) {
+		grfmsg(1, "TownHouseChangeInfo: Too many houses loaded (%u), max (%u). Ignoring.", hid + numinfo, NUM_HOUSES_PER_GRF);
 		return CIR_INVALID_ID;
 	}
 
 	/* Allocate house specs if they haven't been allocated already. */
 	if (_cur.grffile->housespec == NULL) {
-		_cur.grffile->housespec = CallocT<HouseSpec*>(HOUSE_MAX);
+		_cur.grffile->housespec = CallocT<HouseSpec*>(NUM_HOUSES_PER_GRF);
 	}
 
 	for (int i = 0; i < numinfo; i++) {
@@ -2296,8 +2417,7 @@ static ChangeInfoResult TownHouseChangeInfo(uint hid, int numinfo, int prop, Byt
 				break;
 
 			case 0x12: // Building name ID
-				housespec->building_name = buf->ReadWord();
-				_string_to_grf_mapping[&housespec->building_name] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &housespec->building_name);
 				break;
 
 			case 0x13: // Building availability mask
@@ -2763,13 +2883,11 @@ static ChangeInfoResult CargoChangeInfo(uint cid, int numinfo, int prop, ByteRea
 				break;
 
 			case 0x09: // String ID for cargo type name
-				cs->name = buf->ReadWord();
-				_string_to_grf_mapping[&cs->name] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &cs->name);
 				break;
 
 			case 0x0A: // String for 1 unit of cargo
-				cs->name_single = buf->ReadWord();
-				_string_to_grf_mapping[&cs->name_single] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &cs->name_single);
 				break;
 
 			case 0x0B: // String for singular quantity of cargo (e.g. 1 tonne of coal)
@@ -2777,8 +2895,7 @@ static ChangeInfoResult CargoChangeInfo(uint cid, int numinfo, int prop, ByteRea
 				/* String for units of cargo. This is different in OpenTTD
 				 * (e.g. tonnes) to TTDPatch (e.g. {COMMA} tonne of coal).
 				 * Property 1B is used to set OpenTTD's behaviour. */
-				cs->units_volume = buf->ReadWord();
-				_string_to_grf_mapping[&cs->units_volume] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &cs->units_volume);
 				break;
 
 			case 0x0C: // String for plural quantity of cargo (e.g. 10 tonnes of coal)
@@ -2786,13 +2903,11 @@ static ChangeInfoResult CargoChangeInfo(uint cid, int numinfo, int prop, ByteRea
 				/* Strings for an amount of cargo. This is different in OpenTTD
 				 * (e.g. {WEIGHT} of coal) to TTDPatch (e.g. {COMMA} tonnes of coal).
 				 * Property 1C is used to set OpenTTD's behaviour. */
-				cs->quantifier = buf->ReadWord();
-				_string_to_grf_mapping[&cs->quantifier] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &cs->quantifier);
 				break;
 
 			case 0x0D: // String for two letter cargo abbreviation
-				cs->abbrev = buf->ReadWord();
-				_string_to_grf_mapping[&cs->abbrev] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &cs->abbrev);
 				break;
 
 			case 0x0E: // Sprite ID for cargo icon
@@ -2847,6 +2962,7 @@ static ChangeInfoResult CargoChangeInfo(uint cid, int numinfo, int prop, ByteRea
 					case 0x0B: cs->town_effect = TE_FOOD; break;
 					default:
 						grfmsg(1, "CargoChangeInfo: Unknown town growth substitute value %d, setting to none.", substitute_type);
+						/* FALL THROUGH */
 					case 0xFF: cs->town_effect = TE_NONE; break;
 				}
 				break;
@@ -2977,14 +3093,14 @@ static ChangeInfoResult IndustrytilesChangeInfo(uint indtid, int numinfo, int pr
 {
 	ChangeInfoResult ret = CIR_SUCCESS;
 
-	if (indtid + numinfo > NUM_INDUSTRYTILES) {
-		grfmsg(1, "IndustryTilesChangeInfo: Too many industry tiles loaded (%u), max (%u). Ignoring.", indtid + numinfo, NUM_INDUSTRYTILES);
+	if (indtid + numinfo > NUM_INDUSTRYTILES_PER_GRF) {
+		grfmsg(1, "IndustryTilesChangeInfo: Too many industry tiles loaded (%u), max (%u). Ignoring.", indtid + numinfo, NUM_INDUSTRYTILES_PER_GRF);
 		return CIR_INVALID_ID;
 	}
 
 	/* Allocate industry tile specs if they haven't been allocated already. */
 	if (_cur.grffile->indtspec == NULL) {
-		_cur.grffile->indtspec = CallocT<IndustryTileSpec*>(NUM_INDUSTRYTILES);
+		_cur.grffile->indtspec = CallocT<IndustryTileSpec*>(NUM_INDUSTRYTILES_PER_GRF);
 	}
 
 	for (int i = 0; i < numinfo; i++) {
@@ -3215,14 +3331,14 @@ static ChangeInfoResult IndustriesChangeInfo(uint indid, int numinfo, int prop, 
 {
 	ChangeInfoResult ret = CIR_SUCCESS;
 
-	if (indid + numinfo > NUM_INDUSTRYTYPES) {
-		grfmsg(1, "IndustriesChangeInfo: Too many industries loaded (%u), max (%u). Ignoring.", indid + numinfo, NUM_INDUSTRYTYPES);
+	if (indid + numinfo > NUM_INDUSTRYTYPES_PER_GRF) {
+		grfmsg(1, "IndustriesChangeInfo: Too many industries loaded (%u), max (%u). Ignoring.", indid + numinfo, NUM_INDUSTRYTYPES_PER_GRF);
 		return CIR_INVALID_ID;
 	}
 
 	/* Allocate industry specs if they haven't been allocated already. */
 	if (_cur.grffile->industryspec == NULL) {
-		_cur.grffile->industryspec = CallocT<IndustrySpec*>(NUM_INDUSTRYTYPES);
+		_cur.grffile->industryspec = CallocT<IndustrySpec*>(NUM_INDUSTRYTYPES_PER_GRF);
 	}
 
 	for (int i = 0; i < numinfo; i++) {
@@ -3390,18 +3506,15 @@ static ChangeInfoResult IndustriesChangeInfo(uint indid, int numinfo, int prop, 
 				break;
 
 			case 0x0C: // Industry closure message
-				indsp->closure_text = buf->ReadWord();
-				_string_to_grf_mapping[&indsp->closure_text] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &indsp->closure_text);
 				break;
 
 			case 0x0D: // Production increase message
-				indsp->production_up_text = buf->ReadWord();
-				_string_to_grf_mapping[&indsp->production_up_text] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &indsp->production_up_text);
 				break;
 
 			case 0x0E: // Production decrease message
-				indsp->production_down_text = buf->ReadWord();
-				_string_to_grf_mapping[&indsp->production_down_text] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &indsp->production_down_text);
 				break;
 
 			case 0x0F: // Fund cost multiplier
@@ -3472,8 +3585,7 @@ static ChangeInfoResult IndustriesChangeInfo(uint indid, int numinfo, int prop, 
 				break;
 
 			case 0x1B: // New industry text ID
-				indsp->new_industry_text = buf->ReadWord();
-				_string_to_grf_mapping[&indsp->new_industry_text] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &indsp->new_industry_text);
 				break;
 
 			case 0x1C: // Input cargo multipliers for the three input cargo types
@@ -3486,8 +3598,7 @@ static ChangeInfoResult IndustriesChangeInfo(uint indid, int numinfo, int prop, 
 				}
 
 			case 0x1F: // Industry name
-				indsp->name = buf->ReadWord();
-				_string_to_grf_mapping[&indsp->name] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &indsp->name);
 				break;
 
 			case 0x20: // Prospecting success chance
@@ -3505,10 +3616,15 @@ static ChangeInfoResult IndustriesChangeInfo(uint indid, int numinfo, int prop, 
 				indsp->removal_cost_multiplier = buf->ReadDWord();
 				break;
 
-			case 0x24: // name for nearby station
-				indsp->station_name = buf->ReadWord();
-				if (indsp->station_name != STR_NULL) _string_to_grf_mapping[&indsp->station_name] = _cur.grffile->grfid;
+			case 0x24: { // name for nearby station
+				uint16 str = buf->ReadWord();
+				if (str == 0) {
+					indsp->station_name = STR_NULL;
+				} else {
+					AddStringForMapping(str, &indsp->station_name);
+				}
 				break;
+			}
 
 			default:
 				ret = CIR_UNKNOWN;
@@ -3554,14 +3670,14 @@ static ChangeInfoResult AirportChangeInfo(uint airport, int numinfo, int prop, B
 {
 	ChangeInfoResult ret = CIR_SUCCESS;
 
-	if (airport + numinfo > NUM_AIRPORTS) {
-		grfmsg(1, "AirportChangeInfo: Too many airports, trying id (%u), max (%u). Ignoring.", airport + numinfo, NUM_AIRPORTS);
+	if (airport + numinfo > NUM_AIRPORTS_PER_GRF) {
+		grfmsg(1, "AirportChangeInfo: Too many airports, trying id (%u), max (%u). Ignoring.", airport + numinfo, NUM_AIRPORTS_PER_GRF);
 		return CIR_INVALID_ID;
 	}
 
 	/* Allocate industry specs if they haven't been allocated already. */
 	if (_cur.grffile->airportspec == NULL) {
-		_cur.grffile->airportspec = CallocT<AirportSpec*>(NUM_AIRPORTS);
+		_cur.grffile->airportspec = CallocT<AirportSpec*>(NUM_AIRPORTS_PER_GRF);
 	}
 
 	for (int i = 0; i < numinfo; i++) {
@@ -3701,8 +3817,7 @@ static ChangeInfoResult AirportChangeInfo(uint airport, int numinfo, int prop, B
 				break;
 
 			case 0x10:
-				as->name = buf->ReadWord();
-				_string_to_grf_mapping[&as->name] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &as->name);
 				break;
 
 			case 0x11: // Maintenance cost factor
@@ -3737,6 +3852,7 @@ static ChangeInfoResult IgnoreObjectProperty(uint prop, ByteReader *buf)
 		case 0x16:
 		case 0x17:
 			buf->ReadByte();
+			break;
 
 		case 0x09:
 		case 0x0A:
@@ -3773,14 +3889,14 @@ static ChangeInfoResult ObjectChangeInfo(uint id, int numinfo, int prop, ByteRea
 {
 	ChangeInfoResult ret = CIR_SUCCESS;
 
-	if (id + numinfo > NUM_OBJECTS) {
-		grfmsg(1, "ObjectChangeInfo: Too many objects loaded (%u), max (%u). Ignoring.", id + numinfo, NUM_OBJECTS);
+	if (id + numinfo > NUM_OBJECTS_PER_GRF) {
+		grfmsg(1, "ObjectChangeInfo: Too many objects loaded (%u), max (%u). Ignoring.", id + numinfo, NUM_OBJECTS_PER_GRF);
 		return CIR_INVALID_ID;
 	}
 
 	/* Allocate object specs if they haven't been allocated already. */
 	if (_cur.grffile->objectspec == NULL) {
-		_cur.grffile->objectspec = CallocT<ObjectSpec*>(NUM_OBJECTS);
+		_cur.grffile->objectspec = CallocT<ObjectSpec*>(NUM_OBJECTS_PER_GRF);
 	}
 
 	for (int i = 0; i < numinfo; i++) {
@@ -3811,16 +3927,13 @@ static ChangeInfoResult ObjectChangeInfo(uint id, int numinfo, int prop, ByteRea
 			}
 
 			case 0x09: { // Class name
-				StringID class_name = buf->ReadWord();
 				ObjectClass *objclass = ObjectClass::Get(spec->cls_id);
-				objclass->name = class_name;
-				_string_to_grf_mapping[&objclass->name] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &objclass->name);
 				break;
 			}
 
 			case 0x0A: // Object name
-				spec->name = buf->ReadWord();
-				_string_to_grf_mapping[&spec->name] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &spec->name);
 				break;
 
 			case 0x0B: // Climate mask
@@ -3882,6 +3995,10 @@ static ChangeInfoResult ObjectChangeInfo(uint id, int numinfo, int prop, ByteRea
 				}
 				break;
 
+			case 0x18: // Amount placed on 256^2 map on map creation
+				spec->generate_amount = buf->ReadByte();
+				break;
+
 			default:
 				ret = CIR_UNKNOWN;
 				break;
@@ -3922,33 +4039,29 @@ static ChangeInfoResult RailTypeChangeInfo(uint id, int numinfo, int prop, ByteR
 				buf->ReadDWord();
 				break;
 
-			case 0x09: // Toolbar caption of railtype (sets name as well for backwards compatibility for grf ver < 8)
-				rti->strings.toolbar_caption = buf->ReadWord();
-				_string_to_grf_mapping[&rti->strings.toolbar_caption] = _cur.grffile->grfid;
+			case 0x09: { // Toolbar caption of railtype (sets name as well for backwards compatibility for grf ver < 8)
+				uint16 str = buf->ReadWord();
+				AddStringForMapping(str, &rti->strings.toolbar_caption);
 				if (_cur.grffile->grf_version < 8) {
-					rti->strings.name = rti->strings.toolbar_caption;
-					_string_to_grf_mapping[&rti->strings.name] = _cur.grffile->grfid;
+					AddStringForMapping(str, &rti->strings.name);
 				}
 				break;
+			}
 
 			case 0x0A: // Menu text of railtype
-				rti->strings.menu_text = buf->ReadWord();
-				_string_to_grf_mapping[&rti->strings.menu_text] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &rti->strings.menu_text);
 				break;
 
 			case 0x0B: // Build window caption
-				rti->strings.build_caption = buf->ReadWord();
-				_string_to_grf_mapping[&rti->strings.build_caption] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &rti->strings.build_caption);
 				break;
 
 			case 0x0C: // Autoreplace text
-				rti->strings.replace_text = buf->ReadWord();
-				_string_to_grf_mapping[&rti->strings.replace_text] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &rti->strings.replace_text);
 				break;
 
 			case 0x0D: // New locomotive text
-				rti->strings.new_loco = buf->ReadWord();
-				_string_to_grf_mapping[&rti->strings.new_loco] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &rti->strings.new_loco);
 				break;
 
 			case 0x0E: // Compatible railtype list
@@ -3965,8 +4078,8 @@ static ChangeInfoResult RailTypeChangeInfo(uint id, int numinfo, int prop, ByteR
 					RailType rt = GetRailTypeByLabel(BSWAP32(label), false);
 					if (rt != INVALID_RAILTYPE) {
 						switch (prop) {
+							case 0x0F: SetBit(rti->powered_railtypes, rt); // Powered implies compatible.
 							case 0x0E: SetBit(rti->compatible_railtypes, rt);            break;
-							case 0x0F: SetBit(rti->powered_railtypes, rt);               break;
 							case 0x18: SetBit(rti->introduction_required_railtypes, rt); break;
 							case 0x19: SetBit(rti->introduces_railtypes, rt);            break;
 						}
@@ -4012,8 +4125,7 @@ static ChangeInfoResult RailTypeChangeInfo(uint id, int numinfo, int prop, ByteR
 				break;
 
 			case 0x1B: // Name of railtype (overridden by prop 09 for grf ver < 8)
-				rti->strings.name = buf->ReadWord();
-				_string_to_grf_mapping[&rti->strings.name] = _cur.grffile->grfid;
+				AddStringForMapping(buf->ReadWord(), &rti->strings.name);
 				break;
 
 			case 0x1C: // Maintenance cost factor
@@ -4118,14 +4230,14 @@ static ChangeInfoResult AirportTilesChangeInfo(uint airtid, int numinfo, int pro
 {
 	ChangeInfoResult ret = CIR_SUCCESS;
 
-	if (airtid + numinfo > NUM_AIRPORTTILES) {
-		grfmsg(1, "AirportTileChangeInfo: Too many airport tiles loaded (%u), max (%u). Ignoring.", airtid + numinfo, NUM_AIRPORTTILES);
+	if (airtid + numinfo > NUM_AIRPORTTILES_PER_GRF) {
+		grfmsg(1, "AirportTileChangeInfo: Too many airport tiles loaded (%u), max (%u). Ignoring.", airtid + numinfo, NUM_AIRPORTTILES_PER_GRF);
 		return CIR_INVALID_ID;
 	}
 
 	/* Allocate airport tile specs if they haven't been allocated already. */
 	if (_cur.grffile->airtspec == NULL) {
-		_cur.grffile->airtspec = CallocT<AirportTileSpec*>(NUM_AIRPORTTILES);
+		_cur.grffile->airtspec = CallocT<AirportTileSpec*>(NUM_AIRPORTTILES_PER_GRF);
 	}
 
 	for (int i = 0; i < numinfo; i++) {
@@ -6574,7 +6686,7 @@ static void ParamSet(ByteReader *buf)
 				/* Disable the read GRF if it is a static NewGRF. */
 				DisableStaticNewGRFInfluencingNonStaticNewGRFs(c);
 				src1 = 0;
-			} else if (file == NULL || (c != NULL && c->status == GCS_DISABLED)) {
+			} else if (file == NULL || c == NULL || c->status == GCS_DISABLED) {
 				src1 = 0;
 			} else if (src1 == 0xFE) {
 				src1 = c->version;
@@ -7754,7 +7866,7 @@ static void ResetCustomStations()
 	for (GRFFile **file = _grf_files.Begin(); file != end; file++) {
 		StationSpec **&stations = (*file)->stations;
 		if (stations == NULL) continue;
-		for (uint i = 0; i < MAX_STATIONS; i++) {
+		for (uint i = 0; i < NUM_STATIONS_PER_GRF; i++) {
 			if (stations[i] == NULL) continue;
 			StationSpec *statspec = stations[i];
 
@@ -7789,7 +7901,7 @@ static void ResetCustomHouses()
 	for (GRFFile **file = _grf_files.Begin(); file != end; file++) {
 		HouseSpec **&housespec = (*file)->housespec;
 		if (housespec == NULL) continue;
-		for (uint i = 0; i < HOUSE_MAX; i++) {
+		for (uint i = 0; i < NUM_HOUSES_PER_GRF; i++) {
 			free(housespec[i]);
 		}
 
@@ -7805,7 +7917,7 @@ static void ResetCustomAirports()
 	for (GRFFile **file = _grf_files.Begin(); file != end; file++) {
 		AirportSpec **aslist = (*file)->airportspec;
 		if (aslist != NULL) {
-			for (uint i = 0; i < NUM_AIRPORTS; i++) {
+			for (uint i = 0; i < NUM_AIRPORTS_PER_GRF; i++) {
 				AirportSpec *as = aslist[i];
 
 				if (as != NULL) {
@@ -7826,7 +7938,7 @@ static void ResetCustomAirports()
 
 		AirportTileSpec **&airporttilespec = (*file)->airtspec;
 		if (airporttilespec != NULL) {
-			for (uint i = 0; i < NUM_AIRPORTTILES; i++) {
+			for (uint i = 0; i < NUM_AIRPORTTILES_PER_GRF; i++) {
 				free(airporttilespec[i]);
 			}
 			free(airporttilespec);
@@ -7846,7 +7958,7 @@ static void ResetCustomIndustries()
 		/* We are verifiying both tiles and industries specs loaded from the grf file
 		 * First, let's deal with industryspec */
 		if (industryspec != NULL) {
-			for (uint i = 0; i < NUM_INDUSTRYTYPES; i++) {
+			for (uint i = 0; i < NUM_INDUSTRYTYPES_PER_GRF; i++) {
 				IndustrySpec *ind = industryspec[i];
 				if (ind == NULL) continue;
 
@@ -7866,7 +7978,7 @@ static void ResetCustomIndustries()
 		}
 
 		if (indtspec == NULL) continue;
-		for (uint i = 0; i < NUM_INDUSTRYTILES; i++) {
+		for (uint i = 0; i < NUM_INDUSTRYTILES_PER_GRF; i++) {
 			free(indtspec[i]);
 		}
 
@@ -7882,7 +7994,7 @@ static void ResetCustomObjects()
 	for (GRFFile **file = _grf_files.Begin(); file != end; file++) {
 		ObjectSpec **&objectspec = (*file)->objectspec;
 		if (objectspec == NULL) continue;
-		for (uint i = 0; i < NUM_OBJECTS; i++) {
+		for (uint i = 0; i < NUM_OBJECTS_PER_GRF; i++) {
 			free(objectspec[i]);
 		}
 
@@ -8380,7 +8492,7 @@ static void EnsureEarlyHouse(HouseZones bitmask)
 {
 	Year min_year = MAX_YEAR;
 
-	for (int i = 0; i < HOUSE_MAX; i++) {
+	for (int i = 0; i < NUM_HOUSES; i++) {
 		HouseSpec *hs = HouseSpec::Get(i);
 		if (hs == NULL || !hs->enabled) continue;
 		if ((hs->building_availability & bitmask) != bitmask) continue;
@@ -8389,7 +8501,7 @@ static void EnsureEarlyHouse(HouseZones bitmask)
 
 	if (min_year == 0) return;
 
-	for (int i = 0; i < HOUSE_MAX; i++) {
+	for (int i = 0; i < NUM_HOUSES; i++) {
 		HouseSpec *hs = HouseSpec::Get(i);
 		if (hs == NULL || !hs->enabled) continue;
 		if ((hs->building_availability & bitmask) != bitmask) continue;
@@ -8419,14 +8531,14 @@ static void FinaliseHouseArray()
 		HouseSpec **&housespec = (*file)->housespec;
 		if (housespec == NULL) continue;
 
-		for (int i = 0; i < HOUSE_MAX; i++) {
+		for (int i = 0; i < NUM_HOUSES_PER_GRF; i++) {
 			HouseSpec *hs = housespec[i];
 
 			if (hs == NULL) continue;
 
-			const HouseSpec *next1 = (i + 1 < HOUSE_MAX ? housespec[i + 1] : NULL);
-			const HouseSpec *next2 = (i + 2 < HOUSE_MAX ? housespec[i + 2] : NULL);
-			const HouseSpec *next3 = (i + 3 < HOUSE_MAX ? housespec[i + 3] : NULL);
+			const HouseSpec *next1 = (i + 1 < NUM_HOUSES_PER_GRF ? housespec[i + 1] : NULL);
+			const HouseSpec *next2 = (i + 2 < NUM_HOUSES_PER_GRF ? housespec[i + 2] : NULL);
+			const HouseSpec *next3 = (i + 3 < NUM_HOUSES_PER_GRF ? housespec[i + 3] : NULL);
 
 			if (!IsHouseSpecValid(hs, next1, next2, next3, (*file)->filename)) continue;
 
@@ -8434,11 +8546,11 @@ static void FinaliseHouseArray()
 		}
 	}
 
-	for (int i = 0; i < HOUSE_MAX; i++) {
+	for (int i = 0; i < NUM_HOUSES; i++) {
 		HouseSpec *hs = HouseSpec::Get(i);
-		const HouseSpec *next1 = (i + 1 < HOUSE_MAX ? HouseSpec::Get(i + 1) : NULL);
-		const HouseSpec *next2 = (i + 2 < HOUSE_MAX ? HouseSpec::Get(i + 2) : NULL);
-		const HouseSpec *next3 = (i + 3 < HOUSE_MAX ? HouseSpec::Get(i + 3) : NULL);
+		const HouseSpec *next1 = (i + 1 < NUM_HOUSES ? HouseSpec::Get(i + 1) : NULL);
+		const HouseSpec *next2 = (i + 2 < NUM_HOUSES ? HouseSpec::Get(i + 2) : NULL);
+		const HouseSpec *next3 = (i + 3 < NUM_HOUSES ? HouseSpec::Get(i + 3) : NULL);
 
 		/* We need to check all houses again to we are sure that multitile houses
 		 * did get consecutive IDs and none of the parts are missing. */
@@ -8482,7 +8594,7 @@ static void FinaliseIndustriesArray()
 		IndustrySpec **&industryspec = (*file)->industryspec;
 		IndustryTileSpec **&indtspec = (*file)->indtspec;
 		if (industryspec != NULL) {
-			for (int i = 0; i < NUM_INDUSTRYTYPES; i++) {
+			for (int i = 0; i < NUM_INDUSTRYTYPES_PER_GRF; i++) {
 				IndustrySpec *indsp = industryspec[i];
 
 				if (indsp != NULL && indsp->enabled) {
@@ -8519,7 +8631,7 @@ static void FinaliseIndustriesArray()
 		}
 
 		if (indtspec != NULL) {
-			for (int i = 0; i < NUM_INDUSTRYTILES; i++) {
+			for (int i = 0; i < NUM_INDUSTRYTILES_PER_GRF; i++) {
 				IndustryTileSpec *indtsp = indtspec[i];
 				if (indtsp != NULL) {
 					_industile_mngr.SetEntitySpec(indtsp);
@@ -8552,7 +8664,7 @@ static void FinaliseObjectsArray()
 	for (GRFFile **file = _grf_files.Begin(); file != end; file++) {
 		ObjectSpec **&objectspec = (*file)->objectspec;
 		if (objectspec != NULL) {
-			for (int i = 0; i < NUM_OBJECTS; i++) {
+			for (int i = 0; i < NUM_OBJECTS_PER_GRF; i++) {
 				if (objectspec[i] != NULL && objectspec[i]->grf_prop.grffile != NULL && objectspec[i]->enabled) {
 					_object_mngr.SetEntitySpec(objectspec[i]);
 				}
@@ -8572,7 +8684,7 @@ static void FinaliseAirportsArray()
 	for (GRFFile **file = _grf_files.Begin(); file != end; file++) {
 		AirportSpec **&airportspec = (*file)->airportspec;
 		if (airportspec != NULL) {
-			for (int i = 0; i < NUM_AIRPORTS; i++) {
+			for (int i = 0; i < NUM_AIRPORTS_PER_GRF; i++) {
 				if (airportspec[i] != NULL && airportspec[i]->enabled) {
 					_airport_mngr.SetEntitySpec(airportspec[i]);
 				}
@@ -8581,7 +8693,7 @@ static void FinaliseAirportsArray()
 
 		AirportTileSpec **&airporttilespec = (*file)->airtspec;
 		if (airporttilespec != NULL) {
-			for (uint i = 0; i < NUM_AIRPORTTILES; i++) {
+			for (uint i = 0; i < NUM_AIRPORTTILES_PER_GRF; i++) {
 				if (airporttilespec[i] != NULL && airporttilespec[i]->enabled) {
 					_airporttile_mngr.SetEntitySpec(airporttilespec[i]);
 				}
@@ -8984,10 +9096,10 @@ extern void InitGRFTownGeneratorNames();
 /** Finish loading NewGRFs and execute needed post-processing */
 static void AfterLoadGRFs()
 {
-	for (StringIDToGRFIDMapping::iterator it = _string_to_grf_mapping.begin(); it != _string_to_grf_mapping.end(); it++) {
-		*((*it).first) = MapGRFStringID((*it).second, *((*it).first));
+	for (StringIDMapping *it = _string_to_grf_mapping.Begin(); it != _string_to_grf_mapping.End(); it++) {
+		*it->target = MapGRFStringID(it->grfid, it->source);
 	}
-	_string_to_grf_mapping.clear();
+	_string_to_grf_mapping.Clear();
 
 	/* Free the action 6 override sprites. */
 	for (GRFLineToSpriteOverride::iterator it = _grf_line_to_action6_sprite_override.begin(); it != _grf_line_to_action6_sprite_override.end(); it++) {

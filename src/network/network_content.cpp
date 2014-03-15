@@ -404,6 +404,8 @@ static bool GunzipFile(const ContentInfo *ci)
 #if defined(WITH_ZLIB)
 	bool ret = true;
 	FILE *ftmp = fopen(GetFullFilename(ci, true), "rb");
+	if (ftmp == NULL) return false;
+
 	gzFile fin = gzdopen(fileno(ftmp), "rb");
 	FILE *fout = fopen(GetFullFilename(ci, false), "wb");
 
@@ -703,7 +705,8 @@ ClientNetworkContentSocketHandler::ClientNetworkContentSocketHandler() :
 	http_response_index(-2),
 	curFile(NULL),
 	curInfo(NULL),
-	isConnecting(false)
+	isConnecting(false),
+	lastActivity(_realtime_tick)
 {
 }
 

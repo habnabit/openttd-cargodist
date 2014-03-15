@@ -141,6 +141,9 @@
     <ClCompile Include="..\src\console_cmds.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\cpu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\crashlog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -246,6 +249,9 @@
     <ClCompile Include="..\src\linkgraph\mcf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\linkgraph\refresh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -286,9 +292,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\order_backup.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\os_timer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\pbs.cpp">
@@ -379,6 +382,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\viewport_sprite_sorter_sse4.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\waypoint.cpp">
@@ -490,6 +496,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\console_type.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\cpu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\crashlog.h">
@@ -700,6 +709,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\linkgraph\mcf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\linkgraph\refresh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\livery.h">
@@ -1143,6 +1155,9 @@
     <ClInclude Include="..\src\viewport_func.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\viewport_sprite_sorter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\viewport_type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1255,6 +1270,9 @@
       <Filter>Core Source Code</Filter>
     </ClInclude>
     <ClInclude Include="..\src\core\smallmatrix_type.hpp">
+      <Filter>Core Source Code</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\core\smallstack_type.hpp">
       <Filter>Core Source Code</Filter>
     </ClInclude>
     <ClInclude Include="..\src\core\smallvec_type.hpp">
@@ -2319,6 +2337,12 @@
     <ClInclude Include="..\src\script\api\script_story_page.hpp">
       <Filter>Script API</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\script\api\script_storypagelist.hpp">
+      <Filter>Script API</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\script\api\script_storypageelementlist.hpp">
+      <Filter>Script API</Filter>
+    </ClInclude>
     <ClInclude Include="..\src\script\api\script_subsidy.hpp">
       <Filter>Script API</Filter>
     </ClInclude>
@@ -2505,6 +2529,12 @@
     <ClCompile Include="..\src\script\api\script_story_page.cpp">
       <Filter>Script API Implementation</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\script\api\script_storypagelist.cpp">
+      <Filter>Script API Implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\script\api\script_storypageelementlist.cpp">
+      <Filter>Script API Implementation</Filter>
+    </ClCompile>
     <ClCompile Include="..\src\script\api\script_subsidy.cpp">
       <Filter>Script API Implementation</Filter>
     </ClCompile>
@@ -2556,6 +2586,12 @@
     <ClInclude Include="..\src\blitter\32bpp_anim.hpp">
       <Filter>Blitters</Filter>
     </ClInclude>
+    <ClCompile Include="..\src\blitter\32bpp_anim_sse4.cpp">
+      <Filter>Blitters</Filter>
+    </ClCompile>
+    <ClInclude Include="..\src\blitter\32bpp_anim_sse4.hpp">
+      <Filter>Blitters</Filter>
+    </ClInclude>
     <ClCompile Include="..\src\blitter\32bpp_base.cpp">
       <Filter>Blitters</Filter>
     </ClCompile>
@@ -2572,6 +2608,30 @@
       <Filter>Blitters</Filter>
     </ClCompile>
     <ClInclude Include="..\src\blitter\32bpp_simple.hpp">
+      <Filter>Blitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\blitter\32bpp_sse_func.hpp">
+      <Filter>Blitters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\blitter\32bpp_sse_type.h">
+      <Filter>Blitters</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\blitter\32bpp_sse2.cpp">
+      <Filter>Blitters</Filter>
+    </ClCompile>
+    <ClInclude Include="..\src\blitter\32bpp_sse2.hpp">
+      <Filter>Blitters</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\blitter\32bpp_sse4.cpp">
+      <Filter>Blitters</Filter>
+    </ClCompile>
+    <ClInclude Include="..\src\blitter\32bpp_sse4.hpp">
+      <Filter>Blitters</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\blitter\32bpp_ssse3.cpp">
+      <Filter>Blitters</Filter>
+    </ClCompile>
+    <ClInclude Include="..\src\blitter\32bpp_ssse3.hpp">
       <Filter>Blitters</Filter>
     </ClInclude>
     <ClCompile Include="..\src\blitter\8bpp_base.cpp">

@@ -1051,7 +1051,6 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Leikjastillinga
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Fyrirtækjastillingar (geymdar í vistunarskrám; hefur bara áhrif á nýja leiki)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Fyrirtækjastillingar (geymdar í vistunarskrám; hefur bara áhrif á núverandi fyrirtæki)
 
-STR_CONFIG_SETTING_RESTRICT_LABEL                               :{BLACK}Sýna:
 STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Takmarkar listan hér fyrir neðan við breyttar stillingar
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Grunnstillingar
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Ítarlegar stillingar
@@ -1320,8 +1319,6 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Sjálfgefið litaspjald fyrir NewGRF sem tilgreina ekki litaspjald: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Sjálfgefið litaspjald til að nota með NewGRF sem skilgreina ekki hvaða litaspjald það notar
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :DOS litaspjald
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Windows litaspjald
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Setja leik á bið þegar nýr leikur er hafinn: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Ef þessi stilling er virk mun leikurinn fara sjálfvirkt á bið þegar nýr leikur hefst. Það gefur færi á að skoða kortið betur
@@ -1962,6 +1959,7 @@ STR_NETWORK_CLIENT                                              :Notandi
 STR_NETWORK_SPECTATORS                                          :Áhorfendur
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Sláðu inn peningaupphæð sem þú vilt láta af hendi rakna
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Áhorfandi
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Ekki vista innslegið lykilorð
@@ -2555,7 +2553,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Land í eigu fy
 STR_ABOUT_OPENTTD                                               :{WHITE}Um OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Upphaflegur höfundarréttur {COPYRIGHT} 1995 Chris Sawyer, Öll réttindi áskilin
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD útgáfa {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2013 OpenTTD hópurinn
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2014 OpenTTD hópurinn
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Vista leik
@@ -2801,6 +2799,8 @@ STR_NEWGRF_INVALID_CARGO_ABBREV                                 :??
 STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} af <invalid cargo>
 STR_NEWGRF_INVALID_ENGINE                                       :<invalid vehicle model>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<invalid industry>
+
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
 
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Skanna NewGRF
@@ -4192,6 +4192,8 @@ STR_ERROR_CAN_T_CHANGE_SERVICING                                :{WHITE}Get ekki
 
 STR_ERROR_VEHICLE_IS_DESTROYED                                  :{WHITE}... ökutæki er eyðilagt
 
+STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL                          :{WHITE}Engin farartæki verða í boði
+STR_ERROR_NO_VEHICLES_AVAILABLE_AT_ALL_EXPLANATION              :{WHITE}Breyta NewGRF stillingunum þínum
 
 # Specific vehicle errors
 STR_ERROR_CAN_T_MAKE_TRAIN_PASS_SIGNAL                          :{WHITE}Get ekki látið lest fara framhjá hættumerki...
@@ -4367,7 +4369,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (Dísel)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Dísel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Dísel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (Gufu)
@@ -4576,7 +4578,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Chugger-Chug Fa
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Shivershake Farþegaferja
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Yate Farmskip
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Bakewell Farmskip
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Mightymover Farmskip
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :MightyMover Farmskip
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Powernaut Farmskip
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

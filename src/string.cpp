@@ -608,7 +608,7 @@ char *strcasestr(const char *haystack, const char *needle)
  */
 static const char *SkipGarbage(const char *str)
 {
-	while (*str != '\0' && (*str < 'A' || IsInsideMM(*str, '[', '`' + 1) || IsInsideMM(*str, '{', '~' + 1))) str++;
+	while (*str != '\0' && (*str < '0' || IsInsideMM(*str, ';', '@' + 1) || IsInsideMM(*str, '[', '`' + 1) || IsInsideMM(*str, '{', '~' + 1))) str++;
 	return str;
 }
 
@@ -752,7 +752,14 @@ public:
 				/* The ICU word iterator considers both the start and the end of a word a valid
 				 * break point, but we only want word starts. Move to the next location in
 				 * case the new position points to whitespace. */
-				while (pos != icu::BreakIterator::DONE && IsWhitespace(Utf16DecodeChar((const uint16 *)&this->utf16_str[pos]))) pos = this->word_itr->next();
+				while (pos != icu::BreakIterator::DONE &&
+						IsWhitespace(Utf16DecodeChar((const uint16 *)&this->utf16_str[pos]))) {
+					int32_t new_pos = this->word_itr->next();
+					/* Don't set it to DONE if it was valid before. Otherwise we'll return END
+					 * even though the iterator wasn't at the end of the string before. */
+					if (new_pos == icu::BreakIterator::DONE) break;
+					pos = new_pos;
+				}
 
 				this->char_itr->isBoundary(pos);
 				break;
@@ -777,7 +784,14 @@ public:
 				/* The ICU word iterator considers both the start and the end of a word a valid
 				 * break point, but we only want word starts. Move to the previous location in
 				 * case the new position points to whitespace. */
-				while (pos != icu::BreakIterator::DONE && IsWhitespace(Utf16DecodeChar((const uint16 *)&this->utf16_str[pos]))) pos = this->word_itr->previous();
+				while (pos != icu::BreakIterator::DONE &&
+						IsWhitespace(Utf16DecodeChar((const uint16 *)&this->utf16_str[pos]))) {
+					int32_t new_pos = this->word_itr->previous();
+					/* Don't set it to DONE if it was valid before. Otherwise we'll return END
+					 * even though the iterator wasn't at the start of the string before. */
+					if (new_pos == icu::BreakIterator::DONE) break;
+					pos = new_pos;
+				}
 
 				this->char_itr->isBoundary(pos);
 				break;
@@ -805,7 +819,7 @@ class DefaultStringIterator : public StringIterator
 	size_t cur_pos;     ///< Current iteration position.
 
 public:
-	DefaultStringIterator() : string(NULL)
+	DefaultStringIterator() : string(NULL), len(0), cur_pos(0)
 	{
 	}
 

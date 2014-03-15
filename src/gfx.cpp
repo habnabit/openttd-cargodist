@@ -73,7 +73,7 @@ extern uint _dirty_block_colour;
 
 void GfxScroll(int left, int top, int width, int height, int xo, int yo)
 {
-	Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
+	Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 
 	if (xo == 0 && yo == 0) return;
 
@@ -105,7 +105,7 @@ void GfxScroll(int left, int top, int width, int height, int xo, int yo)
  */
 void GfxFillRect(int left, int top, int right, int bottom, int colour, FillRectMode mode)
 {
-	Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
+	Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 	const DrawPixelInfo *dpi = _cur_dpi;
 	void *dst;
 	const int otop = top;
@@ -162,10 +162,11 @@ void GfxFillRect(int left, int top, int right, int bottom, int colour, FillRectM
  * @param screen_height Height of the screen to check clipping against.
  * @param colour Colour of the line.
  * @param width Width of the line.
+ * @param dash Length of dashes for dashed lines. 0 means solid line.
  */
-static inline void GfxDoDrawLine(void *video, int x, int y, int x2, int y2, int screen_width, int screen_height, uint8 colour, int width)
+static inline void GfxDoDrawLine(void *video, int x, int y, int x2, int y2, int screen_width, int screen_height, uint8 colour, int width, int dash = 0)
 {
-	Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
+	Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 
 	assert(width > 0);
 
@@ -174,7 +175,7 @@ static inline void GfxDoDrawLine(void *video, int x, int y, int x2, int y2, int 
 		blitter->DrawLine(video,
 				Clamp(x, 0, screen_width), y,
 				Clamp(x2, 0, screen_width), y2,
-				screen_width, screen_height, colour, width);
+				screen_width, screen_height, colour, width, dash);
 		return;
 	}
 	if (x2 == x) {
@@ -182,7 +183,7 @@ static inline void GfxDoDrawLine(void *video, int x, int y, int x2, int y2, int 
 		blitter->DrawLine(video,
 				x, Clamp(y, 0, screen_height),
 				x2, Clamp(y2, 0, screen_height),
-				screen_width, screen_height, colour, width);
+				screen_width, screen_height, colour, width, dash);
 		return;
 	}
 
@@ -212,7 +213,7 @@ static inline void GfxDoDrawLine(void *video, int x, int y, int x2, int y2, int 
 	 * of rounding errors so much additional code has to be run here that in
 	 * the general case the effect is not noticable. */
 
-	blitter->DrawLine(video, x, y, x2, y2, screen_width, screen_height, colour, width);
+	blitter->DrawLine(video, x, y, x2, y2, screen_width, screen_height, colour, width, dash);
 }
 
 /**
@@ -241,11 +242,11 @@ static inline bool GfxPreprocessLine(DrawPixelInfo *dpi, int &x, int &y, int &x2
 	return true;
 }
 
-void GfxDrawLine(int x, int y, int x2, int y2, int colour, int width)
+void GfxDrawLine(int x, int y, int x2, int y2, int colour, int width, int dash)
 {
 	DrawPixelInfo *dpi = _cur_dpi;
 	if (GfxPreprocessLine(dpi, x, y, x2, y2, width)) {
-		GfxDoDrawLine(dpi->dst_ptr, x, y, x2, y2, dpi->width, dpi->height, colour, width);
+		GfxDoDrawLine(dpi->dst_ptr, x, y, x2, y2, dpi->width, dpi->height, colour, width, dash);
 	}
 }
 
@@ -338,12 +339,12 @@ static void SetColourRemap(TextColour colour)
  * @return In case of left or center alignment the right most pixel we have drawn to.
  *         In case of right alignment the left most pixel we have drawn to.
  */
-static int DrawLayoutLine(ParagraphLayout::Line *line, int y, int left, int right, StringAlignment align, bool underline, bool truncation)
+static int DrawLayoutLine(const ParagraphLayouter::Line *line, int y, int left, int right, StringAlignment align, bool underline, bool truncation)
 {
-	if (line->countRuns() == 0) return 0;
+	if (line->CountRuns() == 0) return 0;
 
-	int w = line->getWidth();
-	int h = line->getLeading();
+	int w = line->GetWidth();
+	int h = line->GetLeading();
 
 	/*
 	 * The following is needed for truncation.
@@ -374,7 +375,7 @@ static int DrawLayoutLine(ParagraphLayout::Line *line, int y, int left, int righ
 		 * another size would be chosen it won't have truncated too little for
 		 * the truncation dots.
 		 */
-		FontCache *fc = ((const Font*)line->getVisualRun(0)->getFont())->fc;
+		FontCache *fc = ((const Font*)line->GetVisualRun(0)->GetFont())->fc;
 		GlyphID dot_glyph = fc->MapCharToGlyph('.');
 		dot_width = fc->GetGlyphWidth(dot_glyph);
 		dot_sprite = fc->GetGlyph(dot_glyph);
@@ -417,9 +418,9 @@ static int DrawLayoutLine(ParagraphLayout::Line *line, int y, int left, int righ
 			NOT_REACHED();
 	}
 
-	for (int run_index = 0; run_index < line->countRuns(); run_index++) {
-		const ParagraphLayout::VisualRun *run = line->getVisualRun(run_index);
-		const Font *f = (const Font*)run->getFont();
+	for (int run_index = 0; run_index < line->CountRuns(); run_index++) {
+		const ParagraphLayouter::VisualRun *run = line->GetVisualRun(run_index);
+		const Font *f = (const Font*)run->GetFont();
 
 		FontCache *fc = f->fc;
 		TextColour colour = f->colour;
@@ -431,15 +432,15 @@ static int DrawLayoutLine(ParagraphLayout::Line *line, int y, int left, int righ
 
 		bool draw_shadow = fc->GetDrawGlyphShadow() && colour != TC_BLACK;
 
-		for (int i = 0; i < run->getGlyphCount(); i++) {
-			GlyphID glyph = run->getGlyphs()[i];
+		for (int i = 0; i < run->GetGlyphCount(); i++) {
+			GlyphID glyph = run->GetGlyphs()[i];
 
 			/* Not a valid glyph (empty) */
 			if (glyph == 0xFFFF) continue;
 
-			int begin_x = (int)run->getPositions()[i * 2]     + left - offset_x;
-			int end_x   = (int)run->getPositions()[i * 2 + 2] + left - offset_x  - 1;
-			int top     = (int)run->getPositions()[i * 2 + 1] + y;
+			int begin_x = (int)run->GetPositions()[i * 2]     + left - offset_x;
+			int end_x   = (int)run->GetPositions()[i * 2 + 2] + left - offset_x  - 1;
+			int top     = (int)run->GetPositions()[i * 2 + 1] + y;
 
 			/* Truncated away. */
 			if (truncation && (begin_x < min_x || end_x > max_x)) continue;
@@ -535,9 +536,9 @@ int DrawString(int left, int right, int top, StringID str, TextColour colour, St
  * @param maxw maximum string width
  * @return height of pixels of string when it is drawn
  */
-static int GetStringHeight(const char *str, int maxw)
+int GetStringHeight(const char *str, int maxw, FontSize fontsize)
 {
-	Layouter layout(str, maxw);
+	Layouter layout(str, maxw, TC_FROMSTRING, fontsize);
 	return layout.GetBounds().height;
 }
 
@@ -639,10 +640,10 @@ int DrawStringMultiLine(int left, int right, int top, int bottom, const char *st
 	int last_line = top;
 	int first_line = bottom;
 
-	for (ParagraphLayout::Line **iter = layout.Begin(); iter != layout.End(); iter++) {
-		ParagraphLayout::Line *line = *iter;
+	for (const ParagraphLayouter::Line **iter = layout.Begin(); iter != layout.End(); iter++) {
+		const ParagraphLayouter::Line *line = *iter;
 
-		int line_height = line->getLeading();
+		int line_height = line->GetLeading();
 		if (y >= top && y < bottom) {
 			last_line = y + line_height;
 			if (first_line > y) first_line = y;
@@ -816,37 +817,64 @@ void DrawSprite(SpriteID img, PaletteID pal, int x, int y, const SubSprite *sub,
 	}
 }
 
-static void GfxMainBlitterViewport(const Sprite *sprite, int x, int y, BlitterMode mode, const SubSprite *sub, SpriteID sprite_id)
+/**
+ * The code for setting up the blitter mode and sprite information before finally drawing the sprite.
+ * @param sprite The sprite to draw.
+ * @param x      The X location to draw.
+ * @param y      The Y location to draw.
+ * @param mode   The settings for the blitter to pass.
+ * @param sub    Whether to only draw a sub set of the sprite.
+ * @param zoom   The zoom level at which to draw the sprites.
+ * @tparam ZOOM_BASE The factor required to get the sub sprite information into the right size.
+ * @tparam SCALED_XY Whether the X and Y are scaled or unscaled.
+ */
+template <int ZOOM_BASE, bool SCALED_XY>
+static void GfxBlitter(const Sprite * const sprite, int x, int y, BlitterMode mode, const SubSprite * const sub, SpriteID sprite_id, ZoomLevel zoom)
 {
 	const DrawPixelInfo *dpi = _cur_dpi;
 	Blitter::BlitterParams bp;
 
-	/* Amount of pixels to clip from the source sprite */
-	int clip_left   = (sub != NULL ? max(0,                   -sprite->x_offs + sub->left * ZOOM_LVL_BASE       ) : 0);
-	int clip_top    = (sub != NULL ? max(0,                   -sprite->y_offs + sub->top  * ZOOM_LVL_BASE       ) : 0);
-	int clip_right  = (sub != NULL ? max(0, sprite->width  - (-sprite->x_offs + (sub->right + 1)  * ZOOM_LVL_BASE)) : 0);
-	int clip_bottom = (sub != NULL ? max(0, sprite->height - (-sprite->y_offs + (sub->bottom + 1) * ZOOM_LVL_BASE)) : 0);
-
-	if (clip_left + clip_right >= sprite->width) return;
-	if (clip_top + clip_bottom >= sprite->height) return;
+	if (SCALED_XY) {
+		/* Scale it */
+		x = ScaleByZoom(x, zoom);
+		y = ScaleByZoom(y, zoom);
+	}
 
 	/* Move to the correct offset */
 	x += sprite->x_offs;
 	y += sprite->y_offs;
 
+	if (sub == NULL) {
+		/* No clipping. */
+		bp.skip_left = 0;
+		bp.skip_top = 0;
+		bp.width = UnScaleByZoom(sprite->width, zoom);
+		bp.height = UnScaleByZoom(sprite->height, zoom);
+	} else {
+		/* Amount of pixels to clip from the source sprite */
+		int clip_left   = max(0,                   -sprite->x_offs +  sub->left        * ZOOM_BASE );
+		int clip_top    = max(0,                   -sprite->y_offs +  sub->top         * ZOOM_BASE );
+		int clip_right  = max(0, sprite->width  - (-sprite->x_offs + (sub->right + 1)  * ZOOM_BASE));
+		int clip_bottom = max(0, sprite->height - (-sprite->y_offs + (sub->bottom + 1) * ZOOM_BASE));
+
+		if (clip_left + clip_right >= sprite->width) return;
+		if (clip_top + clip_bottom >= sprite->height) return;
+
+		bp.skip_left = UnScaleByZoomLower(clip_left, zoom);
+		bp.skip_top = UnScaleByZoomLower(clip_top, zoom);
+		bp.width = UnScaleByZoom(sprite->width - clip_left - clip_right, zoom);
+		bp.height = UnScaleByZoom(sprite->height - clip_top - clip_bottom, zoom);
+
+		x += ScaleByZoom(bp.skip_left, zoom);
+		y += ScaleByZoom(bp.skip_top, zoom);
+	}
+
 	/* Copy the main data directly from the sprite */
 	bp.sprite = sprite->data;
 	bp.sprite_width = sprite->width;
 	bp.sprite_height = sprite->height;
-	bp.width = UnScaleByZoom(sprite->width - clip_left - clip_right, dpi->zoom);
-	bp.height = UnScaleByZoom(sprite->height - clip_top - clip_bottom, dpi->zoom);
 	bp.top = 0;
 	bp.left = 0;
-	bp.skip_left = UnScaleByZoomLower(clip_left, dpi->zoom);
-	bp.skip_top = UnScaleByZoomLower(clip_top, dpi->zoom);
-
-	x += ScaleByZoom(bp.skip_left, dpi->zoom);
-	y += ScaleByZoom(bp.skip_top, dpi->zoom);
 
 	bp.dst = dpi->dst_ptr;
 	bp.pitch = dpi->pitch;
@@ -858,141 +886,39 @@ static void GfxMainBlitterViewport(const Sprite *sprite, int x, int y, BlitterMo
 	if (bp.width <= 0) return;
 	if (bp.height <= 0) return;
 
-	y -= dpi->top;
+	y -= SCALED_XY ? ScaleByZoom(dpi->top, zoom) : dpi->top;
+	int y_unscaled = UnScaleByZoom(y, zoom);
 	/* Check for top overflow */
 	if (y < 0) {
-		bp.height -= -UnScaleByZoom(y, dpi->zoom);
+		bp.height -= -y_unscaled;
 		if (bp.height <= 0) return;
-		bp.skip_top += -UnScaleByZoom(y, dpi->zoom);
+		bp.skip_top += -y_unscaled;
 		y = 0;
 	} else {
-		bp.top = UnScaleByZoom(y, dpi->zoom);
+		bp.top = y_unscaled;
 	}
 
 	/* Check for bottom overflow */
-	y += ScaleByZoom(bp.height, dpi->zoom) - dpi->height;
-	if (y > 0) {
-		bp.height -= UnScaleByZoom(y, dpi->zoom);
-		if (bp.height <= 0) return;
-	}
-
-	x -= dpi->left;
-	/* Check for left overflow */
-	if (x < 0) {
-		bp.width -= -UnScaleByZoom(x, dpi->zoom);
-		if (bp.width <= 0) return;
-		bp.skip_left += -UnScaleByZoom(x, dpi->zoom);
-		x = 0;
-	} else {
-		bp.left = UnScaleByZoom(x, dpi->zoom);
-	}
-
-	/* Check for right overflow */
-	x += ScaleByZoom(bp.width, dpi->zoom) - dpi->width;
-	if (x > 0) {
-		bp.width -= UnScaleByZoom(x, dpi->zoom);
-		if (bp.width <= 0) return;
-	}
-
-	assert(bp.skip_left + bp.width <= UnScaleByZoom(sprite->width, dpi->zoom));
-	assert(bp.skip_top + bp.height <= UnScaleByZoom(sprite->height, dpi->zoom));
-
-	/* We do not want to catch the mouse. However we also use that spritenumber for unknown (text) sprites. */
-	if (_newgrf_debug_sprite_picker.mode == SPM_REDRAW && sprite_id != SPR_CURSOR_MOUSE) {
-		Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
-		void *topleft = blitter->MoveTo(bp.dst, bp.left, bp.top);
-		void *bottomright = blitter->MoveTo(topleft, bp.width - 1, bp.height - 1);
-
-		void *clicked = _newgrf_debug_sprite_picker.clicked_pixel;
-
-		if (topleft <= clicked && clicked <= bottomright) {
-			uint offset = (((size_t)clicked - (size_t)topleft) / (blitter->GetScreenDepth() / 8)) % bp.pitch;
-			if (offset < (uint)bp.width) {
-				_newgrf_debug_sprite_picker.sprites.Include(sprite_id);
-			}
-		}
-	}
-
-	BlitterFactoryBase::GetCurrentBlitter()->Draw(&bp, mode, dpi->zoom);
-}
-
-static void GfxMainBlitter(const Sprite *sprite, int x, int y, BlitterMode mode, const SubSprite *sub, SpriteID sprite_id, ZoomLevel zoom)
-{
-	const DrawPixelInfo *dpi = _cur_dpi;
-	Blitter::BlitterParams bp;
-
-	/* Amount of pixels to clip from the source sprite */
-	int clip_left   = (sub != NULL ? max(0,                   -sprite->x_offs + sub->left       ) : 0);
-	int clip_top    = (sub != NULL ? max(0,                   -sprite->y_offs + sub->top        ) : 0);
-	int clip_right  = (sub != NULL ? max(0, sprite->width  - (-sprite->x_offs + sub->right  + 1)) : 0);
-	int clip_bottom = (sub != NULL ? max(0, sprite->height - (-sprite->y_offs + sub->bottom + 1)) : 0);
-
-	if (clip_left + clip_right >= sprite->width) return;
-	if (clip_top + clip_bottom >= sprite->height) return;
-
-	/* Scale it */
-	x = ScaleByZoom(x, zoom);
-	y = ScaleByZoom(y, zoom);
-
-	/* Move to the correct offset */
-	x += sprite->x_offs;
-	y += sprite->y_offs;
-
-	/* Copy the main data directly from the sprite */
-	bp.sprite = sprite->data;
-	bp.sprite_width = sprite->width;
-	bp.sprite_height = sprite->height;
-	bp.width = UnScaleByZoom(sprite->width - clip_left - clip_right, zoom);
-	bp.height = UnScaleByZoom(sprite->height - clip_top - clip_bottom, zoom);
-	bp.top = 0;
-	bp.left = 0;
-	bp.skip_left = UnScaleByZoomLower(clip_left, zoom);
-	bp.skip_top = UnScaleByZoomLower(clip_top, zoom);
-
-	x += ScaleByZoom(bp.skip_left, zoom);
-	y += ScaleByZoom(bp.skip_top, zoom);
-
-	bp.dst = dpi->dst_ptr;
-	bp.pitch = dpi->pitch;
-	bp.remap = _colour_remap_ptr;
-
-	assert(sprite->width > 0);
-	assert(sprite->height > 0);
-
-	if (bp.width <= 0) return;
-	if (bp.height <= 0) return;
-
-	y -= ScaleByZoom(dpi->top, zoom);
-	/* Check for top overflow */
-	if (y < 0) {
-		bp.height -= -UnScaleByZoom(y, zoom);
-		if (bp.height <= 0) return;
-		bp.skip_top += -UnScaleByZoom(y, zoom);
-		y = 0;
-	} else {
-		bp.top = UnScaleByZoom(y, zoom);
-	}
-
-	/* Check for bottom overflow */
-	y += ScaleByZoom(bp.height - dpi->height, zoom);
+	y += SCALED_XY ? ScaleByZoom(bp.height - dpi->height, zoom) : ScaleByZoom(bp.height, zoom) - dpi->height;
 	if (y > 0) {
 		bp.height -= UnScaleByZoom(y, zoom);
 		if (bp.height <= 0) return;
 	}
 
-	x -= ScaleByZoom(dpi->left, zoom);
+	x -= SCALED_XY ? ScaleByZoom(dpi->left, zoom) : dpi->left;
+	int x_unscaled = UnScaleByZoom(x, zoom);
 	/* Check for left overflow */
 	if (x < 0) {
-		bp.width -= -UnScaleByZoom(x, zoom);
+		bp.width -= -x_unscaled;
 		if (bp.width <= 0) return;
-		bp.skip_left += -UnScaleByZoom(x, zoom);
+		bp.skip_left += -x_unscaled;
 		x = 0;
 	} else {
-		bp.left = UnScaleByZoom(x, zoom);
+		bp.left = x_unscaled;
 	}
 
 	/* Check for right overflow */
-	x += ScaleByZoom(bp.width - dpi->width, zoom);
+	x += SCALED_XY ? ScaleByZoom(bp.width - dpi->width, zoom) : ScaleByZoom(bp.width, zoom) - dpi->width;
 	if (x > 0) {
 		bp.width -= UnScaleByZoom(x, zoom);
 		if (bp.width <= 0) return;
@@ -1003,7 +929,7 @@ static void GfxMainBlitter(const Sprite *sprite, int x, int y, BlitterMode mode,
 
 	/* We do not want to catch the mouse. However we also use that spritenumber for unknown (text) sprites. */
 	if (_newgrf_debug_sprite_picker.mode == SPM_REDRAW && sprite_id != SPR_CURSOR_MOUSE) {
-		Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
+		Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 		void *topleft = blitter->MoveTo(bp.dst, bp.left, bp.top);
 		void *bottomright = blitter->MoveTo(topleft, bp.width - 1, bp.height - 1);
 
@@ -1017,7 +943,17 @@ static void GfxMainBlitter(const Sprite *sprite, int x, int y, BlitterMode mode,
 		}
 	}
 
-	BlitterFactoryBase::GetCurrentBlitter()->Draw(&bp, mode, zoom);
+	BlitterFactory::GetCurrentBlitter()->Draw(&bp, mode, zoom);
+}
+
+static void GfxMainBlitterViewport(const Sprite *sprite, int x, int y, BlitterMode mode, const SubSprite *sub, SpriteID sprite_id)
+{
+	GfxBlitter<ZOOM_LVL_BASE, false>(sprite, x, y, mode, sub, sprite_id, _cur_dpi->zoom);
+}
+
+static void GfxMainBlitter(const Sprite *sprite, int x, int y, BlitterMode mode, const SubSprite *sub, SpriteID sprite_id, ZoomLevel zoom)
+{
+	GfxBlitter<1, true>(sprite, x, y, mode, sub, sprite_id, zoom);
 }
 
 void DoPaletteAnimations();
@@ -1037,7 +973,7 @@ void DoPaletteAnimations()
 	static int palette_animation_counter = 0;
 	palette_animation_counter += 8;
 
-	Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
+	Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 	const Colour *s;
 	const ExtraPaletteValues *ev = &_extra_palette_values;
 	Colour old_val[PALETTE_ANIM_SIZE];
@@ -1237,7 +1173,7 @@ void UndrawMouseCursor()
 	if (_screen.dst_ptr == NULL) return;
 
 	if (_cursor.visible) {
-		Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
+		Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 		_cursor.visible = false;
 		blitter->CopyFromBuffer(blitter->MoveTo(_screen.dst_ptr, _cursor.draw_pos.x, _cursor.draw_pos.y), _cursor_backup.GetBuffer(), _cursor.draw_size.x, _cursor.draw_size.y);
 		_video_driver->MakeDirty(_cursor.draw_pos.x, _cursor.draw_pos.y, _cursor.draw_size.x, _cursor.draw_size.y);
@@ -1254,7 +1190,7 @@ void DrawMouseCursor()
 	/* Don't draw the mouse cursor if the screen is not ready */
 	if (_screen.dst_ptr == NULL) return;
 
-	Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
+	Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 	int x;
 	int y;
 	int w;
@@ -1507,7 +1443,7 @@ void MarkWholeScreenDirty()
  */
 bool FillDrawPixelInfo(DrawPixelInfo *n, int left, int top, int width, int height)
 {
-	Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
+	Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 	const DrawPixelInfo *o = _cur_dpi;
 
 	n->zoom = ZOOM_LVL_NORMAL;

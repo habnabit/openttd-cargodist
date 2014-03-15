@@ -48,6 +48,7 @@
 #include "cargomonitor.h"
 #include "goal_base.h"
 #include "story_base.h"
+#include "linkgraph/refresh.h"
 
 #include "table/strings.h"
 #include "table/pricebase.h"
@@ -1232,7 +1233,7 @@ void PrepareUnload(Vehicle *front_v)
 	assert(CargoPayment::CanAllocateItem());
 	front_v->cargo_payment = new CargoPayment(front_v);
 
-	StationID next_station = front_v->GetNextStoppingStation();
+	StationIDStack next_station = front_v->GetNextStoppingStation();
 	if (front_v->orders.list == NULL || (front_v->current_order.GetUnloadType() & OUFB_NO_UNLOAD) == 0) {
 		Station *st = Station::Get(front_v->last_station_visited);
 		for (Vehicle *v = front_v; v != NULL; v = v->Next()) {
@@ -1295,9 +1296,9 @@ static uint GetLoadAmount(Vehicle *v)
  * @param st Station where the consist is loading at the moment.
  * @param u Front of the loading vehicle consist.
  * @param consist_capleft If given, save free capacities after reserving there.
- * @param next_station Station the vehicle will stop at next.
+ * @param next_station Station(s) the vehicle will stop at next.
  */
-static void ReserveConsist(Station *st, Vehicle *u, CargoArray *consist_capleft, StationID next_station)
+static void ReserveConsist(Station *st, Vehicle *u, CargoArray *consist_capleft, StationIDStack next_station)
 {
 	Vehicle *next_cargo = u;
 	uint32 seen_cargos = 0;
@@ -1346,10 +1347,97 @@ static bool IsArticulatedVehicleEmpty(Vehicle *v)
 	v = v->GetFirstEnginePart();
 
 	for (; v != NULL; v = v->HasArticulatedPart() ? v->GetNextArticulatedPart() : NULL) {
-		if (v->cargo.TotalCount() != 0) return false;
+		if (v->cargo.StoredCount() != 0) return false;
 	}
 
 	return true;
+}
+
+/**
+ * Refit a vehicle in a station.
+ * @param v Vehicle to be refitted.
+ * @param consist_capleft Added cargo capacities in the consist.
+ * @param st Station the vehicle is loading at.
+ * @param next_station Possible next stations the vehicle can travel to.
+ * @param new_cid Target cargo for refit.
+ */
+static void HandleStationRefit(Vehicle *v, CargoArray &consist_capleft, Station *st, StationIDStack next_station, CargoID new_cid)
+{
+	if (v->type == VEH_AIRCRAFT && (!Aircraft::From(v)->IsNormalAircraft() || v->Next()->cargo.StoredCount() > 0)) {
+		return;
+	}
+
+	bool is_normal_aircraft = (v->type == VEH_AIRCRAFT && Aircraft::From(v)->IsNormalAircraft());
+	Vehicle *v_start = v->GetFirstEnginePart();
+
+	/* Remove old capacity from consist capacity */
+	consist_capleft[v_start->cargo_type] -= (v_start->cargo_cap - v_start->cargo.ReservedCount());
+	for (Vehicle *w = v_start; w->HasArticulatedPart(); ) {
+		w = w->GetNextArticulatedPart();
+		consist_capleft[w->cargo_type] -= (w->cargo_cap - w->cargo.ReservedCount());
+	}
+	if (is_normal_aircraft) {
+		consist_capleft[v->Next()->cargo_type] -= (v->Next()->cargo_cap - v->Next()->cargo.ReservedCount());
+	}
+
+	Backup<CompanyByte> cur_company(_current_company, v->owner, FILE_LINE);
+
+	/* Check if all articulated parts are empty and collect refit mask. */
+	uint32 refit_mask = v->GetEngine()->info.refit_mask;
+	Vehicle *w = v_start;
+	while (w->HasArticulatedPart()) {
+		w = w->GetNextArticulatedPart();
+		refit_mask |= EngInfo(w->engine_type)->refit_mask;
+	}
+
+	if (new_cid == CT_AUTO_REFIT) {
+		/* Get a refittable cargo type with waiting cargo for next_station or INVALID_STATION. */
+		CargoID cid;
+		new_cid = v_start->cargo_type;
+		FOR_EACH_SET_CARGO_ID(cid, refit_mask) {
+			if (st->goods[cid].cargo.HasCargoFor(next_station)) {
+				/* Try to find out if auto-refitting would succeed. In case the refit is allowed,
+				 * the returned refit capacity will be greater than zero. */
+				DoCommand(v_start->tile, v_start->index, cid | 1U << 6 | 0xFF << 8 | 1U << 16, DC_QUERY_COST, GetCmdRefitVeh(v_start)); // Auto-refit and only this vehicle including artic parts.
+				/* Try to balance different loadable cargoes between parts of the consist, so that
+				 * all of them can be loaded. Avoid a situation where all vehicles suddenly switch
+				 * to the first loadable cargo for which there is only one packet. */
+				if (_returned_refit_capacity > 0 && consist_capleft[cid] < consist_capleft[new_cid]) {
+					new_cid = cid;
+				}
+			}
+		}
+	}
+
+	/* Refit if given a valid cargo. */
+	if (new_cid < NUM_CARGO && new_cid != v_start->cargo_type) {
+		StationID next_one = StationIDStack(next_station).Pop();
+		v_start->cargo.Return(UINT_MAX, &st->goods[v_start->cargo_type].cargo, next_one);
+		for (w = v_start; w->HasArticulatedPart();) {
+			w = w->GetNextArticulatedPart();
+			w->cargo.Return(UINT_MAX, &st->goods[w->cargo_type].cargo, next_one);
+		}
+		if (is_normal_aircraft) {
+			v->Next()->cargo.Return(UINT_MAX, &st->goods[v->Next()->cargo_type].cargo, next_one);
+		}
+		CommandCost cost = DoCommand(v_start->tile, v_start->index, new_cid | 1U << 6 | 0xFF << 8 | 1U << 16, DC_EXEC, GetCmdRefitVeh(v_start)); // Auto-refit and only this vehicle including artic parts.
+		if (cost.Succeeded()) v->First()->profit_this_year -= cost.GetCost() << 8;
+	}
+
+	/* Add new capacity to consist capacity and reserve cargo */
+	w = v_start;
+	do {
+		st->goods[w->cargo_type].cargo.Reserve(w->cargo_cap - w->cargo.RemainingCount(), &w->cargo, st->xy, next_station);
+		consist_capleft[w->cargo_type] += w->cargo_cap - w->cargo.RemainingCount();
+		w = w->HasArticulatedPart() ? w->GetNextArticulatedPart() : NULL;
+	} while (w != NULL);
+	if (is_normal_aircraft) {
+		w = v->Next();
+		st->goods[w->cargo_type].cargo.Reserve(w->cargo_cap - w->cargo.RemainingCount(), &w->cargo, st->xy, next_station);
+		consist_capleft[w->cargo_type] += w->cargo_cap - w->cargo.RemainingCount();
+	}
+
+	cur_company.Restore();
 }
 
 /**
@@ -1363,7 +1451,7 @@ static void LoadUnloadVehicle(Vehicle *front)
 	StationID last_visited = front->last_station_visited;
 	Station *st = Station::Get(last_visited);
 
-	StationID next_station = front->GetNextStoppingStation();
+	StationIDStack next_station = front->GetNextStoppingStation();
 	bool use_autorefit = front->current_order.IsRefit() && front->current_order.GetRefitCargo() == CT_AUTO_REFIT;
 	CargoArray consist_capleft;
 	if (_settings_game.order.improved_load &&
@@ -1421,8 +1509,8 @@ static void LoadUnloadVehicle(Vehicle *front)
 				/* The station does not accept our goods anymore. */
 				if (front->current_order.GetUnloadType() & (OUFB_TRANSFER | OUFB_UNLOAD)) {
 					/* Transfer instead of delivering. */
-					v->cargo.Reassign(v->cargo.ActionCount(VehicleCargoList::MTA_DELIVER),
-							VehicleCargoList::MTA_DELIVER, VehicleCargoList::MTA_TRANSFER);
+					v->cargo.Reassign<VehicleCargoList::MTA_DELIVER, VehicleCargoList::MTA_TRANSFER>(
+							v->cargo.ActionCount(VehicleCargoList::MTA_DELIVER), INVALID_STATION);
 				} else {
 					uint new_remaining = v->cargo.RemainingCount() + v->cargo.ActionCount(VehicleCargoList::MTA_DELIVER);
 					if (v->cargo_cap < new_remaining) {
@@ -1431,8 +1519,8 @@ static void LoadUnloadVehicle(Vehicle *front)
 					}
 
 					/* Keep instead of delivering. This may lead to no cargo being unloaded, so ...*/
-					v->cargo.Reassign(v->cargo.ActionCount(VehicleCargoList::MTA_DELIVER),
-							VehicleCargoList::MTA_DELIVER, VehicleCargoList::MTA_KEEP);
+					v->cargo.Reassign<VehicleCargoList::MTA_DELIVER, VehicleCargoList::MTA_KEEP>(
+							v->cargo.ActionCount(VehicleCargoList::MTA_DELIVER));
 
 					/* ... say we unloaded something, otherwise we'll think we didn't unload
 					 * something and we didn't load something, so we must be finished
@@ -1469,65 +1557,9 @@ static void LoadUnloadVehicle(Vehicle *front)
 		if (front->current_order.GetLoadType() & OLFB_NO_LOAD || HasBit(front->vehicle_flags, VF_STOP_LOADING)) continue;
 
 		/* This order has a refit, if this is the first vehicle part carrying cargo and the whole vehicle is empty, try refitting. */
-		if (front->current_order.IsRefit() && artic_part == 1 && IsArticulatedVehicleEmpty(v) &&
-				(v->type != VEH_AIRCRAFT || (Aircraft::From(v)->IsNormalAircraft() && v->Next()->cargo.TotalCount() == 0))) {
-			Vehicle *v_start = v->GetFirstEnginePart();
-			CargoID new_cid = front->current_order.GetRefitCargo();
-
-			/* Remove old capacity from consist capacity */
-			consist_capleft[v_start->cargo_type] -= v_start->cargo_cap;
-			for (Vehicle *w = v_start; w->HasArticulatedPart(); ) {
-				w = w->GetNextArticulatedPart();
-				consist_capleft[w->cargo_type] -= w->cargo_cap;
-			}
-
-			Backup<CompanyByte> cur_company(_current_company, front->owner, FILE_LINE);
-
-			/* Check if all articulated parts are empty and collect refit mask. */
-			uint32 refit_mask = v->GetEngine()->info.refit_mask;
-			Vehicle *w = v_start;
-			while (w->HasArticulatedPart()) {
-				w = w->GetNextArticulatedPart();
-				if (w->cargo.TotalCount() > 0) new_cid = CT_NO_REFIT;
-				refit_mask |= EngInfo(w->engine_type)->refit_mask;
-			}
-
-			if (new_cid == CT_AUTO_REFIT) {
-				/* Get a refittable cargo type with waiting cargo for next_station or INVALID_STATION. */
-				CargoID cid;
-				new_cid = v_start->cargo_type;
-				FOR_EACH_SET_CARGO_ID(cid, refit_mask) {
-					if (st->goods[cid].cargo.HasCargoFor(next_station) ||
-							st->goods[cid].cargo.HasCargoFor(INVALID_STATION)) {
-						/* Try to find out if auto-refitting would succeed. In case the refit is allowed,
-						 * the returned refit capacity will be greater than zero. */
-						DoCommand(v_start->tile, v_start->index, cid | 1U << 6 | 0xFF << 8 | 1U << 16, DC_QUERY_COST, GetCmdRefitVeh(v_start)); // Auto-refit and only this vehicle including artic parts.
-						/* Try to balance different loadable cargoes between parts of the consist, so that
-						 * all of them can be loaded. Avoid a situation where all vehicles suddenly switch
-						 * to the first loadable cargo for which there is only one packet. */
-						if (_returned_refit_capacity > 0 && consist_capleft[cid] < consist_capleft[new_cid]) {
-							new_cid = cid;
-						}
-					}
-				}
-			}
-
-			/* Refit if given a valid cargo. */
-			if (new_cid < NUM_CARGO && new_cid != v_start->cargo_type) {
-				CommandCost cost = DoCommand(v_start->tile, v_start->index, new_cid | 1U << 6 | 0xFF << 8 | 1U << 16, DC_EXEC, GetCmdRefitVeh(v_start)); // Auto-refit and only this vehicle including artic parts.
-				if (cost.Succeeded()) front->profit_this_year -= cost.GetCost() << 8;
-				ge = &st->goods[v->cargo_type];
-			}
-
-			/* Add new capacity to consist capacity and reserve cargo */
-			w = v_start;
-			do {
-				st->goods[w->cargo_type].cargo.Reserve(w->cargo_cap, &w->cargo, st->xy, next_station);
-				consist_capleft[w->cargo_type] += w->cargo_cap - w->cargo.RemainingCount();
-				w = w->HasArticulatedPart() ? w->GetNextArticulatedPart() : NULL;
-			} while (w != NULL);
-
-			cur_company.Restore();
+		if (front->current_order.IsRefit() && artic_part == 1 && IsArticulatedVehicleEmpty(v)) {
+			HandleStationRefit(v, consist_capleft, st, next_station, front->current_order.GetRefitCargo());
+			ge = &st->goods[v->cargo_type];
 		}
 
 		/* As we're loading here the following link can carry the full capacity of the vehicle. */
@@ -1658,7 +1690,7 @@ static void LoadUnloadVehicle(Vehicle *front)
 			 * along them. Otherwise the vehicle could wait for cargo
 			 * indefinitely if it hasn't visited the other links yet, or if the
 			 * links die while it's loading. */
-			if (!finished_loading) front->RefreshNextHopsStats();
+			if (!finished_loading) LinkRefresher::Run(front);
 		}
 		unloading_time = 20;
 

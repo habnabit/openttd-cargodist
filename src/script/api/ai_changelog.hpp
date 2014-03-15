@@ -20,12 +20,33 @@
  * 1.4.0 is not yet released. The following changes are not set in stone yet.
  *
  * API additions:
+ * \li AICargo::GetDistributionType
+ * \li AIDate::DATE_INVALID
+ * \li AIDate::IsValidDate
  * \li AIStation::HasCargoRating
+ * \li AIStation::GetCargoWaitingFrom
+ * \li AIStation::GetCargoWaitingVia
  * \li AITile::GetTerrainType
+ * \li AITown::FoundTown
+ * \li AITown::GetFundBuildingsDuration
+ * \li AITown::TOWN_GROWTH_NONE
  *
  * Other changes:
  * \li AIStation::GetCargoRating does return -1 for cargo-station combinations that
  *     do not have a rating yet instead of returning 69.
+ *
+ * \b 1.3.3
+ *
+ * No changes
+ *
+ * \b 1.3.2
+ *
+ * No changes
+ *
+ * \b 1.3.1
+ *
+ * API additions:
+ * \li AITile::GetTerrainType
  *
  * \b 1.3.0
  *

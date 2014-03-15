@@ -31,7 +31,7 @@ STR_CARGO_PLURAL_PASSENGERS                                     :Passagéier
 STR_CARGO_PLURAL_COAL                                           :Kuelen
 STR_CARGO_PLURAL_MAIL                                           :Post
 STR_CARGO_PLURAL_OIL                                            :Ueleg
-STR_CARGO_PLURAL_LIVESTOCK                                      :Béischten
+STR_CARGO_PLURAL_LIVESTOCK                                      :Véi
 STR_CARGO_PLURAL_GOODS                                          :Wueren
 STR_CARGO_PLURAL_GRAIN                                          :Kaar
 STR_CARGO_PLURAL_WOOD                                           :Holz
@@ -42,7 +42,7 @@ STR_CARGO_PLURAL_COPPER_ORE                                     :Koffererz
 STR_CARGO_PLURAL_MAIZE                                          :Mais
 STR_CARGO_PLURAL_FRUIT                                          :Friichten
 STR_CARGO_PLURAL_DIAMONDS                                       :Diamanten
-STR_CARGO_PLURAL_FOOD                                           :Iessen
+STR_CARGO_PLURAL_FOOD                                           :Iesswueren
 STR_CARGO_PLURAL_PAPER                                          :Pabeier
 STR_CARGO_PLURAL_GOLD                                           :Gold
 STR_CARGO_PLURAL_WATER                                          :Waasser
@@ -65,8 +65,8 @@ STR_CARGO_SINGULAR_PASSENGER                                    :Passagéier
 STR_CARGO_SINGULAR_COAL                                         :Kuelen
 STR_CARGO_SINGULAR_MAIL                                         :Post
 STR_CARGO_SINGULAR_OIL                                          :Ueleg
-STR_CARGO_SINGULAR_LIVESTOCK                                    :Béischt
-STR_CARGO_SINGULAR_GOODS                                        :Wuer
+STR_CARGO_SINGULAR_LIVESTOCK                                    :Véi
+STR_CARGO_SINGULAR_GOODS                                        :Wueren
 STR_CARGO_SINGULAR_GRAIN                                        :Kaar
 STR_CARGO_SINGULAR_WOOD                                         :Holz
 STR_CARGO_SINGULAR_IRON_ORE                                     :Eisenerz
@@ -88,7 +88,7 @@ STR_CARGO_SINGULAR_CANDY                                        :Séissegkeet
 STR_CARGO_SINGULAR_COLA                                         :Cola
 STR_CARGO_SINGULAR_COTTON_CANDY                                 :Zockerwatt
 STR_CARGO_SINGULAR_BUBBLE                                       :Blos
-STR_CARGO_SINGULAR_TOFFEE                                       :Karmell
+STR_CARGO_SINGULAR_TOFFEE                                       :Karamell
 STR_CARGO_SINGULAR_BATTERY                                      :Batterie
 STR_CARGO_SINGULAR_PLASTIC                                      :Plastik
 STR_CARGO_SINGULAR_FIZZY_DRINK                                  :Spruddel-Gedrénks
@@ -99,8 +99,8 @@ STR_QUANTITY_PASSENGERS                                         :{COMMA} Passag�
 STR_QUANTITY_COAL                                               :{WEIGHT_LONG} Kuel
 STR_QUANTITY_MAIL                                               :{COMMA} Posts{P aak äck}
 STR_QUANTITY_OIL                                                :{VOLUME_LONG} Ueleg
-STR_QUANTITY_LIVESTOCK                                          :{COMMA} Béischt{P "" en}
-STR_QUANTITY_GOODS                                              :{COMMA} Wuerenkëscht{P "" en}
+STR_QUANTITY_LIVESTOCK                                          :{COMMA} Eenheet{P "" en} Véi
+STR_QUANTITY_GOODS                                              :{COMMA} Wuerekëscht{P "" en}
 STR_QUANTITY_GRAIN                                              :{WEIGHT_LONG} Kaar
 STR_QUANTITY_WOOD                                               :{WEIGHT_LONG} Holz
 STR_QUANTITY_IRON_ORE                                           :{WEIGHT_LONG} Eisenerz
@@ -110,7 +110,7 @@ STR_QUANTITY_COPPER_ORE                                         :{WEIGHT_LONG} K
 STR_QUANTITY_MAIZE                                              :{WEIGHT_LONG} Mais
 STR_QUANTITY_FRUIT                                              :{WEIGHT_LONG} Friichten
 STR_QUANTITY_DIAMONDS                                           :{COMMA} S{P aak äck} mat Diamanten
-STR_QUANTITY_FOOD                                               :{WEIGHT_LONG} Iessen
+STR_QUANTITY_FOOD                                               :{WEIGHT_LONG} Iesswueren
 STR_QUANTITY_PAPER                                              :{WEIGHT_LONG} Pabeier
 STR_QUANTITY_GOLD                                               :{COMMA} S{P aak äck} mat Gold
 STR_QUANTITY_WATER                                              :{VOLUME_LONG} Waasser
@@ -175,7 +175,7 @@ STR_CRATES                                                      :{COMMA} Këscht
 # Colours, do not shuffle
 STR_COLOUR_DARK_BLUE                                            :Donkelblo
 STR_COLOUR_PALE_GREEN                                           :Bleechgréng
-STR_COLOUR_PINK                                                 :Rosa
+STR_COLOUR_PINK                                                 :Donkelroud
 STR_COLOUR_YELLOW                                               :Giel
 STR_COLOUR_RED                                                  :Rout
 STR_COLOUR_LIGHT_BLUE                                           :Hellblo
@@ -281,7 +281,7 @@ STR_SORT_BY_TOTAL_CAPACITY_PER_CARGOTYPE                        :Total Luedplaat
 STR_SORT_BY_MAX_SPEED                                           :Maximal Geschwindegkeet
 STR_SORT_BY_MODEL                                               :Model
 STR_SORT_BY_VALUE                                               :Wäert
-STR_SORT_BY_LENGTH                                              :Lengt
+STR_SORT_BY_LENGTH                                              :Längt
 STR_SORT_BY_LIFE_TIME                                           :Reschtlaafzäit
 STR_SORT_BY_TIMETABLE_DELAY                                     :Zäitplang Verspéidung
 STR_SORT_BY_FACILITY                                            :Statiounstyp
@@ -805,10 +805,10 @@ STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_GENERAL                   :{BIG_FONT}{BLAC
 STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_FARM                      :{BIG_FONT}{BLACK}Insektenbefall bei {INDUSTRY}!{}Produktioun geet ëm 50% erof
 STR_NEWS_INDUSTRY_PRODUCTION_DECREASE_SMOOTH                    :{BIG_FONT}{BLACK}{STRING} Produktioun vun {INDUSTRY} geet ëm {COMMA}% erof!
 
-STR_NEWS_TRAIN_IS_WAITING                                       :{WHITE}{VEHICLE} waart am Depot
-STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}{VEHICLE} waart am Depot
-STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}{VEHICLE} waart am Depot
-STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE} waart am Hangar
+STR_NEWS_TRAIN_IS_WAITING                                       :{WHITE}{VEHICLE} waard am Schapp
+STR_NEWS_ROAD_VEHICLE_IS_WAITING                                :{WHITE}{VEHICLE} waard am Schapp
+STR_NEWS_SHIP_IS_WAITING                                        :{WHITE}{VEHICLE} waard am Schapp
+STR_NEWS_AIRCRAFT_IS_WAITING                                    :{WHITE}{VEHICLE} waard am Hangar
 
 # Start of order review system
 # DON'T ADD OR REMOVE LINES HERE
@@ -1070,7 +1070,8 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Spillastellung 
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Firmenastellung (am Save gespäichert; betrëfft just nei Spiller)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Firmenastellung (am Save gespäichert; betrëfft just déi aktuell Firma)
 
-STR_CONFIG_SETTING_RESTRICT_LABEL                               :{BLACK}Weis:
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategorie:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Typ:
 STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Limitéiert d'Lëscht dass nëmmen geännert Astellungen gewisen ginn
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Basic Astellungen
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Erweidert Astellungen
@@ -1085,6 +1086,10 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Spillastellunge
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Spillastellungen (am Save gespäichert; betrëfft just nei Spiller)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Firmenastellungen (am Save gespäichert; betrëfft just nei Spiller)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Firmenastellung (am Save gespäichert; betrëfft just déi aktuell Firma)
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Weis all Sich-Resultater no der Astellung{}{SILVER}Kategorie {BLACK}bis {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :Weis all Sich-Resultater no der Astellung{}{SILVER}Typ {BLACK}bis {WHITE}All Astellungstypen
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Weis all Sich-Resultater no der Astellung{}{SILVER}Kategorie {BLACK}bis {WHITE}{STRING} {BLACK}an {SILVER}Typ {BLACK}bis {WHITE}All Astellungstypen
+STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Keng -
 
 STR_CONFIG_SETTING_OFF                                          :Aus
 STR_CONFIG_SETTING_ON                                           :Un
@@ -1255,7 +1260,7 @@ STR_CONFIG_SETTING_HOVER_DELAY                                  :Weis Tooltips: 
 STR_CONFIG_SETTING_HOVER_DELAY_HELPTEXT                         :Verzögerung bis d'Tooltips ugewisen ginn, wann een mat der Maus iwwert en Element geet. Alternativ kënnen d'Tooltips och op d'riets Maustast geluet ginn
 STR_CONFIG_SETTING_HOVER_DELAY_VALUE                            :Fir {COMMA} Sekonn{P 0 "" en} dropbleiwen
 STR_CONFIG_SETTING_HOVER_DELAY_DISABLED                         :Rietsklick
-STR_CONFIG_SETTING_POPULATION_IN_LABEL                          :Weist Bewunnerzuel am Numm vun der Stadt: {STRING}
+STR_CONFIG_SETTING_POPULATION_IN_LABEL                          :Weist Awunner am Numm vun der Stad: {STRING}
 STR_CONFIG_SETTING_POPULATION_IN_LABEL_HELPTEXT                 :Weis d'Awunnerzuel vun Stied an deenen hirem Label un op der Kaart
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS                         :Déckt vunn de Linnen vun den Graphen: {STRING}
 STR_CONFIG_SETTING_GRAPH_LINE_THICKNESS_HELPTEXT                :Breed vun den Linnen an den Grafiken. Eng dënn Linn kann méi präzis gelies ginn, eng méi déck kann besser gesinn ginn an d'Faarwen sinn besser ze ënnerscheeden
@@ -1339,8 +1344,8 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Standard Palette fir NewGRFen déi keng spezifësch Palette hunn: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Standardpalette fir NewGRFen déi net definéiert hunn wéi eng se brauchen
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :DOS Palette
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Windows Palette
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Standard (D) Palette
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Aal (W) Palette
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Automatesch Pausen beim Start vun enger neier Partie: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Wann ugeschalt, pauséiert d'Spill automatesch wann en neit Spill gestart gëtt, wat erlaabt d'Kaart besser ze studéieren
@@ -1434,8 +1439,8 @@ STR_CONFIG_SETTING_SERVINT_SHIPS                                :Standard Revisi
 STR_CONFIG_SETTING_SERVINT_SHIPS_HELPTEXT                       :Definéiert den Standardrevisiounsintervall fir nei Schëffer, wann keen expliziten Revisiounsintervall uginn ass
 STR_CONFIG_SETTING_NOSERVICE                                    :Revisiounen ausschalten wann Pannen op "Keng" gestallt sinn: {STRING}
 STR_CONFIG_SETTING_NOSERVICE_HELPTEXT                           :Wann ugeschalt, ginn Gefierer net an d'Revisioun geschéckt, wann se keng Pann kënnen kréien
-STR_CONFIG_SETTING_WAGONSPEEDLIMITS                             :Geschwindegkeetsbegrenzungen fir Wagongen: {STRING}
-STR_CONFIG_SETTING_WAGONSPEEDLIMITS_HELPTEXT                    :Wann ugeschalt, benotz och Geschwindegkeetslimitatiounen fir Wagonen fir d'maximal Geschwindegkeet vun engem Zuch ze definéiren
+STR_CONFIG_SETTING_WAGONSPEEDLIMITS                             :Geschwindegkeetsbegrenzungen fir Waggonen: {STRING}
+STR_CONFIG_SETTING_WAGONSPEEDLIMITS_HELPTEXT                    :Wann ugeschalt, benotz och Geschwindegkeetslimitatiounen fir Waggonen fir d'maximal Geschwindegkeet vun engem Zuch ze definéiren
 STR_CONFIG_SETTING_DISABLE_ELRAILS                              :Elecktreschschinnen ausschalten: {STRING}
 STR_CONFIG_SETTING_DISABLE_ELRAILS_HELPTEXT                     :Wann dës Astellung ugeschalt ass, ginn keng elektresch Schinnen gebrauch fir mat elektreschen Zich ze fueren
 
@@ -1725,7 +1730,7 @@ STR_INTRO_TRANSLATION                                           :{BLACK}Des Iwwe
 
 # Quit window
 STR_QUIT_CAPTION                                                :{WHITE}Eraus
-STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD                  :{YELLOW}bass du sécher dass du aus dem OpenTTD eraus wëlls , an an den {STRING} zréck?
+STR_QUIT_ARE_YOU_SURE_YOU_WANT_TO_EXIT_OPENTTD                  :{YELLOW}Bass du sécher, dass du aus OpenTTD eraus wëlls , an an den {STRING} zréck?
 STR_QUIT_YES                                                    :{BLACK}Jo
 STR_QUIT_NO                                                     :{BLACK}Nee
 
@@ -1783,12 +1788,12 @@ STR_LIVERY_MONORAIL                                             :Monorail Lok
 STR_LIVERY_MAGLEV                                               :Magnéitbunnlok
 STR_LIVERY_DMU                                                  :DMU
 STR_LIVERY_EMU                                                  :EMU
-STR_LIVERY_PASSENGER_WAGON_STEAM                                :Passagéierwagon (Damp)
-STR_LIVERY_PASSENGER_WAGON_DIESEL                               :Passagéierwagon (Diesel)
-STR_LIVERY_PASSENGER_WAGON_ELECTRIC                             :Passagéierwagon (Elektrësch)
-STR_LIVERY_PASSENGER_WAGON_MONORAIL                             :Passagéierwagon (Monorail)
-STR_LIVERY_PASSENGER_WAGON_MAGLEV                               :Passagéierwagon (Magnéitbahn)
-STR_LIVERY_FREIGHT_WAGON                                        :Wuerenwagon
+STR_LIVERY_PASSENGER_WAGON_STEAM                                :Passagéierwaggon (Damp)
+STR_LIVERY_PASSENGER_WAGON_DIESEL                               :Passagéierwaggon (Diesel)
+STR_LIVERY_PASSENGER_WAGON_ELECTRIC                             :Passagéierwaggon (Elektrësch)
+STR_LIVERY_PASSENGER_WAGON_MONORAIL                             :Passagéierwaggon (Monorail)
+STR_LIVERY_PASSENGER_WAGON_MAGLEV                               :Passagéierwaggon (Magnéitbahn)
+STR_LIVERY_FREIGHT_WAGON                                        :Gidderwaggon
 STR_LIVERY_BUS                                                  :Bus
 STR_LIVERY_TRUCK                                                :Camion
 STR_LIVERY_PASSENGER_SHIP                                       :Passagéierfähr
@@ -2042,6 +2047,7 @@ STR_NETWORK_CLIENT                                              :Spiller
 STR_NETWORK_SPECTATORS                                          :Zuschauer
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Gëff den Betrag un deenst du wëlls ginn
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Zuschauer
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Späicher d'Passwuert net
@@ -2262,13 +2268,13 @@ STR_JOIN_WAYPOINT_CREATE_SPLITTED_WAYPOINT                      :{YELLOW}Separat
 
 # Rail construction toolbar
 STR_RAIL_TOOLBAR_RAILROAD_CONSTRUCTION_CAPTION                  :Schinnenbau
-STR_RAIL_TOOLBAR_ELRAIL_CONSTRUCTION_CAPTION                    :Élektrëschen Zuchbau
+STR_RAIL_TOOLBAR_ELRAIL_CONSTRUCTION_CAPTION                    :Elektrëschen Schinnenbau
 STR_RAIL_TOOLBAR_MONORAIL_CONSTRUCTION_CAPTION                  :Monorailbau
 STR_RAIL_TOOLBAR_MAGLEV_CONSTRUCTION_CAPTION                    :Magnéitbahnbau
 
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_TRACK                   :{BLACK}Schinnen bauen. Ctrl wiesselt tëscht bauen/ofrappen. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_AUTORAIL                         :{BLACK}Schinnen am automateschen Modus bauen. Ctrl wiesselt tëscht bauen/ofrappen. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
-STR_RAIL_TOOLBAR_TOOLTIP_BUILD_TRAIN_DEPOT_FOR_BUILDING         :{BLACK}Zuchdepot bauen (fir Zich ze kafen an ze flécken). Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
+STR_RAIL_TOOLBAR_TOOLTIP_BUILD_TRAIN_DEPOT_FOR_BUILDING         :{BLACK}Zuchschapp bauen (fir Zich ze kafen an ze flécken). Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
 STR_RAIL_TOOLBAR_TOOLTIP_CONVERT_RAIL_TO_WAYPOINT               :{BLACK}Konvertéiert d'Schinnen zum Weepunkt. Ctrl aktivéiert Weepunkter ze verbannen. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_STATION                 :{BLACK}Gare bauen. Ctrl aktivéiert fir d'Statioun unzebauen. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
 STR_RAIL_TOOLBAR_TOOLTIP_BUILD_RAILROAD_SIGNALS                 :{BLACK}Zuchsignaler bauen. Ctrl wiesselt tëscht Diks/Luuten{}Zéien baut Signaler laanscht eng Zuchstreck. Ctrl baut Signaler bis déi nächst Weich{}Ctrl+Klick mécht Selectiounsfënster op.Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
@@ -2283,8 +2289,8 @@ STR_RAIL_NAME_MONORAIL                                          :Monorail
 STR_RAIL_NAME_MAGLEV                                            :Magnéitbunn
 
 # Rail depot construction window
-STR_BUILD_DEPOT_TRAIN_ORIENTATION_CAPTION                       :{WHITE}Zuchdepot Richtung
-STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP                       :{BLACK}Wielt d'Richtung vum Zuchdepot
+STR_BUILD_DEPOT_TRAIN_ORIENTATION_CAPTION                       :{WHITE}Richtung vum Zuchschapp
+STR_BUILD_DEPOT_TRAIN_ORIENTATION_TOOLTIP                       :{BLACK}Wielt d'Richtung vum Zuchschapp
 
 # Rail waypoint construction window
 STR_WAYPOINT_CAPTION                                            :{WHITE}Weepunkt
@@ -2296,8 +2302,8 @@ STR_STATION_BUILD_ORIENTATION                                   :{BLACK}Richtung
 STR_STATION_BUILD_RAILROAD_ORIENTATION_TOOLTIP                  :{BLACK}Wielt Gare Richtung
 STR_STATION_BUILD_NUMBER_OF_TRACKS                              :{BLACK}Unzuel vun Schinnen
 STR_STATION_BUILD_NUMBER_OF_TRACKS_TOOLTIP                      :{BLACK}Wielt d'Unzuel vun den Gleisen fir d'Gare
-STR_STATION_BUILD_PLATFORM_LENGTH                               :{BLACK}Lengt
-STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Wielt d'Lengt vun der Gare
+STR_STATION_BUILD_PLATFORM_LENGTH                               :{BLACK}Platformlängt
+STR_STATION_BUILD_PLATFORM_LENGTH_TOOLTIP                       :{BLACK}Wielt d'Längt vun der Gare
 STR_STATION_BUILD_DRAG_DROP                                     :{BLACK}Drag & Drop
 STR_STATION_BUILD_DRAG_DROP_TOOLTIP                             :{BLACK}D'Statioun per drag & drop bauen
 
@@ -2350,7 +2356,7 @@ STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAMWAY_SECTION                  :{BLACK}Tramschi
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOROAD                         :{BLACK}D'Strooss mat der Bau-Automatik bauen. Ctrl wiësselt tëscht Stroossen bauen/ofrappen. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_AUTOTRAM                         :{BLACK}Tramschinnen mam "Autotram" Modus bauen. Ctrl wiesselt tëscht Tramschinnen bauen/ofrappen. Shift wiesselt tëschtbauen/ongeféier Käschten uweisen
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_ROAD_VEHICLE_DEPOT               :{BLACK}Baut Stroossendepot (fir Gefierer ze kafen an ze flécken). Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
-STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAM_VEHICLE_DEPOT               :{BLACK}Tramdepot bauen(fir ze kafen an fir d'Revisioun). Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
+STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRAM_VEHICLE_DEPOT               :{BLACK}Tramschapp bauen (fir Gefierer ze kafen an d'Revisioun). Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_BUS_STATION                      :{BLACK}Baut Busarrêt. Ctrl aktivéiert ubauen vun Statiounen. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_PASSENGER_TRAM_STATION           :{BLACK}Passagéier-Tramstatioun bauen. Ctrl aktivéirt ubauen vun Statiounen. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
 STR_ROAD_TOOLBAR_TOOLTIP_BUILD_TRUCK_LOADING_BAY                :{BLACK}Baut Camionsgare. Ctrl aktivéiert ubauen vun Statiounen. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
@@ -2366,8 +2372,8 @@ STR_ROAD_TOOLBAR_TOOLTIP_TOGGLE_BUILD_REMOVE_FOR_TRAMWAYS       :{BLACK}Wiesselt
 # Road depot construction window
 STR_BUILD_DEPOT_ROAD_ORIENTATION_CAPTION                        :{WHITE}Stroossendepot Richtung
 STR_BUILD_DEPOT_ROAD_ORIENTATION_SELECT_TOOLTIP                 :{BLACK}Wielt Stroossendepot Richtung
-STR_BUILD_DEPOT_TRAM_ORIENTATION_CAPTION                        :{WHITE}Tramdepot Richtung
-STR_BUILD_DEPOT_TRAM_ORIENTATION_SELECT_TOOLTIP                 :{BLACK}Tramdepot Richtung wielen
+STR_BUILD_DEPOT_TRAM_ORIENTATION_CAPTION                        :{WHITE}Richtung vum Tramschapp
+STR_BUILD_DEPOT_TRAM_ORIENTATION_SELECT_TOOLTIP                 :{BLACK}Tramschapp Ausriichtung wielen
 
 # Road vehicle station construction window
 STR_STATION_BUILD_BUS_ORIENTATION                               :{WHITE}Busarrêt Richtung
@@ -2384,7 +2390,7 @@ STR_WATERWAYS_TOOLBAR_CAPTION                                   :{WHITE}Waassers
 STR_WATERWAYS_TOOLBAR_CAPTION_SE                                :{WHITE}Waasserstroosen
 STR_WATERWAYS_TOOLBAR_BUILD_CANALS_TOOLTIP                      :{BLACK}Kanäl bauen. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
 STR_WATERWAYS_TOOLBAR_BUILD_LOCKS_TOOLTIP                       :{BLACK}Schlass setzen. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
-STR_WATERWAYS_TOOLBAR_BUILD_DEPOT_TOOLTIP                       :{BLACK}Schëffdepot bauen (fir Schëffer ze bauen an ze warten). Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
+STR_WATERWAYS_TOOLBAR_BUILD_DEPOT_TOOLTIP                       :{BLACK}Schëffsschapp bauen (fir Schëffer ze bauen an ze warten). Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
 STR_WATERWAYS_TOOLBAR_BUILD_DOCK_TOOLTIP                        :{BLACK}Schëffdock bauen. Ctrl aktivéiert ubauen vun Statiounen. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
 STR_WATERWAYS_TOOLBAR_BUOY_TOOLTIP                              :{BLACK}Plazéiert eng Boje, déi als Weepunkt kann benotzt ginn. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
 STR_WATERWAYS_TOOLBAR_BUILD_AQUEDUCT_TOOLTIP                    :{BLACK}Aquadukt bauen. Shift wiesselt tëscht bauen/ongeféier Käschten uweisen
@@ -2392,8 +2398,8 @@ STR_WATERWAYS_TOOLBAR_CREATE_LAKE_TOOLTIP                       :{BLACK}Waasser 
 STR_WATERWAYS_TOOLBAR_CREATE_RIVER_TOOLTIP                      :{BLACK}Plazéier Flëss
 
 # Ship depot construction window
-STR_DEPOT_BUILD_SHIP_CAPTION                                    :{WHITE}Schëffdepot Richtung
-STR_DEPOT_BUILD_SHIP_ORIENTATION_TOOLTIP                        :{BLACK}Wielt d'Schëffdepot Richtung
+STR_DEPOT_BUILD_SHIP_CAPTION                                    :{WHITE}Schëffsschapp Richtung
+STR_DEPOT_BUILD_SHIP_ORIENTATION_TOOLTIP                        :{BLACK}Wielt Richtung vum Schëffsschapp
 
 # Dock construction window
 STR_STATION_BUILD_DOCK_CAPTION                                  :{WHITE}Hafen
@@ -2546,6 +2552,7 @@ STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: 
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Akzeptéiert Luedung: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Schinnen Geschw.-Limit: {LTBLUE}{VELOCITY}
+STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Strossen Geschw. Limitatioun: {LTBLUE}{VELOCITY}
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :Fielsen
@@ -2578,7 +2585,7 @@ STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_EXIT_NOENTRYSIGNALS         :{STRING} Schinn
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_PBSSIGNALS            :{STRING} Schinn mat Kombo- an Weesignaler
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_COMBO_NOENTRYSIGNALS        :{STRING} Schinn mat Kombo- an Einbahnweesignaler
 STR_LAI_RAIL_DESCRIPTION_TRACK_WITH_PBS_NOENTRYSIGNALS          :{STRING} Schinn mat Wee- and Einbahnweesignaler
-STR_LAI_RAIL_DESCRIPTION_TRAIN_DEPOT                            :{STRING} Zuchdepot
+STR_LAI_RAIL_DESCRIPTION_TRAIN_DEPOT                            :{STRING} Zuchschapp
 
 STR_LAI_ROAD_DESCRIPTION_ROAD                                   :Strooss
 STR_LAI_ROAD_DESCRIPTION_ROAD_WITH_STREETLIGHTS                 :Strooss mat Luuchten
@@ -2608,7 +2615,7 @@ STR_LAI_WATER_DESCRIPTION_CANAL                                 :Kanal
 STR_LAI_WATER_DESCRIPTION_LOCK                                  :Schlass
 STR_LAI_WATER_DESCRIPTION_RIVER                                 :Floss
 STR_LAI_WATER_DESCRIPTION_COAST_OR_RIVERBANK                    :Küst oder Flossufer
-STR_LAI_WATER_DESCRIPTION_SHIP_DEPOT                            :Schëffdepot
+STR_LAI_WATER_DESCRIPTION_SHIP_DEPOT                            :Schëffsschapp
 
 # Industries come directly from their industry names
 
@@ -2642,7 +2649,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Land am Firmenb
 STR_ABOUT_OPENTTD                                               :{WHITE}Iwwert OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Original Copyright {COPYRIGHT} 1995 Chris Sawyer, All Rechter virbehalen
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD Versioun {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2013 D'OpenTTD team
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2014 D'OpenTTD team
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Spill späicheren
@@ -2702,7 +2709,7 @@ STR_MAPGEN_BORDER_FREEFORM                                      :{BLACK}Fräifor
 STR_MAPGEN_BORDER_WATER                                         :{BLACK}Waasser
 STR_MAPGEN_BORDER_RANDOM                                        :{BLACK}Zoufälleg
 STR_MAPGEN_BORDER_RANDOMIZE                                     :{BLACK}Zoufall
-STR_MAPGEN_BORDER_MANUAL                                        :{BLACK}Handbuch
+STR_MAPGEN_BORDER_MANUAL                                        :{BLACK}Manuell
 
 STR_MAPGEN_HEIGHTMAP_ROTATION                                   :{BLACK}Héichtekaart rotatioun:
 STR_MAPGEN_HEIGHTMAP_NAME                                       :{BLACK}Héichtekaart Numm:
@@ -2772,7 +2779,7 @@ STR_NEWGRF_SETTINGS_TOGGLE_PALETTE                              :{BLACK}Palette 
 STR_NEWGRF_SETTINGS_TOGGLE_PALETTE_TOOLTIP                      :{BLACK}Wiessel Palette vun den selectéierten NewGRF.{} Maach dat wann d'Grafiken vun deser NewGRF rosa am Spill ausgesin
 STR_NEWGRF_SETTINGS_APPLY_CHANGES                               :{BLACK}Ännerungen unhuelen
 
-STR_NEWGRF_SETTINGS_FIND_MISSING_CONTENT_BUTTON                 :{BLACK}Fann Inhalt den feelt online
+STR_NEWGRF_SETTINGS_FIND_MISSING_CONTENT_BUTTON                 :{BLACK}Feelenden Inhalt online downloaden
 STR_NEWGRF_SETTINGS_FIND_MISSING_CONTENT_TOOLTIP                :{BLACK}Check op den Inahlt den feelt online kann fonnt gin
 
 STR_NEWGRF_SETTINGS_FILENAME                                    :{BLACK}Dateinumm: {SILVER}{STRING}
@@ -2873,8 +2880,9 @@ STR_NEWGRF_LIST_MISSING                                         :{RED}Dateien fe
 
 # NewGRF 'it's broken' warnings
 STR_NEWGRF_BROKEN                                               :{WHITE}Verhalen vun der NewGRF '{0:STRING}' kann Desyncs oder Crashen verursachen
-STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}Changéiert Zoustand fir '{1:ENGINE}' wann net an engem Depot
-STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}Changéiert Gefierlengt fir '{1:ENGINE}' wann net an engem Depot
+STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}Ännert den Zoustand fir '{1:ENGINE}' wann net an engem Schapp
+STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}Ännnert d'Gefierlängt fir '{1:ENGINE}' wann net an engem Schapp
+STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}Geännerte Gefierkapazitéit vun '{1:ENGINE}' wann net an engem Schapp oder amgaang emgebaut ze ginn
 STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}Zuch'{VEHICLE}' vun der Firma '{COMPANY}' huet eng falsch Längt. Et kënnt wahrscheinlech wéinst den NewGRFs. Spill kann desyncroniséiren oder ofstierzen
 
 STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF '{0:STRING}' huet Fehlinformatiounen
@@ -2888,6 +2896,9 @@ STR_NEWGRF_INVALID_CARGO_ABBREV                                 :??
 STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} vun <invalider Wuer>
 STR_NEWGRF_INVALID_ENGINE                                       :<invaliden Gefier-Modell>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<invalid Industrie>
+
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<ongültegt Gefier>
 
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Scannen NewGRFen
@@ -2917,7 +2928,7 @@ STR_TOWN_POPULATION                                             :{BLACK}Weltbev�
 # Town view window
 STR_TOWN_VIEW_TOWN_CAPTION                                      :{WHITE}{TOWN}
 STR_TOWN_VIEW_CITY_CAPTION                                      :{WHITE}{TOWN} (Stad)
-STR_TOWN_VIEW_POPULATION_HOUSES                                 :{BLACK}Bewunnerunzuel: {ORANGE}{COMMA}{BLACK}  Haiser: {ORANGE}{COMMA}
+STR_TOWN_VIEW_POPULATION_HOUSES                                 :{BLACK}Awunner: {ORANGE}{COMMA}{BLACK}  Haiser: {ORANGE}{COMMA}
 STR_TOWN_VIEW_PASSENGERS_LAST_MONTH_MAX                         :{BLACK}Passagéier leschten Mount: {ORANGE}{COMMA}{BLACK}  max: {ORANGE}{COMMA}
 STR_TOWN_VIEW_MAIL_LAST_MONTH_MAX                               :{BLACK}Post leschten Mount: {ORANGE}{COMMA}{BLACK}  max: {ORANGE}{COMMA}
 STR_TOWN_VIEW_CARGO_FOR_TOWNGROWTH                              :{BLACK}Luedungen gebraucht fir Stadwuestum:
@@ -3026,6 +3037,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}Zréck
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}Géi op d'Säit firdrun
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}Nächst
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}Géi op déi nächst Säit
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Ongültëg Zil Referenz
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Statiounennimm - klick op den Numm fir d'Siicht drop ze zentréieren. Ctrl+Klick erstellt eng nei Usiicht op d'Statioun
@@ -3035,7 +3047,7 @@ STR_STATION_LIST_STATION                                        :{YELLOW}{STATIO
 STR_STATION_LIST_WAYPOINT                                       :{YELLOW}{WAYPOINT}
 STR_STATION_LIST_NONE                                           :{YELLOW}- Näischt -
 STR_STATION_LIST_SELECT_ALL_FACILITIES                          :{BLACK}Selectéier all d'Fabriken
-STR_STATION_LIST_SELECT_ALL_TYPES                               :{BLACK}Wielt all Luedungstyp (ouni Luedung déi waart)
+STR_STATION_LIST_SELECT_ALL_TYPES                               :{BLACK}Wielt all Luedungstyp (ouni Luedung déi waard)
 STR_STATION_LIST_NO_WAITING_CARGO                               :{BLACK}Kéng Luedung
 
 # Station view window
@@ -3263,9 +3275,9 @@ STR_VEHICLE_LIST_MANAGE_LIST_TOOLTIP                            :{BLACK}Scheckt 
 STR_VEHICLE_LIST_REPLACE_VEHICLES                               :Gefierer ersetzen
 STR_VEHICLE_LIST_SEND_FOR_SERVICING                             :An d'Revisioun schécken
 
-STR_VEHICLE_LIST_SEND_TRAIN_TO_DEPOT                            :An den Depot schécken
+STR_VEHICLE_LIST_SEND_TRAIN_TO_DEPOT                            :An den Schapp schécken
 STR_VEHICLE_LIST_SEND_ROAD_VEHICLE_TO_DEPOT                     :An den Depot schécken
-STR_VEHICLE_LIST_SEND_SHIP_TO_DEPOT                             :An den Depot schécken
+STR_VEHICLE_LIST_SEND_SHIP_TO_DEPOT                             :An den Schapp schécken
 STR_VEHICLE_LIST_SEND_AIRCRAFT_TO_HANGAR                        :An den Hangar schécken
 
 STR_VEHICLE_LIST_MASS_STOP_LIST_TOOLTIP                         :{BLACK}Klick fir all Gefierer an der Lëscht ze stoppen
@@ -3320,7 +3332,7 @@ STR_PURCHASE_INFO_COST                                          :{BLACK}Käschte
 STR_PURCHASE_INFO_WEIGHT_CWEIGHT                                :{BLACK}Gewiicht: {GOLD}{WEIGHT_SHORT} ({WEIGHT_SHORT})
 STR_PURCHASE_INFO_COST_SPEED                                    :{BLACK}Käschten: {GOLD}{CURRENCY_LONG}{BLACK} Geschw.: {GOLD}{VELOCITY}
 STR_PURCHASE_INFO_AIRCRAFT_CAPACITY                             :{BLACK}Kapazitéit: {GOLD}{CARGO_LONG}, {CARGO_LONG}
-STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}Ugedriwwen Wagonen: {GOLD}+{POWER}{BLACK} Gewiicht: {GOLD}+{WEIGHT_SHORT}
+STR_PURCHASE_INFO_PWAGPOWER_PWAGWEIGHT                          :{BLACK}Ugedriwwen Waggonen: {GOLD}+{POWER}{BLACK} Gewiicht: {GOLD}+{WEIGHT_SHORT}
 STR_PURCHASE_INFO_REFITTABLE_TO                                 :{BLACK}Embaubaur zu: {GOLD}{STRING}
 STR_PURCHASE_INFO_ALL_TYPES                                     :All Typ Wueren
 STR_PURCHASE_INFO_ALL_BUT                                       :Alles ausser {CARGO_LIST}
@@ -3360,8 +3372,8 @@ STR_QUERY_RENAME_AIRCRAFT_TYPE_CAPTION                          :{WHITE}Fligerty
 # Depot window
 STR_DEPOT_CAPTION                                               :{WHITE}{DEPOT}
 
-STR_DEPOT_RENAME_TOOLTIP                                        :{BLACK}Enner den Numm vum Depot
-STR_DEPOT_RENAME_DEPOT_CAPTION                                  :Depot ëmbenennen
+STR_DEPOT_RENAME_TOOLTIP                                        :{BLACK}Enner den Numm vum Schapp
+STR_DEPOT_RENAME_DEPOT_CAPTION                                  :Schapp ëmbenennen
 
 STR_DEPOT_NO_ENGINE                                             :{BLACK}-
 STR_DEPOT_VEHICLE_TOOLTIP                                       :{BLACK}{ENGINE}{STRING}
@@ -3380,14 +3392,14 @@ STR_DEPOT_AIRCRAFT_SELL_TOOLTIP                                 :{BLACK}Zitt den
 
 STR_DEPOT_DRAG_WHOLE_TRAIN_TO_SELL_TOOLTIP                      :{BLACK}Lokomotiv heihinner zéien fir de ganzen Zuch ze läschen
 
-STR_DEPOT_SELL_ALL_BUTTON_TRAIN_TOOLTIP                         :{BLACK}All Zich am Depot verkafen
+STR_DEPOT_SELL_ALL_BUTTON_TRAIN_TOOLTIP                         :{BLACK}All Zich am Schapp verkafen
 STR_DEPOT_SELL_ALL_BUTTON_ROAD_VEHICLE_TOOLTIP                  :{BLACK}All Gefiert am Depot verkafen
-STR_DEPOT_SELL_ALL_BUTTON_SHIP_TOOLTIP                          :{BLACK}All Schëff am Depot verkafen
+STR_DEPOT_SELL_ALL_BUTTON_SHIP_TOOLTIP                          :{BLACK}All Schëff am Schapp verkafen
 STR_DEPOT_SELL_ALL_BUTTON_AIRCRAFT_TOOLTIP                      :{BLACK}All Fliger am Hangar verkafen
 
-STR_DEPOT_AUTOREPLACE_TRAIN_TOOLTIP                             :{BLACK}All Zich am Depot automatesch ersetzen
+STR_DEPOT_AUTOREPLACE_TRAIN_TOOLTIP                             :{BLACK}All Zich am Schapp automatesch ersetzen
 STR_DEPOT_AUTOREPLACE_ROAD_VEHICLE_TOOLTIP                      :{BLACK}All Gefierer am Depot automatesch ersetzen
-STR_DEPOT_AUTOREPLACE_SHIP_TOOLTIP                              :{BLACK}All Schëffer am Depot automatesch ersetzen
+STR_DEPOT_AUTOREPLACE_SHIP_TOOLTIP                              :{BLACK}All Schëffer am Schapp automatesch ersetzen
 STR_DEPOT_AUTOREPLACE_AIRCRAFT_TOOLTIP                          :{BLACK}All Fliger am Hangar automatesch ersetzen
 
 STR_DEPOT_TRAIN_NEW_VEHICLES_BUTTON                             :{BLACK}Nei Gefierer
@@ -3405,32 +3417,32 @@ STR_DEPOT_CLONE_ROAD_VEHICLE                                    :{BLACK}Gefiert 
 STR_DEPOT_CLONE_SHIP                                            :{BLACK}Schëff klonen
 STR_DEPOT_CLONE_AIRCRAFT                                        :{BLACK}Fliger klonen
 
-STR_DEPOT_CLONE_TRAIN_DEPOT_INFO                                :{BLACK}Dëst baut eng Kopie vun engem Zuch mat all den Wagonen. Klick op dësen Knäppchen an dann op en Zuch am Depot oder baussen. Ctrl+Klick fir Opträg ze deelen. Shift+Klick weist ongeféier Käschten ouni Kaf
+STR_DEPOT_CLONE_TRAIN_DEPOT_INFO                                :{BLACK}Dëst baut eng Kopie vun engem Zuch mat all den Waggonen. Klick op dësen Knäppchen an dann op en Zuch am Schapp oder baussen. Ctrl+Klick fir Opträg ze deelen. Shift+Klick weist ongeféier Käschten ouni Kaf
 STR_DEPOT_CLONE_ROAD_VEHICLE_DEPOT_INFO                         :{BLACK}Keeft eng Kopie vum Stroossengefier. Klick dësen Kneppchen an dann op en Stroossengefier am oder baussent dem Depot. Ctrl+Klick deelt och d'Opträg. Shift+Klick weist ongeféier Käschten ouni Kaf
-STR_DEPOT_CLONE_SHIP_DEPOT_INFO                                 :{BLACK}Dëst baut eng Kopie vum Schëff. Klick op dësen Knäppchen an dann op en Schëff am Depot oder baussen.Ctrl+Klick kopéiert och d'Opträg. Shift+Klick weist ongeféier Käschten ouni Kaf
+STR_DEPOT_CLONE_SHIP_DEPOT_INFO                                 :{BLACK}Dëst baut eng Kopie vum Schëff. Klick op dësen Knäppchen an dann op en Schëff am Schapp oder baussen.Ctrl+Klick kopéiert och d'Opträg. Shift+Klick weist ongeféier Käschten ouni Kaf
 STR_DEPOT_CLONE_AIRCRAFT_INFO_HANGAR_WINDOW                     :{BLACK}Dëst baut eng Kopie vun engem Fliger. Klick op dësen Knäppchen, an dann op en Fliger am Hangar oder baussen. Ctrl+Klick fir Uerder ze deelen. Shift+Klick weist ongeféier Käschten ouni Kaf
 
-STR_DEPOT_TRAIN_LOCATION_TOOLTIP                                :{BLACK}Zentréiert d'Usiicht op den Depot. Ctrl+Klick erstellt eng nei Usiicht op den Depot
+STR_DEPOT_TRAIN_LOCATION_TOOLTIP                                :{BLACK}Zentréiert d'Usiicht op den Schapp. Ctrl+Klick erstellt eng nei Usiicht op den Schapp
 STR_DEPOT_ROAD_VEHICLE_LOCATION_TOOLTIP                         :{BLACK}Zentréiert d'Usiicht op den Depot. Ctrl+Klick erstellt eng nei Usiicht op den Depot
-STR_DEPOT_SHIP_LOCATION_TOOLTIP                                 :{BLACK}Zentréiert d'Usiicht op den Depot. Ctrl+Klick erstellt eng nei Usiicht op den Depot
+STR_DEPOT_SHIP_LOCATION_TOOLTIP                                 :{BLACK}Zentréiert d'Usiicht op den Schapp. Ctrl+Klick erstellt eng nei Usiicht op den Schapp
 STR_DEPOT_AIRCRAFT_LOCATION_TOOLTIP                             :{BLACK}Zentréiert d'Usiicht op den Hangar. Ctrl+Klick erstellt eng nei Usiicht op den Hangar
 
-STR_DEPOT_VEHICLE_ORDER_LIST_TRAIN_TOOLTIP                      :{BLACK}Lëscht mat all Zich an dësem Depot
+STR_DEPOT_VEHICLE_ORDER_LIST_TRAIN_TOOLTIP                      :{BLACK}Lëscht mat all Zich an dësem Schapp
 STR_DEPOT_VEHICLE_ORDER_LIST_ROAD_VEHICLE_TOOLTIP               :{BLACK}Lëscht mat all Gefierer an dësem Depot
-STR_DEPOT_VEHICLE_ORDER_LIST_SHIP_TOOLTIP                       :{BLACK}Lëscht mat all Schëffer an dësem Depot
+STR_DEPOT_VEHICLE_ORDER_LIST_SHIP_TOOLTIP                       :{BLACK}Lëscht mat all Schëffer an dësem Schapp
 STR_DEPOT_VEHICLE_ORDER_LIST_AIRCRAFT_TOOLTIP                   :{BLACK}Lëscht mat all Fliger am Hangar op dësem Fluchhafen
 
-STR_DEPOT_MASS_STOP_DEPOT_TRAIN_TOOLTIP                         :{BLACK}Klick fir all Zich am Depot ze stoppen
+STR_DEPOT_MASS_STOP_DEPOT_TRAIN_TOOLTIP                         :{BLACK}Klick fir all Zich am Schapp ze stoppen
 STR_DEPOT_MASS_STOP_DEPOT_ROAD_VEHICLE_TOOLTIP                  :{BLACK}Klick fir all Gefierer am Depot ze stoppen
-STR_DEPOT_MASS_STOP_DEPOT_SHIP_TOOLTIP                          :{BLACK}Klick fir all Schëffer am Depot ze stoppen
+STR_DEPOT_MASS_STOP_DEPOT_SHIP_TOOLTIP                          :{BLACK}Klick fir all Schëffer am Schapp ze stoppen
 STR_DEPOT_MASS_STOP_HANGAR_TOOLTIP                              :{BLACK}Klick fir all Fliger am Hangar ze stoppen
 
-STR_DEPOT_MASS_START_DEPOT_TRAIN_TOOLTIP                        :{BLACK}Klick fir all Zich am Depot ze starten
+STR_DEPOT_MASS_START_DEPOT_TRAIN_TOOLTIP                        :{BLACK}Klick fir all Zich am Schapp ze starten
 STR_DEPOT_MASS_START_DEPOT_ROAD_VEHICLE_TOOLTIP                 :{BLACK}Klick fir all Gefierer am Depot ze starten
 STR_DEPOT_MASS_START_DEPOT_SHIP_TOOLTIP                         :{BLACK}Klick fir all Schëff am Schapp ze starten
 STR_DEPOT_MASS_START_HANGAR_TOOLTIP                             :{BLACK}Klick fir all Fliger am Hangar ze starten
 
-STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Du verkeefs grad all Gefierer am Depot. Bass du sécher ?
+STR_DEPOT_SELL_CONFIRMATION_TEXT                                :{YELLOW}Du verkeefs grad all Gefierer am Schapp. Bass du sécher ?
 
 # Engine preview window
 STR_ENGINE_PREVIEW_CAPTION                                      :{WHITE}Meldung vum Gefiertenhiersteller
@@ -3450,7 +3462,7 @@ STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_CAPACITY_RUNCOST:{BLACK}Käscht
 STR_ENGINE_PREVIEW_COST_MAX_SPEED_RANGE_CAPACITY_RUNCOST        :{BLACK}Käschten: {CURRENCY_LONG} Max. Geschw.: {VELOCITY} Distanz: {COMMA} Felder{}Kapazitéit: {CARGO_LONG}{}Betribskäschten: {CURRENCY_LONG}/Jr
 
 # Autoreplace window
-STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Tausch{STRING} - {STRING} aus
+STR_REPLACE_VEHICLES_WHITE                                      :{WHITE}Ersetz {STRING} - {STRING}
 STR_REPLACE_VEHICLE_TRAIN                                       :Zuch
 STR_REPLACE_VEHICLE_ROAD_VEHICLE                                :Stroossengefier
 STR_REPLACE_VEHICLE_SHIP                                        :Schëff
@@ -3470,19 +3482,19 @@ STR_REPLACE_VEHICLES_STOP                                       :{BLACK}Stop Gef
 STR_REPLACE_HELP_STOP_BUTTON                                    :{BLACK}Drécken fir den Austosch ze stoppen
 
 STR_REPLACE_ENGINE_WAGON_SELECT                                 :{BLACK}Tauschen aus: {ORANGE}{STRING}
-STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}Wiessel tëscht Maschin- an Wagonaustosch. Fënster
+STR_REPLACE_ENGINE_WAGON_SELECT_HELP                            :{BLACK}Wiessel tëscht Maschin- an Waggonaustosch-Fënster
 STR_REPLACE_ENGINES                                             :Motoren
-STR_REPLACE_WAGONS                                              :Wagonen
+STR_REPLACE_WAGONS                                              :Waggonen
 
 STR_REPLACE_HELP_RAILTYPE                                       :{BLACK}Wielt den Schinnentyp fir den Maschinen ausgetosch ginn
 STR_REPLACE_HELP_REPLACE_INFO_TAB                               :{BLACK}Weist un wellech Maschin vun der lénks selectéierter Maschin ausgetosch soll ginn, wann et zoutrëfft
-STR_REPLACE_RAIL_VEHICLES                                       :Schinnengefierter
-STR_REPLACE_ELRAIL_VEHICLES                                     :Elektresch Schinnen Gefierer
+STR_REPLACE_RAIL_VEHICLES                                       :Zich
+STR_REPLACE_ELRAIL_VEHICLES                                     :Elektresch Zich
 STR_REPLACE_MONORAIL_VEHICLES                                   :Monorail Gefierer
 STR_REPLACE_MAGLEV_VEHICLES                                     :Magnéitbunn Gefierer
 
-STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Wagon raushuelen: {ORANGE}{STRING}
-STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Mëscht dass d'automatescht Austauschen d'Lengt vum Zuch behält, an dem en Wagonen (vun lénks un) wechhëllt, wann d'Lok den Zuch ze laang mëscht
+STR_REPLACE_REMOVE_WAGON                                        :{BLACK}Waggon raushuelen: {ORANGE}{STRING}
+STR_REPLACE_REMOVE_WAGON_HELP                                   :{BLACK}Mëscht dass d'automatescht Austauschen d'Längt vum Zuch behält, an dem en Waggonen (vun lénks un) wechhëllt, wann d'Lok den Zuch ze laang mëscht
 
 # Vehicle view
 STR_VEHICLE_VIEW_CAPTION                                        :{WHITE}{VEHICLE}
@@ -3492,12 +3504,12 @@ STR_VEHICLE_VIEW_ROAD_VEHICLE_LOCATION_TOOLTIP                  :{BLACK}Zentréi
 STR_VEHICLE_VIEW_SHIP_LOCATION_TOOLTIP                          :{BLACK}Zentréiert d'Usiicht op d'Schëff. Ctrl+Klick follegt dem Schëff an der Haaptusiicht
 STR_VEHICLE_VIEW_AIRCRAFT_LOCATION_TOOLTIP                      :{BLACK}Zentréiert d'Usiicht op den Fliger. Ctrl+Klick follegt dem Fliger an der Haaptusiicht
 
-STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}Schéckt den Zuch an den Depot. CTRL+Klick fir nëmmen Revisoun
+STR_VEHICLE_VIEW_TRAIN_SEND_TO_DEPOT_TOOLTIP                    :{BLACK}Schéckt den Zuch an den Schapp. Ctrl+Klick fir nëmmen Revisoun
 STR_VEHICLE_VIEW_ROAD_VEHICLE_SEND_TO_DEPOT_TOOLTIP             :{BLACK}Schéckt d'Gefiert an den Depot. CTRL+Klick fir nëmmen Revisoun
-STR_VEHICLE_VIEW_SHIP_SEND_TO_DEPOT_TOOLTIP                     :{BLACK}Schéck d'Schëff an den Depot. CTRL+Klick fir nëmmen Revisoun
+STR_VEHICLE_VIEW_SHIP_SEND_TO_DEPOT_TOOLTIP                     :{BLACK}Schéck d'Schëff an den Schapp. Ctrl+Klick fir nëmmen Revisoun
 STR_VEHICLE_VIEW_AIRCRAFT_SEND_TO_DEPOT_TOOLTIP                 :{BLACK}Schéckt den Fliger an den Hangar. CTRL+Klick mëscht nëmmen Revisioun
 
-STR_VEHICLE_VIEW_CLONE_TRAIN_INFO                               :{BLACK}Dëst baut eng Kopie vun engem Zuch mat all den Wagonen. Ctrl+Klick kopéiert och d'Opträg. Shift+Klick weist ongeféier Käschten ouni Kaf
+STR_VEHICLE_VIEW_CLONE_TRAIN_INFO                               :{BLACK}Dëst baut eng Kopie vun engem Zuch mat all den Waggonen. Ctrl+Klick kopéiert och d'Opträg. Shift+Klick weist ongeféier Käschten ouni Kaf
 STR_VEHICLE_VIEW_CLONE_ROAD_VEHICLE_INFO                        :{BLACK}Baut eng Kopie vum Stroossengefiert. Ctrl+Klick kopéiert och d'Opträg. Shift+Klick weist ongeféier Käschten ouni Kaf
 STR_VEHICLE_VIEW_CLONE_SHIP_INFO                                :{BLACK}Dëst baut eng Kopie vum Schëff. Ctrl+Klick kopéiert och d'Opträg. Shift+Klick weist ongeféier Käschten ouni Kaf
 STR_VEHICLE_VIEW_CLONE_AIRCRAFT_INFO                            :{BLACK}Dëst baut eng Kopie vum Fliger. Ctrl+Klick kopéiert och d'Opträg. Shift+Klick weist ongeféier Käschten ouni Kaf
@@ -3610,9 +3622,9 @@ STR_VEHICLE_DETAILS_CARGO_FROM_MULT                             :{LTBLUE}{CARGO_
 STR_VEHICLE_DETAIL_TAB_CARGO                                    :{BLACK}Luedung
 STR_VEHICLE_DETAILS_TRAIN_CARGO_TOOLTIP                         :{BLACK}Weist d'Detailer vun der Luedung
 STR_VEHICLE_DETAIL_TAB_INFORMATION                              :{BLACK}Informatioun
-STR_VEHICLE_DETAILS_TRAIN_INFORMATION_TOOLTIP                   :{BLACK}Weist d'Detailer vun den Wagongen
+STR_VEHICLE_DETAILS_TRAIN_INFORMATION_TOOLTIP                   :{BLACK}Weist d'Detailer vun den Waggonen
 STR_VEHICLE_DETAIL_TAB_CAPACITIES                               :{BLACK}Kapazitéiten
-STR_VEHICLE_DETAILS_TRAIN_CAPACITIES_TOOLTIP                    :{BLACK}Weist d'Kapazitéiten vun den Wagongen
+STR_VEHICLE_DETAILS_TRAIN_CAPACITIES_TOOLTIP                    :{BLACK}Weist d'Kapazitéiten vun den Waggonen
 STR_VEHICLE_DETAIL_TAB_TOTAL_CARGO                              :{BLACK}Total Luedung
 STR_VEHICLE_DETAILS_TRAIN_TOTAL_CARGO_TOOLTIP                   :{BLACK}Weist d'Total Kapazitéit vum Zuch, opgedeelt op d'Wuerentypen
 
@@ -3723,11 +3735,11 @@ STR_ORDERS_STOP_SHARING_BUTTON                                  :{BLACK}Deelen s
 STR_ORDERS_STOP_SHARING_TOOLTIP                                 :{BLACK}Stop d'Deelen vun der Optragslëscht. Ctrl+Klick lescht ausserdem all Opträg vun dësem Gefiert
 
 STR_ORDERS_GO_TO_BUTTON                                         :{BLACK}Géi op
-STR_ORDER_GO_TO_NEAREST_DEPOT                                   :Géi an den noosten Depot
+STR_ORDER_GO_TO_NEAREST_DEPOT                                   :Géi an den noosten Schapp
 STR_ORDER_GO_TO_NEAREST_HANGAR                                  :Géi bei den noosten Hangar
 STR_ORDER_CONDITIONAL                                           :Bedéngten Optragssprong
 STR_ORDER_SHARE                                                 :Opträg deelen
-STR_ORDERS_GO_TO_TOOLTIP                                        :{BLACK}Setzt en neien Optrag firun den ungewielten Optrag, oder un d'Enn vun der Lëscht. Ctrl setzt Statioun Opträg op voll lueden, Weepunkter op 'non-stop', an Depot Opträg 'Revisioun'. Op en Gefiert klicken, kopéiert d'Opträg vun dem Gefiert
+STR_ORDERS_GO_TO_TOOLTIP                                        :{BLACK}Setzt en neien Optrag firun den ungewielten Optrag, oder un d'Enn vun der Lëscht. Ctrl setzt Statioun Opträg op voll lueden, Weepunkter op 'non-stop', an Schapp Opträg 'Revisioun'. Op en Gefiert klicken, kopéiert d'Opträg vun dem Gefiert
 
 STR_ORDERS_VEH_WITH_SHARED_ORDERS_LIST_TOOLTIP                  :{BLACK}Weis all Gefierer déi dësen Plang deelen
 
@@ -3740,9 +3752,9 @@ STR_ORDER_SERVICE_NON_STOP_AT                                   :Revisioun non-s
 
 STR_ORDER_NEAREST_DEPOT                                         :den noosten
 STR_ORDER_NEAREST_HANGAR                                        :den noosten Hangar
-STR_ORDER_TRAIN_DEPOT                                           :Zuchdepot
+STR_ORDER_TRAIN_DEPOT                                           :Zuchschapp
 STR_ORDER_ROAD_VEHICLE_DEPOT                                    :Stroossengefierer-Depot
-STR_ORDER_SHIP_DEPOT                                            :Schëffdepot
+STR_ORDER_SHIP_DEPOT                                            :Schëffsschapp
 STR_ORDER_GO_TO_NEAREST_DEPOT_FORMAT                            :{STRING} {STRING} {STRING}
 STR_ORDER_GO_TO_DEPOT_FORMAT                                    :{STRING} {DEPOT}
 
@@ -3845,9 +3857,9 @@ STR_TIMETABLE_RESET_LATENESS_TOOLTIP                            :{BLACK}Setzt de
 STR_TIMETABLE_AUTOFILL                                          :{BLACK}Autofëllen
 STR_TIMETABLE_AUTOFILL_TOOLTIP                                  :{BLACK}Fëll den Zäitplang automatesch mat den Wäerter vum nächsten Trajet (Ctrl+Klick fir Wardzäiten probéiren bäizehalen)
 
-STR_TIMETABLE_EXPECTED                                          :{BLACK}Erwaart
+STR_TIMETABLE_EXPECTED                                          :{BLACK}Erwaard
 STR_TIMETABLE_SCHEDULED                                         :{BLACK}Geplangt
-STR_TIMETABLE_EXPECTED_TOOLTIP                                  :{BLACK}Tëschent erwaart an geplangt wiesselen
+STR_TIMETABLE_EXPECTED_TOOLTIP                                  :{BLACK}Tëschent erwaard a geplangt wiesselen
 
 STR_TIMETABLE_ARRIVAL_ABBREVIATION                              :A:
 STR_TIMETABLE_DEPARTURE_ABBREVIATION                            :D:
@@ -3939,6 +3951,8 @@ STR_AI_SETTINGS_START_DELAY                                     :Unzuel vun Deeg
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}{STRING} readme vun {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}{STRING} Changelog vun {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}{STRING} Lizenz vun {STRING}
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}Text änneren
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Ännert den Text vun der Fënster esou dass alles erapasst ouni ze scrollen
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Readme liesen
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Changelog
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Lizenz
@@ -4072,12 +4086,12 @@ STR_ERROR_CAN_T_RENAME_TOWN                                     :{WHITE}Kann d'S
 STR_ERROR_CAN_T_FOUND_TOWN_HERE                                 :{WHITE}Kann d'Stad hei net bauen...
 STR_ERROR_CAN_T_EXPAND_TOWN                                     :{WHITE}Kann d'Stad net vergréissern...
 STR_ERROR_TOO_CLOSE_TO_EDGE_OF_MAP_SUB                          :{WHITE}... ze noo um Enn vun der Kaart
-STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... ze noo un enger aanerer Stadt
+STR_ERROR_TOO_CLOSE_TO_ANOTHER_TOWN                             :{WHITE}... ze no un enger anerer Stad
 STR_ERROR_TOO_MANY_TOWNS                                        :{WHITE}... ze vill Stied
 STR_ERROR_NO_SPACE_FOR_TOWN                                     :{WHITE}... et ass keng Plaz méi op der Kaart
 STR_ERROR_TOWN_EXPAND_WARN_NO_ROADS                             :{WHITE}Stied bauen keng Stroossen. Du kanns den Bau iwwert Erweidert Astellungen->Economie->Stied anschalten
 STR_ERROR_ROAD_WORKS_IN_PROGRESS                                :{WHITE}Stroossenarbeschten umgaangen
-STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}Kann des Stad net leschen...{}Eng Statioun oder Depot huet den Numm vun dëser Stad oder en Stéck dat der Stad gehéiert kann net ewechgeholl ginn
+STR_ERROR_TOWN_CAN_T_DELETE                                     :{WHITE}Kann des Stad net leschen...{}Eng Statioun oder Schapp huet den Numm vun dëser Stad oder en Stéck dat der Stad gehéiert kann net ewechgeholl ginn
 STR_ERROR_STATUE_NO_SUITABLE_PLACE                              :{WHITE}... et gëtt keng Gëeegent Plaz fir eng Statue am Stadzentrum
 
 # Industry related errors
@@ -4086,7 +4100,7 @@ STR_ERROR_CAN_T_GENERATE_INDUSTRIES                             :{WHITE}Kann ken
 STR_ERROR_CAN_T_BUILD_HERE                                      :{WHITE}Kann {STRING} net hei bauen...
 STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY                         :{WHITE}Kann deen Industrietyp hei net bauen...
 STR_ERROR_INDUSTRY_TOO_CLOSE                                    :{WHITE}... ze Noo bei enger aanerer Fabrik
-STR_ERROR_MUST_FOUND_TOWN_FIRST                                 :{WHITE}... muss fir d'éischt eng Stadt bauen
+STR_ERROR_MUST_FOUND_TOWN_FIRST                                 :{WHITE}... muss fir d'éischt eng Stad bauen
 STR_ERROR_ONLY_ONE_ALLOWED_PER_TOWN                             :{WHITE}... nëmmen 1 pro Stad erlaabt
 STR_ERROR_CAN_ONLY_BE_BUILT_IN_TOWNS_WITH_POPULATION_OF_1200    :{WHITE}... kann nëmmen an Stiedt mat opmannst 1200 Anwunner gebaut ginn
 STR_ERROR_CAN_ONLY_BE_BUILT_IN_RAINFOREST                       :{WHITE}... kann nëmmen am Regenwaldgebitt gebaut ginn
@@ -4155,19 +4169,19 @@ STR_ERROR_BUOY_IN_THE_WAY                                       :{WHITE}... Boje
 STR_ERROR_BUOY_IS_IN_USE                                        :{WHITE}... Boje ass am Gebrauch vun enger anerer Firma!
 
 # Depot related errors
-STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT                               :{WHITE}Kann den Zuchdepot hei net bauen...
-STR_ERROR_CAN_T_BUILD_ROAD_DEPOT                                :{WHITE}Kann den Depot hei net bauen...
+STR_ERROR_CAN_T_BUILD_TRAIN_DEPOT                               :{WHITE}Kann den Zuchschapp hei net bauen...
+STR_ERROR_CAN_T_BUILD_ROAD_DEPOT                                :{WHITE}Kann de Schapp hei net bauen...
 STR_ERROR_CAN_T_BUILD_TRAM_DEPOT                                :{WHITE}Kann den Tramschapp hei net bauen...
-STR_ERROR_CAN_T_BUILD_SHIP_DEPOT                                :{WHITE}Kann de Schëffdepot hei net bauen...
+STR_ERROR_CAN_T_BUILD_SHIP_DEPOT                                :{WHITE}Kann de Schëffsschapp hei net bauen...
 
-STR_ERROR_CAN_T_RENAME_DEPOT                                    :{WHITE}Kann den Depot net ëmbenennen
+STR_ERROR_CAN_T_RENAME_DEPOT                                    :{WHITE}Kann den Schapp net ëmbenennen
 
-STR_ERROR_TRAIN_MUST_BE_STOPPED_INSIDE_DEPOT                    :{WHITE}... muss an engem Depot gestoppt ginn
+STR_ERROR_TRAIN_MUST_BE_STOPPED_INSIDE_DEPOT                    :{WHITE}... muss an engem Schapp gestoppt ginn
 STR_ERROR_ROAD_VEHICLE_MUST_BE_STOPPED_INSIDE_DEPOT             :{WHITE}... muss an engem Depot gestoppt ginn
-STR_ERROR_SHIP_MUST_BE_STOPPED_INSIDE_DEPOT                     :{WHITE}... muss an engem Schëffdepot gestoppt ginn
+STR_ERROR_SHIP_MUST_BE_STOPPED_INSIDE_DEPOT                     :{WHITE}... muss an engem Schëffsschapp gestoppt ginn
 STR_ERROR_AIRCRAFT_MUST_BE_STOPPED_INSIDE_HANGAR                :{WHITE}... muss an engem Hangar gestoppt ginn
 
-STR_ERROR_TRAINS_CAN_ONLY_BE_ALTERED_INSIDE_A_DEPOT             :{WHITE}Zich kënnen nëmmen an engem Depot verännert ginn
+STR_ERROR_TRAINS_CAN_ONLY_BE_ALTERED_INSIDE_A_DEPOT             :{WHITE}Zich kënnen nëmmen an engem Schapp verännert ginn
 STR_ERROR_TRAIN_TOO_LONG                                        :{WHITE}Zuch ze laang
 STR_ERROR_CAN_T_REVERSE_DIRECTION_RAIL_VEHICLE                  :{WHITE}Kann d'Gefiert hei net ëmdréinen...
 STR_ERROR_CAN_T_REVERSE_DIRECTION_RAIL_VEHICLE_MULTIPLE_UNITS   :{WHITE}... ass aus e puer Eenheeten zesummengesat
@@ -4175,10 +4189,10 @@ STR_ERROR_INCOMPATIBLE_RAIL_TYPES                               :Onkompatibel Sc
 
 STR_ERROR_CAN_T_MOVE_VEHICLE                                    :{WHITE}Kann d'Gefiert net réckelen...
 STR_ERROR_REAR_ENGINE_FOLLOW_FRONT                              :{WHITE}D'hënnescht Maschinn geet ëmmer der viischter no.
-STR_ERROR_UNABLE_TO_FIND_ROUTE_TO                               :{WHITE}Kann den Wee an den Depot net fannen
-STR_ERROR_UNABLE_TO_FIND_LOCAL_DEPOT                            :{WHITE}Kann den Depot net fannen
+STR_ERROR_UNABLE_TO_FIND_ROUTE_TO                               :{WHITE}Kann den Wee an den Schapp net fannen
+STR_ERROR_UNABLE_TO_FIND_LOCAL_DEPOT                            :{WHITE}Kann den Schapp net fannen
 
-STR_ERROR_DEPOT_WRONG_DEPOT_TYPE                                :Falschen Depot-Typ
+STR_ERROR_DEPOT_WRONG_DEPOT_TYPE                                :Falschen Schapp-Typ
 
 # Autoreplace related errors
 STR_ERROR_TRAIN_TOO_LONG_AFTER_REPLACEMENT                      :{WHITE}{VEHICLE} ass ze laang nom Auswiesselen
@@ -4286,9 +4300,9 @@ STR_ERROR_CAN_T_STOP_START_ROAD_VEHICLE                         :{WHITE}Kann d'S
 STR_ERROR_CAN_T_STOP_START_SHIP                                 :{WHITE}Kann d'Schëff net stoppen/starten...
 STR_ERROR_CAN_T_STOP_START_AIRCRAFT                             :{WHITE}Kann den Fliger net stoppen/starten...
 
-STR_ERROR_CAN_T_SEND_TRAIN_TO_DEPOT                             :{WHITE}Kann den Zuch net an den Depot schécken...
+STR_ERROR_CAN_T_SEND_TRAIN_TO_DEPOT                             :{WHITE}Kann den Zuch net an den Schapp schécken...
 STR_ERROR_CAN_T_SEND_ROAD_VEHICLE_TO_DEPOT                      :{WHITE}Kann d'Gefiert net an den Depot schécken...
-STR_ERROR_CAN_T_SEND_SHIP_TO_DEPOT                              :{WHITE}Kann d'Schëff net an den Depot schécken...
+STR_ERROR_CAN_T_SEND_SHIP_TO_DEPOT                              :{WHITE}Kann d'Schëff net an den Schapp schécken...
 STR_ERROR_CAN_T_SEND_AIRCRAFT_TO_HANGAR                         :{WHITE}Kann den Fliger net an den Hangar schécken...
 
 STR_ERROR_CAN_T_BUY_TRAIN                                       :{WHITE}Kann den Zuch net bauen...
@@ -4437,7 +4451,7 @@ STR_INDUSTRY_NAME_WATER_TOWER                                   :Waassertuerm
 STR_INDUSTRY_NAME_FACTORY_2                                     :Fabrik
 STR_INDUSTRY_NAME_FARM_2                                        :Bauerenhaff
 STR_INDUSTRY_NAME_LUMBER_MILL                                   :Bauholzfabrik
-STR_INDUSTRY_NAME_COTTON_CANDY_FOREST                           :Zockerwatt Bësch
+STR_INDUSTRY_NAME_COTTON_CANDY_FOREST                           :Zockerwattbësch
 STR_INDUSTRY_NAME_CANDY_FACTORY                                 :Séissegkeetenfabrik
 STR_INDUSTRY_NAME_BATTERY_FARM                                  :Batteriefarm
 STR_INDUSTRY_NAME_COLA_WELLS                                    :Colaquellen
@@ -4446,7 +4460,7 @@ STR_INDUSTRY_NAME_TOY_FACTORY                                   :Spillsaachen Fa
 STR_INDUSTRY_NAME_PLASTIC_FOUNTAINS                             :Plastikpëtz
 STR_INDUSTRY_NAME_FIZZY_DRINK_FACTORY                           :Spruddelgedrenks Fabrik
 STR_INDUSTRY_NAME_BUBBLE_GENERATOR                              :Blosengenerator
-STR_INDUSTRY_NAME_TOFFEE_QUARRY                                 :Karmelbroch
+STR_INDUSTRY_NAME_TOFFEE_QUARRY                                 :Karamellbroch
 STR_INDUSTRY_NAME_SUGAR_MINE                                    :Zockerminn
 
 ############ WARNING, using range 0x6000 for strings that are stored in the savegame
@@ -4495,7 +4509,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Collet Pannier 
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (Diesel)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Chu-Chu
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Chu-Chu
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Chu-Chu
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Chu-Chu
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (Damp)
@@ -4518,95 +4532,95 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_SH_30_ELECTRIC               :BR '30' (Elektr
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_SH_40_ELECTRIC               :BR '40' (Elektrësch)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_T_I_M_ELECTRIC               :'T.G.V.' (Elektrësch)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_ASIASTAR_ELECTRIC            :'EuroStar' (Elektrësch)
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PASSENGER_CAR                 :Passagéierwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_MAIL_VAN                      :Postwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COAL_CAR                      :Kuelenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_OIL_TANKER                    :Uelegwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_LIVESTOCK_VAN                 :Liewnsmëttelwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_GOODS_VAN                     :Güterwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_GRAIN_HOPPER                  :Kaarwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_WOOD_TRUCK                    :Holzwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_IRON_ORE_HOPPER               :Eisenerzwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_STEEL_TRUCK                   :Stolwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_ARMORED_VAN                   :Gepanzerten Wagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FOOD_VAN                      :Iessenswagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PAPER_TRUCK                   :Pabeierwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COPPER_ORE_HOPPER             :Koffererzwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_WATER_TANKER                  :Waasserwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FRUIT_TRUCK                   :Friichtenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_RUBBER_TRUCK                  :Kautschuckwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_SUGAR_TRUCK                   :Zockerwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COTTON_CANDY_HOPPER           :Zockerwatt Wagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_TOFFEE_HOPPER                 :Karmelwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_BUBBLE_VAN                    :Blosenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COLA_TANKER                   :Colawagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_CANDY_VAN                     :Séissegkeetenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_TOY_VAN                       :Spillsaachenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_BATTERY_TRUCK                 :Batterienwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FIZZY_DRINK_TRUCK             :Spruddelgedrénks Wagon
-STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PLASTIC_TRUCK                 :Plastikwagon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PASSENGER_CAR                 :Passagéierwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_MAIL_VAN                      :Postwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COAL_CAR                      :Kuelewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_OIL_TANKER                    :Uelegwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_LIVESTOCK_VAN                 :Véiwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_GOODS_VAN                     :Wuerewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_GRAIN_HOPPER                  :Kaarwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_WOOD_TRUCK                    :Holzwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_IRON_ORE_HOPPER               :Eisenerzwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_STEEL_TRUCK                   :Stolwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_ARMORED_VAN                   :Gepanzerten Waggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FOOD_VAN                      :Iesswuerenwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PAPER_TRUCK                   :Pabeierwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COPPER_ORE_HOPPER             :Koffererzwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_WATER_TANKER                  :Waasserwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FRUIT_TRUCK                   :Friichtewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_RUBBER_TRUCK                  :Kautschuckwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_SUGAR_TRUCK                   :Zockerwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COTTON_CANDY_HOPPER           :Zockerwattwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_TOFFEE_HOPPER                 :Karamellwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_BUBBLE_VAN                    :Blosenwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_COLA_TANKER                   :Colawaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_CANDY_VAN                     :Séissegkeetenwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_TOY_VAN                       :Spillsaachenwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_BATTERY_TRUCK                 :Batterienwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_FIZZY_DRINK_TRUCK             :Spruddelgedrénks Waggon
+STR_VEHICLE_NAME_TRAIN_WAGON_RAIL_PLASTIC_TRUCK                 :Plastikwaggon
 STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_X2001_ELECTRIC           :'X2001' (Elektrësch)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_MILLENNIUM_Z1_ELECTRIC   :'Millennium Z1' (Elektrësch)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MONORAIL_WIZZOWOW_Z99             :Wizzowow Z99
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PASSENGER_CAR             :Passagéierwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_MAIL_VAN                  :Postwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COAL_CAR                  :Kuelenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_OIL_TANKER                :Uelegwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_LIVESTOCK_VAN             :Béischtelwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_GOODS_VAN                 :Güterwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_GRAIN_HOPPER              :Kaarwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_WOOD_TRUCK                :Holzwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_IRON_ORE_HOPPER           :Eisenerzwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_STEEL_TRUCK               :Stolwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_ARMORED_VAN               :Gepanzerten Wagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FOOD_VAN                  :Iessenswagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PAPER_TRUCK               :Pabeierwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COPPER_ORE_HOPPER         :Koffererz Wagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_WATER_TANKER              :Waasserwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FRUIT_TRUCK               :Friichtenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_RUBBER_TRUCK              :Kautschuckwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_SUGAR_TRUCK               :Zockerwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COTTON_CANDY_HOPPER       :Zockerwatt Wagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_TOFFEE_HOPPER             :Karmelwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_BUBBLE_VAN                :Blosenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COLA_TANKER               :Colawagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_CANDY_VAN                 :Séissegkeetenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_TOY_VAN                   :Spillsaachenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_BATTERY_TRUCK             :Batteriewagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FIZZY_DRINK_TRUCK         :Spruddelgedrénks Wagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PLASTIC_TRUCK             :Plastikwagon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PASSENGER_CAR             :Passagéierwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_MAIL_VAN                  :Postwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COAL_CAR                  :Kuelenwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_OIL_TANKER                :Uelegwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_LIVESTOCK_VAN             :Véiwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_GOODS_VAN                 :Wuerewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_GRAIN_HOPPER              :Kaarwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_WOOD_TRUCK                :Holzwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_IRON_ORE_HOPPER           :Eisenerzwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_STEEL_TRUCK               :Stolwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_ARMORED_VAN               :Gepanzerten Waggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FOOD_VAN                  :Iesswuerewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PAPER_TRUCK               :Pabeierwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COPPER_ORE_HOPPER         :Koffererzwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_WATER_TANKER              :Waasserwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FRUIT_TRUCK               :Friichtenwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_RUBBER_TRUCK              :Kautschuckwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_SUGAR_TRUCK               :Zockerwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COTTON_CANDY_HOPPER       :Zockerwattwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_TOFFEE_HOPPER             :Karamelwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_BUBBLE_VAN                :Blosenwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_COLA_TANKER               :Colawaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_CANDY_VAN                 :Séissegkeetenwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_TOY_VAN                   :Spillsaachenwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_BATTERY_TRUCK             :Batteriewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_FIZZY_DRINK_TRUCK         :Spruddelgedrénkswaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MONORAIL_PLASTIC_TRUCK             :Plastikwaggon
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV1_LEVIATHAN_ELECTRIC    :Lev1 'Leviathan' (Elektrësch)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV2_CYCLOPS_ELECTRIC      :Lev2 'Cyclops' (Elektrësch)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV3_PEGASUS_ELECTRIC      :Lev3 'Pegasus' (Elektrësch)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_LEV4_CHIMAERA_ELECTRIC     :Lev4 'Chimaera' (Elektrësch)
 STR_VEHICLE_NAME_TRAIN_ENGINE_MAGLEV_WIZZOWOW_ROCKETEER         :Wizzowow Rocketeer
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PASSENGER_CAR               :Passagéierwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_MAIL_VAN                    :Postwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COAL_CAR                    :Kuelenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_OIL_TANKER                  :Uelegwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_LIVESTOCK_VAN               :Béischtenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_GOODS_VAN                   :Güterwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_GRAIN_HOPPER                :Kaarwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_WOOD_TRUCK                  :Holzwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_IRON_ORE_HOPPER             :Eisenerzwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_STEEL_TRUCK                 :Stolwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_ARMORED_VAN                 :Gepanzerten Wagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FOOD_VAN                    :Iessenswagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PAPER_TRUCK                 :Pabeierwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COPPER_ORE_HOPPER           :Koffererzwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_WATER_TANKER                :Waasserwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FRUIT_TRUCK                 :Friichtenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_RUBBER_TRUCK                :Kautschuckwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_SUGAR_TRUCK                 :Zockerwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COTTON_CANDY_HOPPER         :Zockerwatt Wagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_TOFFEE_HOPPER               :Karmelwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_BUBBLE_VAN                  :Blosenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COLA_TANKER                 :Colawagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_CANDY_VAN                   :Séissegkeetenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_TOY_VAN                     :Spillsaachenwagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_BATTERY_TRUCK               :Batteriewagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FIZZY_DRINK_TRUCK           :Spruddelgedrénks Wagon
-STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PLASTIC_TRUCK               :Plastikwagon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PASSENGER_CAR               :Passagéierwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_MAIL_VAN                    :Postwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COAL_CAR                    :Kuelewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_OIL_TANKER                  :Uelegwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_LIVESTOCK_VAN               :Véiwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_GOODS_VAN                   :Wuerewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_GRAIN_HOPPER                :Kaarwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_WOOD_TRUCK                  :Holzwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_IRON_ORE_HOPPER             :Eisenerzwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_STEEL_TRUCK                 :Stolwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_ARMORED_VAN                 :Gepanzerten Waggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FOOD_VAN                    :Iesswuerewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PAPER_TRUCK                 :Pabeierwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COPPER_ORE_HOPPER           :Koffererzwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_WATER_TANKER                :Waasserwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FRUIT_TRUCK                 :Friichtewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_RUBBER_TRUCK                :Kautschuckwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_SUGAR_TRUCK                 :Zockerwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COTTON_CANDY_HOPPER         :Zockerwattwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_TOFFEE_HOPPER               :Karamellwaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_BUBBLE_VAN                  :Blosewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_COLA_TANKER                 :Colawaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_CANDY_VAN                   :Séissegkeetewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_TOY_VAN                     :Spillsaachewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_BATTERY_TRUCK               :Batteriewaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_FIZZY_DRINK_TRUCK           :Spruddelgedrénkswaggon
+STR_VEHICLE_NAME_TRAIN_WAGON_MAGLEV_PLASTIC_TRUCK               :Plastikwaggon
 STR_VEHICLE_NAME_ROAD_VEHICLE_MPS_REGAL_BUS                     :MPS Regal Bus
 STR_VEHICLE_NAME_ROAD_VEHICLE_HEREFORD_LEOPARD_BUS              :Hereford Leopard Bus
 STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_BUS                        :Foster Bus
@@ -4626,12 +4640,12 @@ STR_VEHICLE_NAME_ROAD_VEHICLE_WIZZOWOW_MAIL_TRUCK               :Wizzowow Postca
 STR_VEHICLE_NAME_ROAD_VEHICLE_WITCOMBE_OIL_TANKER               :Witcombe Uelegcamion
 STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_OIL_TANKER                 :Foster Uelegcamion
 STR_VEHICLE_NAME_ROAD_VEHICLE_PERRY_OIL_TANKER                  :Perry Uelegcamion
-STR_VEHICLE_NAME_ROAD_VEHICLE_TALBOTT_LIVESTOCK_VAN             :Talbott Béischtencamion
-STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_LIVESTOCK_VAN                 :Uhl Béischtencamion
-STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_LIVESTOCK_VAN              :Foster Béischtencamion
-STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_GOODS_TRUCK                :Balogh Gütercamion
-STR_VEHICLE_NAME_ROAD_VEHICLE_CRAIGHEAD_GOODS_TRUCK             :Craighead Gütercamion
-STR_VEHICLE_NAME_ROAD_VEHICLE_GOSS_GOODS_TRUCK                  :Goss Gütercamion
+STR_VEHICLE_NAME_ROAD_VEHICLE_TALBOTT_LIVESTOCK_VAN             :Talbott Véitransporter
+STR_VEHICLE_NAME_ROAD_VEHICLE_UHL_LIVESTOCK_VAN                 :Uhl Véitransporter
+STR_VEHICLE_NAME_ROAD_VEHICLE_FOSTER_LIVESTOCK_VAN              :Foster Véitransporter
+STR_VEHICLE_NAME_ROAD_VEHICLE_BALOGH_GOODS_TRUCK                :Balogh Wuerecamion
+STR_VEHICLE_NAME_ROAD_VEHICLE_CRAIGHEAD_GOODS_TRUCK             :Craighead Wuerecamion
+STR_VEHICLE_NAME_ROAD_VEHICLE_GOSS_GOODS_TRUCK                  :Goss Wuerecamion
 STR_VEHICLE_NAME_ROAD_VEHICLE_HEREFORD_GRAIN_TRUCK              :Hereford Kaarcamion
 STR_VEHICLE_NAME_ROAD_VEHICLE_THOMAS_GRAIN_TRUCK                :Thomas Kaarcamion
 STR_VEHICLE_NAME_ROAD_VEHICLE_GOSS_GRAIN_TRUCK                  :Goss Kaarcamion
@@ -4704,7 +4718,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Chugger-Chug Pa
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Shivershake Passagéierfähr
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Yate Frachtschëff
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Bakewell Frachtschëff
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Mightymover Frachtschëff
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :MightyMover Frachtschëff
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Powernaut Frachtschëff
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count
@@ -4763,12 +4777,12 @@ STR_FORMAT_INDUSTRY_NAME                                        :{TOWN} {STRING}
 STR_FORMAT_WAYPOINT_NAME                                        :Weepunkt {TOWN}
 STR_FORMAT_WAYPOINT_NAME_SERIAL                                 :Weepunkt {TOWN} #{COMMA}
 
-STR_FORMAT_DEPOT_NAME_TRAIN                                     :{TOWN} Zuchdepot
-STR_FORMAT_DEPOT_NAME_TRAIN_SERIAL                              :{TOWN} Zuchdepot #{COMMA}
-STR_FORMAT_DEPOT_NAME_ROAD_VEHICLE                              :{TOWN} Stroossendepot
+STR_FORMAT_DEPOT_NAME_TRAIN                                     :Zuchschapp vun {TOWN}
+STR_FORMAT_DEPOT_NAME_TRAIN_SERIAL                              :{TOWN} Zuchschapp #{COMMA}
+STR_FORMAT_DEPOT_NAME_ROAD_VEHICLE                              :Stroossengefierdepot vun{TOWN}
 STR_FORMAT_DEPOT_NAME_ROAD_VEHICLE_SERIAL                       :{TOWN} Stroossendepot #{COMMA}
-STR_FORMAT_DEPOT_NAME_SHIP                                      :{TOWN} Schëffdepot
-STR_FORMAT_DEPOT_NAME_SHIP_SERIAL                               :{TOWN} Schëffdepot #{COMMA}
+STR_FORMAT_DEPOT_NAME_SHIP                                      :Schëffsschapp vun {TOWN}
+STR_FORMAT_DEPOT_NAME_SHIP_SERIAL                               :{TOWN} Schëffsschapp #{COMMA}
 STR_FORMAT_DEPOT_NAME_AIRCRAFT                                  :{STATION} Hangar
 
 STR_UNKNOWN_STATION                                             :onbekannt Statioun

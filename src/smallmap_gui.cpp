@@ -715,6 +715,7 @@ void SmallMapWindow::SetZoomLevel(ZoomLevelChange change, const Point *zoom_pt)
 		case ZLC_INITIALIZE:
 			cur_index = - 1; // Definitely different from new_index.
 			new_index = MIN_ZOOM_INDEX;
+			tile.x = tile.y = 0;
 			break;
 
 		case ZLC_ZOOM_IN:
@@ -941,7 +942,7 @@ void SmallMapWindow::DrawMapIndicators() const
  */
 void SmallMapWindow::DrawSmallMap(DrawPixelInfo *dpi) const
 {
-	Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
+	Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 	DrawPixelInfo *old_dpi;
 
 	old_dpi = _cur_dpi;
@@ -1048,7 +1049,7 @@ void SmallMapWindow::SetupWidgetData()
 SmallMapWindow::SmallMapWindow(WindowDesc *desc, int window_number) : Window(desc), refresh(FORCE_REFRESH_PERIOD)
 {
 	_smallmap_industry_highlight = INVALID_INDUSTRYTYPE;
-	this->overlay = new LinkGraphOverlay(this, WID_SM_MAP);
+	this->overlay = new LinkGraphOverlay(this, WID_SM_MAP, 0, this->GetOverlayCompanyMask(), 1);
 	this->InitNested(window_number);
 	this->LowerWidget(this->map_type + WID_SM_CONTOUR);
 
@@ -1308,7 +1309,6 @@ void SmallMapWindow::SetOverlayCargoMask()
 		if (_legend_linkstats[i].show_on_map) SetBit(cargo_mask, _legend_linkstats[i].type);
 	}
 	this->overlay->SetCargoMask(cargo_mask);
-	this->overlay->RebuildCache();
 }
 
 /**
@@ -1418,10 +1418,12 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 		case WID_SM_LEGEND: // Legend
 			if (this->map_type == SMT_INDUSTRY || this->map_type == SMT_LINKSTATS || this->map_type == SMT_OWNER) {
 				int click_pos = this->GetPositionOnLegend(pt);
+				if (click_pos < 0) break;
+
 				/* If industry type small map*/
 				if (this->map_type == SMT_INDUSTRY) {
 					/* If click on industries label, find right industry type and enable/disable it. */
-					if (click_pos >= 0 && click_pos < _smallmap_industry_count) {
+					if (click_pos < _smallmap_industry_count) {
 						this->SelectLegendItem(click_pos, _legend_from_industries, _smallmap_industry_count);
 					}
 				} else if (this->map_type == SMT_LINKSTATS) {
@@ -1528,7 +1530,14 @@ int SmallMapWindow::GetPositionOnLegend(Point pt)
 	/* Update the window every now and then */
 	if (--this->refresh != 0) return;
 
-	if (this->map_type == SMT_LINKSTATS) this->overlay->RebuildCache();
+	if (this->map_type == SMT_LINKSTATS) {
+		uint32 company_mask = this->GetOverlayCompanyMask();
+		if (this->overlay->GetCompanyMask() != company_mask) {
+			this->overlay->SetCompanyMask(company_mask);
+		} else {
+			this->overlay->RebuildCache();
+		}
+	}
 	_smallmap_industry_highlight_state = !_smallmap_industry_highlight_state;
 
 	this->refresh = _smallmap_industry_highlight != INVALID_INDUSTRYTYPE ? BLINK_PERIOD : FORCE_REFRESH_PERIOD;
@@ -1642,6 +1651,7 @@ public:
 		bar->SetupSmallestSize(w, init_array);
 
 		this->smallmap_window = dynamic_cast<SmallMapWindow *>(w);
+		assert(this->smallmap_window != NULL);
 		this->smallest_x = max(display->smallest_x, bar->smallest_x + smallmap_window->GetMinLegendWidth());
 		this->smallest_y = display->smallest_y + max(bar->smallest_y, smallmap_window->GetLegendHeight(smallmap_window->min_number_of_columns));
 		this->fill_x = max(display->fill_x, bar->fill_x);
@@ -1725,7 +1735,7 @@ static const NWidgetPart _nested_smallmap_bar[] = {
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_TOGGLETOWNNAME),
 							SetDataTip(SPR_IMG_TOWN, STR_SMALLMAP_TOOLTIP_TOGGLE_TOWN_NAMES_ON_OFF), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_LINKSTATS),
-							SetDataTip(SPR_IMG_GRAPHS, STR_SMALLMAP_TOOLTIP_SHOW_LINK_STATS_ON_MAP), SetFill(1, 1),
+							SetDataTip(SPR_IMG_CARGOFLOW, STR_SMALLMAP_TOOLTIP_SHOW_LINK_STATS_ON_MAP), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_ROUTES),
 							SetDataTip(SPR_IMG_SHOW_ROUTES, STR_SMALLMAP_TOOLTIP_SHOW_TRANSPORT_ROUTES_ON), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_VEGETATION),

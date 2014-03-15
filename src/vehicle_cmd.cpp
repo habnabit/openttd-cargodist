@@ -85,14 +85,7 @@ CommandCost CmdBuildVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 	/* Elementary check for valid location. */
 	if (!IsDepotTile(tile) || !IsTileOwner(tile, _current_company)) return CMD_ERROR;
 
-	VehicleType type;
-	switch (GetTileType(tile)) {
-		case MP_RAILWAY: type = VEH_TRAIN;    break;
-		case MP_ROAD:    type = VEH_ROAD;     break;
-		case MP_WATER:   type = VEH_SHIP;     break;
-		case MP_STATION: type = VEH_AIRCRAFT; break;
-		default: NOT_REACHED(); // Safe due to IsDepotTile()
-	}
+	VehicleType type = GetDepotVehicleType(tile);
 
 	/* Validate the engine type. */
 	EngineID eid = GB(p1, 0, 16);
@@ -470,7 +463,7 @@ CommandCost CmdRefitVehicle(TileIndex tile, DoCommandFlag flags, uint32 p1, uint
 		/* Update the cached variables */
 		switch (v->type) {
 			case VEH_TRAIN:
-				Train::From(front)->ConsistChanged(auto_refit);
+				Train::From(front)->ConsistChanged(auto_refit ? CCF_AUTOREFIT : CCF_REFIT);
 				break;
 			case VEH_ROAD:
 				RoadVehUpdateCache(RoadVehicle::From(front), auto_refit);

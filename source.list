@@ -12,6 +12,7 @@ cheat.cpp
 command.cpp
 console.cpp
 console_cmds.cpp
+cpu.cpp
 crashlog.cpp
 currency.cpp
 date.cpp
@@ -47,6 +48,7 @@ linkgraph/linkgraph.cpp
 linkgraph/linkgraphjob.cpp
 linkgraph/linkgraphschedule.cpp
 linkgraph/mcf.cpp
+linkgraph/refresh.cpp
 map.cpp
 misc.cpp
 mixer.cpp
@@ -61,7 +63,6 @@ network/network_server.cpp
 network/network_udp.cpp
 openttd.cpp
 order_backup.cpp
-os_timer.cpp
 pbs.cpp
 progress.cpp
 rail.cpp
@@ -110,6 +111,9 @@ townname.cpp
 vehicle.cpp
 vehiclelist.cpp
 viewport.cpp
+#if SSE
+viewport_sprite_sorter_sse4.cpp
+#end
 waypoint.cpp
 widget.cpp
 window.cpp
@@ -154,6 +158,7 @@ console_func.h
 console_gui.h
 console_internal.h
 console_type.h
+cpu.h
 crashlog.h
 currency.h
 date_func.h
@@ -224,6 +229,7 @@ linkgraph/linkgraphjob.h
 linkgraph/linkgraphjob_base.h
 linkgraph/linkgraphschedule.h
 linkgraph/mcf.h
+linkgraph/refresh.h
 livery.h
 map_func.h
 map_type.h
@@ -371,6 +377,7 @@ vehicle_gui_base.h
 vehicle_type.h
 vehiclelist.h
 viewport_func.h
+viewport_sprite_sorter.h
 viewport_type.h
 water.h
 waypoint_base.h
@@ -426,6 +433,7 @@ core/random_func.cpp
 core/random_func.hpp
 core/smallmap_type.hpp
 core/smallmatrix_type.hpp
+core/smallstack_type.hpp
 core/smallvec_type.hpp
 core/sort_func.hpp
 core/string_compare_type.hpp
@@ -808,6 +816,8 @@ script/api/script_signlist.hpp
 script/api/script_station.hpp
 script/api/script_stationlist.hpp
 script/api/script_story_page.hpp
+script/api/script_storypagelist.hpp
+script/api/script_storypageelementlist.hpp
 script/api/script_subsidy.hpp
 script/api/script_subsidylist.hpp
 script/api/script_testmode.hpp
@@ -872,6 +882,8 @@ script/api/script_signlist.cpp
 script/api/script_station.cpp
 script/api/script_stationlist.cpp
 script/api/script_story_page.cpp
+script/api/script_storypagelist.cpp
+script/api/script_storypageelementlist.cpp
 script/api/script_subsidy.cpp
 script/api/script_subsidylist.cpp
 script/api/script_testmode.cpp
@@ -893,12 +905,26 @@ script/api/script_window.cpp
 #else
 blitter/32bpp_anim.cpp
 blitter/32bpp_anim.hpp
+#if SSE
+blitter/32bpp_anim_sse4.cpp
+blitter/32bpp_anim_sse4.hpp
+#end
 blitter/32bpp_base.cpp
 blitter/32bpp_base.hpp
 blitter/32bpp_optimized.cpp
 blitter/32bpp_optimized.hpp
 blitter/32bpp_simple.cpp
 blitter/32bpp_simple.hpp
+#if SSE
+blitter/32bpp_sse_func.hpp
+blitter/32bpp_sse_type.h
+blitter/32bpp_sse2.cpp
+blitter/32bpp_sse2.hpp
+blitter/32bpp_sse4.cpp
+blitter/32bpp_sse4.hpp
+blitter/32bpp_ssse3.cpp
+blitter/32bpp_ssse3.hpp
+#end
 blitter/8bpp_base.cpp
 blitter/8bpp_base.hpp
 blitter/8bpp_optimized.cpp

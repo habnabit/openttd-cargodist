@@ -1,5 +1,5 @@
-Last updated:    2013-06-01
-Release version: 1.3.1
+Last updated:    2014-02-25
+Release version: 1.4.0-beta5
 ------------------------------------------------------------------------
 
 
@@ -26,6 +26,7 @@ Table of contents
  * 8.1) Translation
  * 8.2) Previewing
 9.0) Troubleshooting
+10.0) Licensing
 X.X) Credits
 
 
@@ -35,9 +36,9 @@ OpenTTD is a transport simulation game based upon the popular game Transport
 Tycoon Deluxe, written by Chris Sawyer. It attempts to mimic the original
 game as closely as possible while extending it with new features.
 
-OpenTTD is licensed under the GNU General Public License version 2.0. For
-more information, see the file 'COPYING'.
-
+OpenTTD is licensed under the GNU General Public License version 2.0,
+but includes some 3rd party software under different licenses. See the
+section "Licensing" below for details.
 
 2.0) Contacting
 ---- ----------
@@ -281,7 +282,8 @@ your operating system:
 		         C:\Documents and Settings\<username>\My Documents\OpenTTD (2000, XP)
 		         C:\Users\<username>\Documents\OpenTTD (Vista, 7)
 		Mac OSX: ~/Documents/OpenTTD
-		Linux:   ~/.openttd
+		Linux:   $XDG_DATA_HOME/openttd which is usually ~/.local/share/openttd when
+		         built with XDG base directory support, otherwise ~/.openttd
 	3. The shared directory
 		Windows: C:\Documents and Settings\All Users\Shared Documents\OpenTTD (2000, XP)
 		         C:\Users\Public\Documents\OpenTTD (Vista, 7)
@@ -321,10 +323,13 @@ Notes:
 	  others.
 	- The previous search order is also used for NewGRFs and openttd.cfg.
 	- If openttd.cfg is not found, then it will be created using the 2, 4, 1, 3,
-	  5 order.
+	  5 order. When built with XDG base directory support, openttd.cfg will be
+	  created in $XDG_CONFIG_HOME/openttd which is usually ~/.config/openttd.
 	- Savegames will be relative to the config file only if there is no save/
 	  directory in paths with higher priority than the config file path, but
 	  autosaves and screenshots will always be relative to the config file.
+	  Unless the configuration file is in $XDG_CONFIG_HOME/openttd, then all
+	  other files will be saved under $XDG_DATA_HOME/openttd.
 
 The preferred setup:
 Place 3rd party files in shared directory (or in personal directory if you do
@@ -476,9 +481,9 @@ DOS:
   website. Compilation is straight forward: use make, but do a './configure'
   before the first build. The build binary will need cwsdpmi.exe to be in
   the same directory as the openttd executable. cwsdpmi.exe can be found in
-  the os/dos subdirectory. If you compile with stripping turned on a binary
-  will be generated that does not need cwsdpmi.exe by adding the cswdstub.exe
-  to the created OpenTTD binary.
+  the os/dos/cwsdpmi subdirectory. If you compile with stripping turned on a
+  binary will be generated that does not need cwsdpmi.exe by adding the
+  cswdstub.exe to the created OpenTTD binary.
 
 7.1) Required/optional libraries
 ---- ---------------------------
@@ -642,6 +647,29 @@ development section (http://www.tt-forums.net/viewforum.php?f=66) or GrfCrawler
 (see section 4.2 'OpenTTD directories') and rescan the list of available NewGRFs.
 Once you have all missing files, you are set to go.
 
+10.0) Licensing
+----- ---------
+OpenTTD is licensed under the GNU General Public License version 2.0. For
+the complete license text, see the file 'COPYING'. This license applies
+to all files in this distribution, except as noted below.
+
+The squirrel implementation in src/3rdparty/squirrel is licensed under
+the Zlib license. See src/3rdparty/squirrel/COPYRIGHT for the complete
+license text.
+
+The md5 implementation in src/3rdparty/md5 is licensed under the Zlib
+license. See the comments in the source files in src/3rdparty/md5 for
+the complete license text.
+
+The exe2coff implementation in os/dos/exe2coff is available under the
+GPL, with a number of additional terms. See os/dos/exe2coff/copying and
+os/dos/exe2coff/copying.dj for the exact licensing terms.
+
+The CWSDPMI implementation in os/dos/cwsdpmi is distributed under a
+custom binary-only license that prohibits modification. The exact
+licensing terms can be found in os/dos/cwsdpmi/cwsdpmi.txt. The sources
+for these files can be downloaded at its author site, at:
+http://homer.rice.edu/~sandmann/cwsdpmi/csdpmi5s.zip
 
 X.X) Credits
 ---- -------

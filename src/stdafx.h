@@ -215,6 +215,11 @@
 	#pragma warning(disable: 6255)   // code analyzer: _alloca indicates failure by raising a stack overflow exception. Consider using _malloca instead
 	#pragma warning(disable: 6246)   // code analyzer: Local declaration of 'statspec' hides declaration of the same name in outer scope. For additional information, see previous declaration at ...
 
+	#if (_MSC_VER == 1500)           // Addresses item #13 on http://blogs.msdn.com/b/vcblog/archive/2008/08/11/tr1-fixes-in-vc9-sp1.aspx, for Visual Studio 2008
+		#define _DO_NOT_DECLARE_INTERLOCKED_INTRINSICS_IN_MEMORY
+		#include <intrin.h>
+	#endif
+
 	#include <malloc.h> // alloca()
 	#define NORETURN __declspec(noreturn)
 	#define inline __forceinline
@@ -489,5 +494,22 @@ static inline void free(const void *ptr)
  * @param type the type of the variable
  */
 #define MAX_UVALUE(type) ((type)~(type)0)
+
+#if defined(_MSC_VER) && !defined(_DEBUG)
+	#define IGNORE_UNINITIALIZED_WARNING_START __pragma(warning(push)) __pragma(warning(disable:4700))
+	#define IGNORE_UNINITIALIZED_WARNING_STOP __pragma(warning(pop))
+#elif defined(__GNUC__) && !defined(_DEBUG)
+	#define HELPER0(x) #x
+	#define HELPER1(x) HELPER0(GCC diagnostic ignored x)
+	#define HELPER2(y) HELPER1(#y)
+	#define IGNORE_UNINITIALIZED_WARNING_START \
+		_Pragma("GCC diagnostic push") \
+		_Pragma(HELPER2(-Wuninitialized)) \
+		_Pragma(HELPER2(-Wmaybe-uninitialized))
+	#define IGNORE_UNINITIALIZED_WARNING_STOP _Pragma("GCC diagnostic pop")
+#else
+	#define IGNORE_UNINITIALIZED_WARNING_START
+	#define IGNORE_UNINITIALIZED_WARNING_STOP
+#endif
 
 #endif /* STDAFX_H */

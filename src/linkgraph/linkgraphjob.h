@@ -21,7 +21,7 @@ class Path;
 typedef std::list<Path *> PathList;
 
 /** Type of the pool for link graph jobs. */
-typedef Pool<LinkGraphJob, LinkGraphJobID, 32, 0xFFFFFF> LinkGraphJobPool;
+typedef Pool<LinkGraphJob, LinkGraphJobID, 32, 0xFFFF> LinkGraphJobPool;
 /** The actual pool with link graph jobs. */
 extern LinkGraphJobPool _link_graph_job_pool;
 
@@ -45,7 +45,7 @@ private:
 	 */
 	struct NodeAnnotation {
 		uint undelivered_supply; ///< Amount of supply that hasn't been distributed yet.
-		PathList paths;          ///< Paths through this node.
+		PathList paths;          ///< Paths through this node, sorted so that those with flow == 0 are in the back.
 		FlowStatMap flows;       ///< Planned flows to other nodes.
 		void Init(uint supply);
 	};
@@ -63,6 +63,10 @@ protected:
 	Date join_date;                   ///< Date when the job is to be joined.
 	NodeAnnotationVector nodes;       ///< Extra node data necessary for link graph calculation.
 	EdgeAnnotationMatrix edges;       ///< Extra edge data necessary for link graph calculation.
+
+	void EraseFlows(NodeID from);
+	void JoinThread();
+	void SpawnThread();
 
 public:
 
@@ -234,7 +238,8 @@ public:
 		const FlowStatMap &Flows() const { return this->node_anno.flows; }
 
 		/**
-		 * Get the paths this node is part of.
+		 * Get the paths this node is part of. Paths are always expected to be
+		 * sorted so that those with flow == 0 are in the back of the list.
 		 * @return Paths.
 		 */
 		PathList &Paths() { return this->node_anno.paths; }

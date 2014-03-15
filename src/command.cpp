@@ -142,6 +142,7 @@ CommandProc CmdClearArea;
 
 CommandProc CmdGiveMoney;
 CommandProc CmdMoneyCheat;
+CommandProc CmdChangeBankBalance;
 CommandProc CmdBuildCanal;
 CommandProc CmdBuildLock;
 
@@ -159,8 +160,10 @@ CommandProc CmdCreateStoryPage;
 CommandProc CmdCreateStoryPageElement;
 CommandProc CmdUpdateStoryPageElement;
 CommandProc CmdSetStoryPageTitle;
+CommandProc CmdSetStoryPageDate;
 CommandProc CmdShowStoryPage;
 CommandProc CmdRemoveStoryPage;
+CommandProc CmdRemoveStoryPageElement;
 
 CommandProc CmdLevelLand;
 
@@ -219,7 +222,7 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdRemoveFromRailStation,                          0, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_REMOVE_FROM_RAIL_STATION
 	DEF_CMD(CmdConvertRail,                                    0, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_CONVERT_RAILD
 	DEF_CMD(CmdBuildRailWaypoint,                              0, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_BUILD_RAIL_WAYPOINT
-	DEF_CMD(CmdRenameWaypoint,                      CMD_STR_CTRL, CMDT_OTHER_MANAGEMENT      ), // CMD_RENAME_WAYPOINT
+	DEF_CMD(CmdRenameWaypoint,                                 0, CMDT_OTHER_MANAGEMENT      ), // CMD_RENAME_WAYPOINT
 	DEF_CMD(CmdRemoveFromRailWaypoint,                         0, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_REMOVE_FROM_RAIL_WAYPOINT
 
 	DEF_CMD(CmdBuildRoadStop,            CMD_NO_WATER | CMD_AUTO, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_BUILD_ROAD_STOP
@@ -281,8 +284,8 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdSellShareInCompany,                             0, CMDT_MONEY_MANAGEMENT      ), // CMD_SELL_SHARE_IN_COMPANY
 	DEF_CMD(CmdBuyCompany,                                     0, CMDT_MONEY_MANAGEMENT      ), // CMD_BUY_COMANY
 
-	DEF_CMD(CmdFoundTown,                            CMD_NO_TEST, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_FOUND_TOWN; founding random town can fail only in exec run
-	DEF_CMD(CmdRenameTown,                            CMD_SERVER, CMDT_OTHER_MANAGEMENT      ), // CMD_RENAME_TOWN
+	DEF_CMD(CmdFoundTown,                CMD_DEITY | CMD_NO_TEST, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_FOUND_TOWN; founding random town can fail only in exec run
+	DEF_CMD(CmdRenameTown,                CMD_DEITY | CMD_SERVER, CMDT_OTHER_MANAGEMENT      ), // CMD_RENAME_TOWN
 	DEF_CMD(CmdDoTownAction,                                   0, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_DO_TOWN_ACTION
 	DEF_CMD(CmdTownCargoGoal,                          CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_TOWN_CARGO_GOAL
 	DEF_CMD(CmdTownGrowthRate,                         CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_TOWN_GROWTH_RATE
@@ -296,6 +299,7 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdClearArea,                            CMD_NO_TEST, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_CLEAR_AREA; destroying multi-tile houses makes town rating differ between test and execution
 
 	DEF_CMD(CmdMoneyCheat,                           CMD_OFFLINE, CMDT_CHEAT                 ), // CMD_MONEY_CHEAT
+	DEF_CMD(CmdChangeBankBalance,                      CMD_DEITY, CMDT_MONEY_MANAGEMENT      ), // CMD_CHANGE_BANK_BALANCE
 	DEF_CMD(CmdBuildCanal,                              CMD_AUTO, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_BUILD_CANAL
 	DEF_CMD(CmdCreateSubsidy,                          CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_CREATE_SUBSIDY
 	DEF_CMD(CmdCompanyCtrl,        CMD_SPECTATOR | CMD_CLIENT_ID, CMDT_SERVER_SETTING        ), // CMD_COMPANY_CTRL
@@ -311,8 +315,10 @@ static const Command _command_proc_table[] = {
 	DEF_CMD(CmdCreateStoryPageElement,  CMD_STR_CTRL | CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_CREATE_STORY_PAGE_ELEMENT
 	DEF_CMD(CmdUpdateStoryPageElement,  CMD_STR_CTRL | CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_UPDATE_STORY_PAGE_ELEMENT
 	DEF_CMD(CmdSetStoryPageTitle,       CMD_STR_CTRL | CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_SET_STORY_PAGE_TITLE
+	DEF_CMD(CmdSetStoryPageDate,                       CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_SET_STORY_PAGE_DATE
 	DEF_CMD(CmdShowStoryPage,                          CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_SHOW_STORY_PAGE
-	DEF_CMD(CmdRemoveStoryPage,         CMD_STR_CTRL | CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_REMOVE_STORY_PAGE
+	DEF_CMD(CmdRemoveStoryPage,                        CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_REMOVE_STORY_PAGE
+	DEF_CMD(CmdRemoveStoryPageElement,                 CMD_DEITY, CMDT_OTHER_MANAGEMENT      ), // CMD_REMOVE_STORY_ELEMENT_PAGE
 
 	DEF_CMD(CmdLevelLand, CMD_ALL_TILES | CMD_NO_TEST | CMD_AUTO, CMDT_LANDSCAPE_CONSTRUCTION), // CMD_LEVEL_LAND; test run might clear tiles multiple times, in execution that only happens once
 
@@ -571,7 +577,7 @@ bool DoCommandP(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallbac
 		/* Only show the error when it's for us. */
 		StringID error_part1 = GB(cmd, 16, 16);
 		if (estimate_only || (IsLocalCompany() && error_part1 != 0 && my_cmd)) {
-			ShowErrorMessage(error_part1, res.GetErrorMessage(), WL_INFO, x, y, res.GetTextRefStackSize(), res.GetTextRefStack());
+			ShowErrorMessage(error_part1, res.GetErrorMessage(), WL_INFO, x, y, res.GetTextRefStackGRF(), res.GetTextRefStackSize(), res.GetTextRefStack());
 		}
 	} else if (estimate_only) {
 		ShowEstimatedCostOrIncome(res.GetCost(), x, y);
@@ -597,7 +603,7 @@ bool DoCommandP(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd, CommandCallbac
  * @param cmd   the command cost to return.
  * @param clear whether to keep the storage changes or not.
  */
-#define return_dcpi(cmd, clear) { _docommand_recursive = 0; ClearStorageChanges(clear); return cmd; }
+#define return_dcpi(cmd) { _docommand_recursive = 0; return cmd; }
 
 /*!
  * Helper function for the toplevel network safe docommand function for the current company.
@@ -641,7 +647,7 @@ CommandCost DoCommandPInternal(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd,
 #endif
 
 	/* Do not even think about executing out-of-bounds tile-commands */
-	if (tile != 0 && (tile >= MapSize() || (!IsValidTile(tile) && (cmd_flags & CMD_ALL_TILES) == 0))) return_dcpi(CMD_ERROR, false);
+	if (tile != 0 && (tile >= MapSize() || (!IsValidTile(tile) && (cmd_flags & CMD_ALL_TILES) == 0))) return_dcpi(CMD_ERROR);
 
 	/* Always execute server and spectator commands as spectator */
 	bool exec_as_spectator = (cmd_flags & (CMD_SPECTATOR | CMD_SERVER)) != 0;
@@ -650,7 +656,7 @@ CommandCost DoCommandPInternal(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd,
 	 * The server will ditch any server commands a client sends to it, so effectively
 	 * this guards the server from executing functions for an invalid company. */
 	if (_game_mode == GM_NORMAL && !exec_as_spectator && !Company::IsValidID(_current_company) && !(_current_company == OWNER_DEITY && (cmd_flags & CMD_DEITY) != 0)) {
-		return_dcpi(CMD_ERROR, false);
+		return_dcpi(CMD_ERROR);
 	}
 
 	Backup<CompanyByte> cur_company(_current_company, FILE_LINE);
@@ -661,8 +667,9 @@ CommandCost DoCommandPInternal(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd,
 	/* Test the command. */
 	_cleared_object_areas.Clear();
 	SetTownRatingTestMode(true);
-	ClearStorageChanges(false);
+	BasePersistentStorageArray::SwitchMode(PSM_ENTER_TESTMODE);
 	CommandCost res = proc(tile, flags, p1, p2, text);
+	BasePersistentStorageArray::SwitchMode(PSM_LEAVE_TESTMODE);
 	SetTownRatingTestMode(false);
 
 	/* Make sure we're not messing things up here. */
@@ -681,7 +688,7 @@ CommandCost DoCommandPInternal(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd,
 			DEBUG(desync, 1, "cmdf: %08x; %02x; %02x; %06x; %08x; %08x; %08x; \"%s\" (%s)", _date, _date_fract, (int)_current_company, tile, p1, p2, cmd & ~CMD_NETWORK_COMMAND, text, GetCommandName(cmd));
 		}
 		cur_company.Restore();
-		return_dcpi(res, false);
+		return_dcpi(res);
 	}
 
 #ifdef ENABLE_NETWORK
@@ -697,7 +704,7 @@ CommandCost DoCommandPInternal(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd,
 		 * This way it's not handled by DoCommand and only the
 		 * actual execution of the command causes messages. Also
 		 * reset the storages as we've not executed the command. */
-		return_dcpi(CommandCost(), false);
+		return_dcpi(CommandCost());
 	}
 #endif /* ENABLE_NETWORK */
 	DEBUG(desync, 1, "cmd: %08x; %02x; %02x; %06x; %08x; %08x; %08x; \"%s\" (%s)", _date, _date_fract, (int)_current_company, tile, p1, p2, cmd & ~CMD_NETWORK_COMMAND, text, GetCommandName(cmd));
@@ -705,8 +712,9 @@ CommandCost DoCommandPInternal(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd,
 	/* Actually try and execute the command. If no cost-type is given
 	 * use the construction one */
 	_cleared_object_areas.Clear();
-	ClearStorageChanges(false);
+	BasePersistentStorageArray::SwitchMode(PSM_ENTER_COMMAND);
 	CommandCost res2 = proc(tile, flags | DC_EXEC, p1, p2, text);
+	BasePersistentStorageArray::SwitchMode(PSM_LEAVE_COMMAND);
 
 	if (cmd_id == CMD_COMPANY_CTRL) {
 		cur_company.Trash();
@@ -727,7 +735,7 @@ CommandCost DoCommandPInternal(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd,
 	if (!test_and_exec_can_differ) {
 		assert(res.GetCost() == res2.GetCost() && res.Failed() == res2.Failed()); // sanity check
 	} else if (res2.Failed()) {
-		return_dcpi(res2, false);
+		return_dcpi(res2);
 	}
 
 	/* If we're needing more money and we haven't done
@@ -737,7 +745,7 @@ CommandCost DoCommandPInternal(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd,
 		 * So make sure the signal buffer is empty even in this case */
 		UpdateSignalsInBuffer();
 		SetDParam(0, _additional_cash_required);
-		return_dcpi(CommandCost(STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY), false);
+		return_dcpi(CommandCost(STR_ERROR_NOT_ENOUGH_CASH_REQUIRES_CURRENCY));
 	}
 
 	/* update last build coordinate of company. */
@@ -751,7 +759,7 @@ CommandCost DoCommandPInternal(TileIndex tile, uint32 p1, uint32 p2, uint32 cmd,
 	/* update signals if needed */
 	UpdateSignalsInBuffer();
 
-	return_dcpi(res2, true);
+	return_dcpi(res2);
 }
 #undef return_dcpi
 
@@ -779,13 +787,15 @@ uint32 CommandCost::textref_stack[16];
 
 /**
  * Activate usage of the NewGRF #TextRefStack for the error message.
- * @param number of entries to copy from the temporary NewGRF registers
+ * @param grffile NewGRF that provides the #TextRefStack
+ * @param num_registers number of entries to copy from the temporary NewGRF registers
  */
-void CommandCost::UseTextRefStack(uint num_registers)
+void CommandCost::UseTextRefStack(const GRFFile *grffile, uint num_registers)
 {
 	extern TemporaryStorageArray<int32, 0x110> _temp_store;
 
 	assert(num_registers < lengthof(textref_stack));
+	this->textref_stack_grffile = grffile;
 	this->textref_stack_size = num_registers;
 	for (uint i = 0; i < num_registers; i++) {
 		textref_stack[i] = _temp_store.GetValue(0x100 + i);

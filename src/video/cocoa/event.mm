@@ -71,7 +71,7 @@ static uint32 _tEvent;
 /* Support for touch gestures is only available starting with the
  * 10.6 SDK, even if it says that support starts in fact with 10.5.2.
  * Replicate the needed stuff for older SDKs. */
-#if MAC_OS_X_VERSION_MAX_ALLOWED == MAC_OS_X_VERSION_10_5
+#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_5 && MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6)
 static const NSUInteger NSEventTypeMagnify    = 30;
 static const NSUInteger NSEventTypeEndGesture = 20;
 
@@ -110,7 +110,7 @@ static void QZ_WarpCursor(int x, int y)
 static void QZ_CheckPaletteAnim()
 {
 	if (_cur_palette.count_dirty != 0) {
-		Blitter *blitter = BlitterFactoryBase::GetCurrentBlitter();
+		Blitter *blitter = BlitterFactory::GetCurrentBlitter();
 
 		switch (blitter->UsePaletteAnimation()) {
 			case Blitter::PALETTE_ANIMATION_VIDEO_BACKEND:
@@ -272,8 +272,10 @@ static uint32 QZ_MapKey(unsigned short sym)
 	return key;
 }
 
-static void QZ_KeyEvent(unsigned short keycode, unsigned short unicode, BOOL down)
+static bool QZ_KeyEvent(unsigned short keycode, unsigned short unicode, BOOL down)
 {
+	bool interpret_keys = true;
+
 	switch (keycode) {
 		case QZ_UP:    SB(_dirkeys, 1, 1, down); break;
 		case QZ_DOWN:  SB(_dirkeys, 3, 1, down); break;
@@ -292,14 +294,31 @@ static void QZ_KeyEvent(unsigned short keycode, unsigned short unicode, BOOL dow
 
 	if (down) {
 		uint32 pressed_key = QZ_MapKey(keycode);
+
+		static bool console = false;
+
+		if (pressed_key == WKC_BACKQUOTE && unicode == 0) {
+			if (!console) {
+				/* Backquote is a dead key, require a double press for hotkey behaviour (i.e. console). */
+				console = true;
+				return true;
+			} else {
+				/* Second backquote, don't interpret as text input. */
+				interpret_keys = false;
+			}
+		}
+		console = false;
+
 		/* Don't handle normal characters if an edit box has the focus. */
-		if (!EditBoxInGlobalFocus() || (!IsInsideMM(pressed_key, 'A', 'Z' + 1) && !IsInsideMM(pressed_key, '0', '9' + 1))) {
+		if (!EditBoxInGlobalFocus() || ((pressed_key & ~WKC_SPECIAL_KEYS) <= WKC_TAB) || IsInsideMM(pressed_key & ~WKC_SPECIAL_KEYS, WKC_F1, WKC_PAUSE + 1)) {
 			HandleKeypress(pressed_key, unicode);
 		}
 		DEBUG(driver, 2, "cocoa_v: QZ_KeyEvent: %x (%x), down, mapping: %x", keycode, unicode, pressed_key);
 	} else {
 		DEBUG(driver, 2, "cocoa_v: QZ_KeyEvent: %x (%x), up", keycode, unicode);
 	}
+
+	return interpret_keys;
 }
 
 static void QZ_DoUnsidedModifiers(unsigned int newMods)
@@ -521,8 +540,9 @@ static bool QZ_PollEvent()
 			}
 
 			if (EditBoxInGlobalFocus()) {
-				[ _cocoa_subdriver->cocoaview interpretKeyEvents:[ NSArray arrayWithObject:event ] ];
-				QZ_KeyEvent([ event keyCode ], 0, YES);
+				if (QZ_KeyEvent([ event keyCode ], 0, YES)) {
+					[ _cocoa_subdriver->cocoaview interpretKeyEvents:[ NSArray arrayWithObject:event ] ];
+				}
 			} else {
 				chars = [ event characters ];
 				if ([ chars length ] == 0) {

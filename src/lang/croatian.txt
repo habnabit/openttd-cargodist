@@ -389,9 +389,9 @@ STR_SORT_BY_ENGINE_ID                                           :MotorID (standa
 STR_SORT_BY_COST                                                :Cijena
 STR_SORT_BY_POWER                                               :Snaga
 STR_SORT_BY_TRACTIVE_EFFORT                                     :Vučna sila
-STR_SORT_BY_INTRO_DATE                                          :Datum početka
-STR_SORT_BY_RUNNING_COST                                        :Trošak uporabe
-STR_SORT_BY_POWER_VS_RUNNING_COST                               :Snaga/trošak uporabe
+STR_SORT_BY_INTRO_DATE                                          :Datum uvođenja
+STR_SORT_BY_RUNNING_COST                                        :Tekući trošak
+STR_SORT_BY_POWER_VS_RUNNING_COST                               :Snaga/Tekući trošak
 STR_SORT_BY_CARGO_CAPACITY                                      :Nosivost tereta
 STR_SORT_BY_RANGE                                               :Domet
 STR_SORT_BY_POPULATION                                          :Stanovništvo
@@ -1166,7 +1166,8 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Postavke igre (
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Postavke kompanije (pohranjene u snimljenoj datoteci; utječu samo na nove igre)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Postavke kompanije (pohranjene u snimljenoj datoteci; utječu samo na trenutnu kompaniju)
 
-STR_CONFIG_SETTING_RESTRICT_LABEL                               :{BLACK}Prikaži:
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategorija:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Tip:
 STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Sužava doljnju listu prikazom samo izmijenjenih postavki
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Osnovne postavke
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Napredne postavke
@@ -1181,6 +1182,10 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Postavke igre (
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Postavke igre (spremljene prilikom snimanja; utječu samo na tekuću igru)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Postavke kompanije (spremljene prilikom snimanja; utječu samo na nove igre)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Postavke kompanije (spremljene prilikom snimanja; utječu samo na trenutnu kompaniju)
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Prikaži sve rezultate pretraga po postavkama{}{SILVER}Kategorija {BLACK}do {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Prikaži sve rezultate pretraga po postavkama{}{SILVER}Tip {BLACK}do {WHITE}Svi tipovi postavki
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Prikaži sve rezultate pretrage po postavkama{}{SILVER}Kategorija {BLACK}do {WHITE}{STRING} {BLACK}i {SILVER}Tip {BLACK}do {WHITE}Svi tipovi postavki
+STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Nijedna -
 
 STR_CONFIG_SETTING_OFF                                          :Isključeno
 STR_CONFIG_SETTING_ON                                           :Uključeno
@@ -1435,8 +1440,8 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Osnovna paleta će biti postavljena za NewGRFove koji ne odrede paletu: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Osnovna paleta koju će koristiti NewGRF-ovi koji nemaju specificirano koju paletu trebaju
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :DOS paleta
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Windows paleta
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Osnovna (D) paleta boja
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Legacy (W) paleta boja
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Automatski pauziraj prilikom pokretanja nove igre: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Kada je uključeno, igra će se automatski pauzirati priliko pokretanja nove igre, dozvoljavajući bolje proučavanje mape
@@ -1676,7 +1681,7 @@ STR_CONFIG_SETTING_DISTRIBUTION_MAIL_HELPTEXT                   :"Simetrično" z
 STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED                        :Način distribucije za OKLOPLJENU klasu tereta: {STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :OKLOPLJENA klasa tereta sadrži vrijednosnice u umjerenoj klimi, dijamante u subtropskoj klimi ili zlato u subarktičkoj klimi. NewGFR-ovi bi mogli ovo izmijeniti. "Simetrično" znači da će se otprilike ista količina tereta slati od stanice A prema stanici B ako od B prema A. "Asimetrično" znači da će se proizvoljne količine tereta slati u oba smjera. "Ručno" znači da se distribucija tih tereta neće vršiti automatski. Preporučljivo je namjestiti ovu postavku na "asimetrično" ili "ručno" kod subarktičke klime jer banke neće slati zlato natrag prema rudnicima zlata. Za umjerenu i subtropsku klimu možete namjestiti i "simetrično" jer će banke slati neke vrijednosnice natrag prema izvorišnoj banci.
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT                         :Način distribucije za ostale klase tereta: {STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :"Simetrično" znači da će se otprilike ista količina tereta slati od stanice A prema stanici B ako od B prema A. "Asimetrično" znači da će se proizvoljne količine tereta slati u oba smjera. "Ručno" znači da se distribucija tih tereta neće vršiti automatski. Preporučljivo bi bilo ovu postavku namjestiti na "asimetrično" ili "ručno".
+STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :"Asimetrično" znači da će se proizvoljna količina tereta slati u bilo kojem smjeru. "Ručno" znači da neće biti nikakve automatske distribucije za te terete.
 STR_CONFIG_SETTING_LINKGRAPH_ACCURACY                           :Točnost distribucije: {STRING}
 STR_CONFIG_SETTING_LINKGRAPH_ACCURACY_HELPTEXT                  :Čim višu vrijednost odaberete, CPU će trebati više vremena za kalkulaciju poveznog grafikona. Ako bude trebalo predugo, mogli bi primijetiti usporavanje igre. U suprotnom, ako namjestite na manju vrijednost, distribucija će biti netočnija i mogli bi primijetiti da se teret šalje na mjesta koja niste očekivali.
 STR_CONFIG_SETTING_DEMAND_DISTANCE                              :Efekt udaljenosti na potražnju: {STRING}
@@ -2138,6 +2143,7 @@ STR_NETWORK_CLIENT                                              :Klijent
 STR_NETWORK_SPECTATORS                                          :Promatrači
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Unesite iznos novca koji želite dati
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Gledatelj
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Nemoj spremiti upisanu zaporku
@@ -2642,6 +2648,7 @@ STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: 
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Prihvaćeni teret: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Najveća brzina željeznice: {LTBLUE}{VELOCITY}
+STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Ograničenje brzine na cesti: {LTBLUE}{VELOCITY}
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :Stijenje
@@ -2738,7 +2745,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Zemlja u posjed
 STR_ABOUT_OPENTTD                                               :{WHITE}O OpenTTD-u
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Izvorno autorsko pravo {COPYRIGHT} 1995 Chris Sawyer, sva prava pridržana
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD verzija {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2013 OpenTTD tim
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2014 OpenTTD tim
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Spremi igru
@@ -2971,6 +2978,7 @@ STR_NEWGRF_LIST_MISSING                                         :{RED}Nedostaju 
 STR_NEWGRF_BROKEN                                               :{WHITE}Ponašanje NewGRF '{0:STRING}' će vjerojatno uzrokovati deharmonizaciju i/ili rušenje igre
 STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}Promijenjen status motoriziranog vagona za '{1:ENGINE}' kad vozilo nije u depou.
 STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}Ovo mijenja dužinu vozila za '{1:ENGINE}' kada vozilo nije unutar depoa
+STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}Promijenilo je kapacitet vozila za '{1:ENGINE}' kada nije u depou ili se remontira
 STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}Vlak'{VEHICLE}' koji pripada tvrtci '{COMPANY}' neispravne je dužine. Uzrok problema je vjerojatno u NewGRF datotekama. Igra će se možda deharmonizirati ili srušiti
 
 STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF '{0:STRING}' daje netočne informacije
@@ -2984,6 +2992,9 @@ STR_NEWGRF_INVALID_CARGO_ABBREV                                 :??
 STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} od <pogrešan teret>
 STR_NEWGRF_INVALID_ENGINE                                       :<pogrešan model vozila>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<pogrešna industrija>
+
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<nepostojeće vozilo>
 
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Tražim NewGRFove
@@ -3122,6 +3133,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}Prethodn
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}Prethodna stranica
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}Sljedeće
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}Sljedeća stranica
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Neispravna referenca cilja
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Imena postaja - klikni na ime kako bi centrirao glavni pogled na postaju. Ctrl+klik otvara novi prozor sa lokacijom postaje
@@ -4035,6 +4047,8 @@ STR_AI_SETTINGS_START_DELAY                                     :Broj dana za st
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}{STRING} "pročitaj me" datoteka od {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}{STRING} zapis izmjena od {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}{STRING} licenca od {STRING}
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}Posloži tekst
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Posloži tekst u prozorima tako da cijeli stane bez potrebe za skrolanjem
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Pogledaj "pročitaj me" datoteku
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Zapis izmjena
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Licenca
@@ -4628,7 +4642,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (Diesel)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (parni)
@@ -4837,7 +4851,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Putnički traje
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Putnički trajekt Shivershake
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Teretni brod Yate
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Teretni brod Bakewell
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Teretni brod Mightymover
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Teretni brod MightyMover
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Teretni brod Powernaut
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

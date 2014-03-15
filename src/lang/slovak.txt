@@ -358,8 +358,8 @@ STR_SORT_BY_COST                                                :Cena
 STR_SORT_BY_POWER                                               :Výkon
 STR_SORT_BY_TRACTIVE_EFFORT                                     :Trakčná sila
 STR_SORT_BY_INTRO_DATE                                          :Uvedenie na trh
-STR_SORT_BY_RUNNING_COST                                        :Náklady na prevádzku
-STR_SORT_BY_POWER_VS_RUNNING_COST                               :Výkon/Náklady na prevádzku
+STR_SORT_BY_RUNNING_COST                                        :Prevádzkové náklady
+STR_SORT_BY_POWER_VS_RUNNING_COST                               :Výkon/Prevádzkové náklady
 STR_SORT_BY_CARGO_CAPACITY                                      :Kapacita nákladu
 STR_SORT_BY_RANGE                                               :Rozsah
 STR_SORT_BY_POPULATION                                          :Populácia
@@ -1132,13 +1132,14 @@ STR_CONFIG_SETTING_COLLAPSE_ALL                                 :{BLACK}Zbaliť 
 STR_CONFIG_SETTING_NO_EXPLANATION_AVAILABLE_HELPTEXT            :(nie je potrebné vysvetlenie)
 STR_CONFIG_SETTING_DEFAULT_VALUE                                :{LTBLUE}Pôvodná hodnota: {ORANGE}{STRING}
 STR_CONFIG_SETTING_TYPE                                         :{LTBLUE}Nastavenie typu: {ORANGE}{STRING}
-STR_CONFIG_SETTING_TYPE_CLIENT                                  :Nastavenia klienta (neuložia sa; ovplyvní všetky hry)
+STR_CONFIG_SETTING_TYPE_CLIENT                                  :Nastavenia klienta (neuchovávané v uložených hrách; ovplyvní všetky hry)
 STR_CONFIG_SETTING_TYPE_GAME_MENU                               :Nastavenia hry (uložia sa; ovplyvní iba nové hry)
 STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Nastavenia hry (uložia sa; ovplyvní iba aktuálnu hru)
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Nastavenia spoločnosti (uložia sa; ovplyvní iba nové hry)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Nastavenia spoločnosti (uložia sa; ovplyvní iba aktuálnu firmu)
 
-STR_CONFIG_SETTING_RESTRICT_LABEL                               :{BLACK}Ukáž:
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Kategória:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Typ:
 STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Obmedzuje zoznam nižšie len na nastavenia, ktoré boli zmenené
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Základné nastavenia
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Pokročilé nastavenia
@@ -1153,6 +1154,10 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Nastavenia hry 
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Nastavenia hry (uložené v uložených hrách; ovplyvní iba aktuálnu hru)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Nastavenia spoločnosti (uložené v uložených hrách; ovplyvní iba nové hry)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Nastavenia spoločnosti (uchované v uloženej hre; ovplyvnia iba aktuálnu spoločnosť)
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Zobrazenie všetkých výsledkov vyhľadávania nastavením{}{SILVER}kategórie {BLACK}na {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Zobrazenie všetkých výsledkov vyhľadávania nastavením{}{SILVER}typu {BLACK}na {WHITE}Všetky typy nastavenia
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Zobrazenie všetkých výsledkov vyhľadávania nastavením{}{SILVER}kategórie {BLACK}na {WHITE}{STRING} {BLACK}a {SILVER}typu {BLACK}na {WHITE}Všetky typy nastavenia
+STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Nič -
 
 STR_CONFIG_SETTING_OFF                                          :nie
 STR_CONFIG_SETTING_ON                                           :áno
@@ -1407,8 +1412,8 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Štandardná paleta predpokladá pre NewGRFy paletu neuvedenú: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Pôvodná paleta nastavenia pre NewGRF keď nie je zadané ktoré NewGRF je potrebné
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Farby DOS
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Farby Windows
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Základná (D) paleta
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Dedená (W) paleta
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Automatická pauza pri štarte novej hry: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Ak je zapnuté, hra sa automaticky zapauzuje ked začne nová hra. Toto umožňuje lepšie preskúmanie mapy hry pred začatím.
@@ -1655,7 +1660,7 @@ STR_CONFIG_SETTING_DEMAND_DISTANCE                              :Vplyv vzdialeno
 STR_CONFIG_SETTING_DEMAND_DISTANCE_HELPTEXT                     :Ak nastavíte toto na hodnotu väčšiu ako 0, tak vzdialenosť medzi východiskovou stanicou A nejakého nákladu a možnou cieľovou stanicou B bude mať vplyv na množstvo nákladu poslaného z A do B. Čím bude B ďalej od A, tým menej nákladu bude odoslaného. Čím viac nastavíte, tým menej nákladu bude odoslaného do vzdialenejších staníc a viac nákladu bude odoslaného do bližších staníc.
 STR_CONFIG_SETTING_DEMAND_SIZE                                  :Množstvo vráteného nákladu pre symetrický mód: {STRING}
 STR_CONFIG_SETTING_DEMAND_SIZE_HELPTEXT                         :Nastavením na menej ako 100% sa bude symetrická distribúcia správať viac asymetricky. Menej nákladu sa bude povinne vracať späť, ak sa určité množstvo pošle do stanice. Ak nastavíte 0%, symetrická distribúcia sa bude správať ako asymetrická.
-STR_CONFIG_SETTING_SHORT_PATH_SATURATION                        :Vyťaženie krátkych ciest pred použitím kapacitných ciest: {STRING}
+STR_CONFIG_SETTING_SHORT_PATH_SATURATION                        :Vyťaženie krátkych ciest pred použitím vysokokapacitných ciest: {STRING}
 STR_CONFIG_SETTING_SHORT_PATH_SATURATION_HELPTEXT               :Často je viac ciest medzi dvoma stanicami. Cargodist vyťaží najprv najkratšiu cestu, potom využije druhú najkratšiu cestu až kým nebude vyťažená atď. Vyťaženie je určené podľa odhadu kapacity a plánovaného využitia. Ak sú vyťažené všetky trasy a nepostačuje to, preťaží všetky trasy, s preferenciou najkapacitnejšej. Väčšinou algoritmus neodhadne kapacitu presne. Toto nastavenie umožňuje určiť na koľko percent musí byť vyťažená prvá pred výberom nasledujúcej dlhšej. Nastavte na menej ako 100%, aby sa zabránilo preplneniu staníc v prípade nadhodnotenia kapacity.
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY                  :Jednotky rýchlosti: {STRING}
@@ -2110,6 +2115,7 @@ STR_NETWORK_CLIENT                                              :Klient
 STR_NETWORK_SPECTATORS                                          :Pozorovatelia
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Vložte čiastku ktorú chcete dať
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Pozorovateľ
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Neukladať zadané heslo
@@ -2614,6 +2620,7 @@ STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: 
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Prijíma náklad: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Rýchlostný limit koľají: {LTBLUE}{VELOCITY}
+STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Rýchlostný limit cesty: {LTBLUE}{VELOCITY}
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :Skaly
@@ -2710,7 +2717,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Spoločnosťou 
 STR_ABOUT_OPENTTD                                               :{WHITE}OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Pôvodný copyright: {COPYRIGHT} 1995 Chris Sawyer, všetky práva vyhradené
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD verzia {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2013 team OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2014 team OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Uložiť hru
@@ -2943,6 +2950,7 @@ STR_NEWGRF_LIST_MISSING                                         :{RED}Chýbajúc
 STR_NEWGRF_BROKEN                                               :{WHITE}Správanie NewGRF '{STRING}' môže sposobiť chybu obrazu a/alebo pád hry.
 STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}Zmenilo stav hnacieho vozidla v '{1:ENGINE}' keď nebolo v depe.
 STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}Zmenilo dĺžku vozidla '{1:ENGINE}' keď nebolo v depe.
+STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}Bola zmenená kapacita vozidla '{1:ENGINE}', hoci nebolo v depe alebo prestavané
 STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}Vlak '{VEHICLE}' patriaci '{COMPANY}' má neplatnú dlžku. Pravdeposobne to spôsobil problém s NewGRF. Môže nastať chybné zobrazenie alebo pád hry.
 
 STR_NEWGRF_BUGGY                                                :{WHITE}NewGRF '{STRING}' poskytuje nesprávne informácie.
@@ -2956,6 +2964,9 @@ STR_NEWGRF_INVALID_CARGO_ABBREV                                 :??
 STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} jednot{P ka ky iek} <neplatného nákladu>
 STR_NEWGRF_INVALID_ENGINE                                       :<chybný model rušňa>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<neplatný priemysel>
+
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<neplatné vozidlo>
 
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Skenovanie NewGRFov
@@ -3094,6 +3105,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}Predchá
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}Ísť na predchádzajúcu stranu
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}Ďalšia
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}Ísť na ďalšiu stranu
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Neplatný odkaz na cieľ
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Názvy staníc - klikni pre pohľad na polohu stanice. Ctrl+klik presunie pohľad na stanicu
@@ -4007,6 +4019,8 @@ STR_AI_SETTINGS_START_DELAY                                     :Koľko dní pre
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}{STRING} "čítajma" {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}{STRING} log zmien {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}{STRING} licencia {STRING}
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}Zalamovať text
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Zalamovať text v okne tak, aby ho nebolo nutné posúvať
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Zobraz čítajma
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Log zmien
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Licencia
@@ -4563,7 +4577,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (Diesel)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (Parny)
@@ -4772,7 +4786,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Chugger-Chug Tr
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Shivershake Trajekt
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Yate Nákladná loď
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Bakewell Nákladná loď
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Mightymover Nákladná loď
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :MightyMover Nákladná loď
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Powernaut Nákladná loď
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

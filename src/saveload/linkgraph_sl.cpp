@@ -30,7 +30,7 @@ static uint _num_nodes;
 const SaveLoad *GetLinkGraphDesc()
 {
 	static const SaveLoad link_graph_desc[] = {
-		 SLE_VAR(LinkGraph, last_compression, SLE_UINT32),
+		 SLE_VAR(LinkGraph, last_compression, SLE_INT32),
 		SLEG_VAR(_num_nodes,                  SLE_UINT16),
 		 SLE_VAR(LinkGraph, cargo,            SLE_UINT8),
 		 SLE_END()
@@ -73,7 +73,7 @@ const SaveLoad *GetLinkGraphJobDesc()
 		}
 
 		const SaveLoad job_desc[] = {
-			SLE_VAR(LinkGraphJob, join_date,        SLE_UINT32),
+			SLE_VAR(LinkGraphJob, join_date,        SLE_INT32),
 			SLE_VAR(LinkGraphJob, link_graph.index, SLE_UINT16),
 			SLE_END()
 		};
@@ -110,7 +110,7 @@ static const SaveLoad _node_desc[] = {
 	SLE_VAR(Node, supply,      SLE_UINT32),
 	SLE_VAR(Node, demand,      SLE_UINT32),
 	SLE_VAR(Node, station,     SLE_UINT16),
-	SLE_VAR(Node, last_update, SLE_UINT32),
+	SLE_VAR(Node, last_update, SLE_INT32),
 	SLE_END()
 };
 
@@ -118,12 +118,13 @@ static const SaveLoad _node_desc[] = {
  * SaveLoad desc for a link graph edge.
  */
 static const SaveLoad _edge_desc[] = {
-	SLE_VAR(Edge, distance,    SLE_UINT32),
-	SLE_VAR(Edge, capacity,    SLE_UINT32),
-	SLE_VAR(Edge, usage,       SLE_UINT32),
-	SLE_VAR(Edge, last_update, SLE_UINT32),
-	SLE_VAR(Edge, next_edge,   SLE_UINT16),
-	SLE_END()
+	    SLE_VAR(Edge, distance,                 SLE_UINT32),
+	    SLE_VAR(Edge, capacity,                 SLE_UINT32),
+	    SLE_VAR(Edge, usage,                    SLE_UINT32),
+	    SLE_VAR(Edge, last_unrestricted_update, SLE_INT32),
+	SLE_CONDVAR(Edge, last_restricted_update,   SLE_INT32, 187, SL_MAX_VERSION),
+	    SLE_VAR(Edge, next_edge,                SLE_UINT16),
+	    SLE_END()
 };
 
 /**

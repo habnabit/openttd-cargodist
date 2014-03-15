@@ -1072,7 +1072,8 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Impostazione di
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Impostazione della compagnia (conservata nei salvataggi; influenza solo le nuove partite)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Impostazione della compagnia (conservata nel salvataggio; influenza solo la compagnia corrente)
 
-STR_CONFIG_SETTING_RESTRICT_LABEL                               :{BLACK}Mostra:
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Categoria:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Tipo:
 STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Limita la lista sottostante alle sole impostazioni con valore modificato
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Impostazioni di base
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Impostazioni avanzate
@@ -1087,6 +1088,10 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Impostazioni di
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Impostazioni di gioco (conservate nel salvataggio; influenzano solo la partita corrente)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Impostazioni della compagnia (conservate nei salvataggi; influenzano solo le nuove partite)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Impostazioni della compagnia (conservate nel salvataggio; influenzano solo la compagnia corrente)
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Per mostrare tutti i risultati impostare la{}{SILVER}Categoria {BLACK}su {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Per mostrare tutti i risultati impostare il{}{SILVER}Tipo {BLACK}su {WHITE}Tutti i tipi di impostazioni
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Per mostrare tutti i risultati impostare la{}{SILVER}Categoria {BLACK}su {WHITE}{STRING} {BLACK}e il {SILVER}Tipo {BLACK}su {WHITE}Tutti i tipi di impostazioni
+STR_CONFIG_SETTINGS_NONE                                        :{WHITE}- Nessuna -
 
 STR_CONFIG_SETTING_OFF                                          :No
 STR_CONFIG_SETTING_OFF.ms                                       :No
@@ -1363,8 +1368,8 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Tavolozza predefinita da utilizzare per i NewGRF che non ne specificano alcuna: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Tavolozza predefinita da utilizzare per i NewGRF che non ne specificano alcuna
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Tavolozza DOS
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Tavolozza Windows
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Tavolozza predefinita (D)
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Tavolozza obsoleta (W)
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Metti in pausa all'inizio di una nuova partita: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Se abilitata, il gioco andrà automaticamente in pausa all'inizio di una nuova partita, permettendo di esaminare meglio la mappa
@@ -1604,14 +1609,14 @@ STR_CONFIG_SETTING_DISTRIBUTION_MAIL_HELPTEXT                   :In modalità "S
 STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED                        :Modalità di distribuzione dei carichi della classe ARMOURED: {STRING}
 STR_CONFIG_SETTING_DISTRIBUTION_ARMOURED_HELPTEXT               :La classe di carico ARMOURED contiene i Valori nel clima temperato, i Diamanti nel clima sub-tropicale e l'Oro nel clima sub-artico. I NewGRF possono modificare questa impostazione. In modalità "Simmetrica" la quantità di carico inviata da una stazione A ad una B è approssimativamente la stessa di quella inviata da B ad A. In modalità "Asimmetrica" è consentito l'invio di quantità di carico arbitrarie in entrambe le direzioni. In modalità "Manuale" non viene effettuata alcuna distribuzione automatica dei carichi interessati. Si raccomanda di impostare su "Asimmetrica" o "Manuale" per le partite nel clima sub-artico, in quanto le banche non restituiscono Oro alle miniere. Per i climi temperato e sub-tropicale è possibile scegliere "Simmetrica" poiché le banche restituiscono un carico di valori equivalente a quello ricevuto dalla banca di origine.
 STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT                         :Modalità di distribuzione dei carichi delle altre classi: {STRING}
-STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :In modalità "Simmetrica" la quantità di carico inviata da una stazione A ad una B è approssimativamente la stessa di quella inviata da B ad A. In modalità "Asimmetrica" è consentito l'invio di quantità di carico arbitrarie in entrambe le direzioni. In modalità "Manuale" non viene effettuata alcuna distribuzione automatica dei carichi interessati. L'impostazione tipica è "Asimmetrica" o "Manuale".
+STR_CONFIG_SETTING_DISTRIBUTION_DEFAULT_HELPTEXT                :In modalità "Asimmetrica" è consentito l'invio di quantità di carico arbitrarie in entrambe le direzioni. In modalità "Manuale" non viene effettuata alcuna distribuzione automatica dei carichi interessati. L'impostazione tipica è "Asimmetrica" o "Manuale".
 STR_CONFIG_SETTING_LINKGRAPH_ACCURACY                           :Precisione della distribuzione: {STRING}
 STR_CONFIG_SETTING_LINKGRAPH_ACCURACY_HELPTEXT                  :Più alta l'impostazione, più tempo impiega la CPU per calcolare il grafo delle rotte. Nel caso sia richiesto molto tempo, potrebbero verificarsi rallentamenti. Tuttavia, impostando un valore basso, la distribuzione potrebbe essere imprecisa e i carichi potrebbero essere inviati a destinazioni inattese.
 STR_CONFIG_SETTING_DEMAND_DISTANCE                              :Effetto della distanza sulla domanda: {STRING}
 STR_CONFIG_SETTING_DEMAND_DISTANCE_HELPTEXT                     :Impostando a un valore maggiore di 0, la distanza fra una stazione di origine A e una possibile destinazione B per uno dei carichi prodotti ha effetto sulla quantità di carico effettivamente inviata da A a B. Più B si trova lontano da A, più piccola è la quantità inviata. Aumentando il valore dell'impostazione si aumenta anche lo squilibrio fra le stazioni lontane (che ricevono meno carico) e le stazioni più vicine (che ne ricevono di più).
 STR_CONFIG_SETTING_DEMAND_SIZE                                  :Quantità di carico restituita in modalità simmetrica: {STRING}
 STR_CONFIG_SETTING_DEMAND_SIZE_HELPTEXT                         :Impostando a meno di 100% fa sì che la distribuzione simmetrica si comporti più come quella asimmetrica. Viene consentito il ritorno indietro di un carico inferiore rispetto alla quantità inviata ad una stazione. A 0% la distribuzione simmetrica si comporta come quella asimmetrica.
-STR_CONFIG_SETTING_SHORT_PATH_SATURATION                        :Saturazione dei percorsi corti prima di utilizzare quelli più capaci: {STRING}
+STR_CONFIG_SETTING_SHORT_PATH_SATURATION                        :Saturazione dei percorsi corti prima di utilizzare quelli a più alta capacità: {STRING}
 STR_CONFIG_SETTING_SHORT_PATH_SATURATION_HELPTEXT               :È frequente che esistano più percorsi fra due stazioni. L'algoritmo Cargodist cercherà di saturare innanzi tutto il percorso più corto, quindi il secondo più corto fino a saturazione e così via. Il grado di saturazione è determinato dalla stima della capacità e dell'utilizo programmato. Se con tutti i percorsi saturi permane ancora domanda, l'algoritmo sovraccaricherà i percorsi indipendentemente dalla lunghezza, preferendo quelli a più alta capacità. Tuttavia, il più delle volte l'algoritmo non stimerà la capacità in modo accurato. Questa impostazione permette di specificare fino a quale percentuale saturare un percorso corto durante il primo passaggio dell'algoritmo prima di sceglierne uno più lungo. Impostarlo a meno di 100% in modo da evitare sovraffollamento delle stazioni in caso di capcità sovrastimata.
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY                  :Unità di velocità: {STRING}
@@ -2066,6 +2071,7 @@ STR_NETWORK_CLIENT                                              :Client
 STR_NETWORK_SPECTATORS                                          :Spettatori
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Inserire la quantità di denaro da donare
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Spettatore
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Non salvare la password inserita
@@ -2576,6 +2582,7 @@ STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: 
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Carichi accettati: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Limite di velocità rotaie: {LTBLUE}{VELOCITY}
+STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Limite di velocità strada: {LTBLUE}{VELOCITY}
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :Rocce
@@ -2672,7 +2679,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :Terreno possedu
 STR_ABOUT_OPENTTD                                               :{WHITE}Informazioni su OpenTTD
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Copyright originale {COPYRIGHT} 1995 Chris Sawyer, Tutti i diritti riservati
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versione {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2013 Il team OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT} 2002-2014 Il team OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Salva partita
@@ -2905,6 +2912,7 @@ STR_NEWGRF_LIST_MISSING                                         :{RED}File manca
 STR_NEWGRF_BROKEN                                               :{WHITE}Il comportamento del NewGRF '{0:STRING}' può causare errori di sincronizzazione e/o crash
 STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}Ha modificato lo stato di vagone motorizzato di '{1:ENGINE}' al di fuori del deposito
 STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}Ha modificato la lunghezza del veicolo '{1:ENGINE}' fuori dal deposito
+STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}Ha modificato la capacità del veicolo '{1:ENGINE}' fuori dal deposito o mentre non era in corso un riadattamento
 STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}Il treno '{VEHICLE}' della '{COMPANY}' ha una lunghezza non valida, probabilmente a causa di problemi con un NewGRF. È possibile che si verifichino errori di sincronizzazione o crash
 
 STR_NEWGRF_BUGGY                                                :{WHITE}Informazioni scorrette fornite dal NewGRF '{0:STRING}'
@@ -2918,6 +2926,9 @@ STR_NEWGRF_INVALID_CARGO_ABBREV                                 :??
 STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} di <carico non valido>
 STR_NEWGRF_INVALID_ENGINE                                       :<modello di veicolo non valido>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<industria non valida>
+
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<veicolo non valido>
 
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Scansione NewGRF
@@ -3056,6 +3067,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}Indietro
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}Va alla pagina precedente
 STR_STORY_BOOK_NEXT_PAGE                                        :{BLACK}Avanti
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}Va alla pagina successiva
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Riferimento obiettivo non valido
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Nomi delle stazioni - fare clic su un nome per centrare la visuale principale sulla stazione. CTRL+clic la mostra in una mini visuale.
@@ -3969,6 +3981,8 @@ STR_AI_SETTINGS_START_DELAY                                     :Giorni da atten
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}File leggimi del {STRING} {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}Changelog del {STRING} {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}Licenza del {STRING} {STRING}
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}A capo automatico
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :{BLACK}Manda automaticamente a capo il testo della finestra in modo che sia visibile senza doverlo scorrere
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Visualizza file leggimi
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Changelog
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Licenza
@@ -4525,7 +4539,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (Diesel)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (Vapore)
@@ -4734,7 +4748,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Traghetto Chugg
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Traghetto Shivershake
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Mercantile Yate
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Mercantile Bakewell
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Mercantile Mightymover
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Mercantile MightyMover
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Mercantile Powernaut
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

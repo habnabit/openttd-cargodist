@@ -28,6 +28,10 @@
 #include <sys/stat.h>
 #include <algorithm>
 
+#ifdef WITH_XDG_BASEDIR
+#include "basedir.h"
+#endif
+
 /** Size of the #Fio data buffer. */
 #define FIO_BUFFER_SIZE 512
 
@@ -84,7 +88,9 @@ void FioSeekTo(size_t pos, int mode)
 	if (mode == SEEK_CUR) pos += FioGetPos();
 	_fio.buffer = _fio.buffer_end = _fio.buffer_start + FIO_BUFFER_SIZE;
 	_fio.pos = pos;
-	fseek(_fio.cur_fh, _fio.pos, SEEK_SET);
+	if (fseek(_fio.cur_fh, _fio.pos, SEEK_SET) < 0) {
+		DEBUG(misc, 0, "Seeking in %s failed", _fio.filename);
+	}
 }
 
 #if defined(LIMITED_FDS)
@@ -248,7 +254,8 @@ void FioOpenFile(int slot, const char *filename, Subdirectory subdir)
 #endif /* LIMITED_FDS */
 	f = FioFOpenFile(filename, "rb", subdir);
 	if (f == NULL) usererror("Cannot open file '%s'", filename);
-	uint32 pos = ftell(f);
+	long pos = ftell(f);
+	if (pos < 0) usererror("Cannot read file '%s'", filename);
 
 	FioCloseFile(slot); // if file was opened before, close it
 	_fio.handles[slot] = f;
@@ -265,7 +272,7 @@ void FioOpenFile(int slot, const char *filename, Subdirectory subdir)
 	_fio.usage_count[slot] = 0;
 	_fio.open_handles++;
 #endif /* LIMITED_FDS */
-	FioSeekToFile(slot, pos);
+	FioSeekToFile(slot, (uint32)pos);
 }
 
 static const char * const _subdirs[] = {
@@ -446,7 +453,11 @@ FILE *FioFOpenFileTar(TarFileListEntry *entry, size_t *filesize)
 	FILE *f = fopen(entry->tar_filename, "rb");
 	if (f == NULL) return f;
 
-	fseek(f, entry->position, SEEK_SET);
+	if (fseek(f, entry->position, SEEK_SET) < 0) {
+		fclose(f);
+		return NULL;
+	}
+
 	if (filesize != NULL) *filesize = entry->size;
 	return f;
 }
@@ -529,6 +540,8 @@ FILE *FioFOpenFile(const char *filename, const char *mode, Subdirectory subdir, 
  */
 static void FioCreateDirectory(const char *name)
 {
+	/* Ignore directory creation errors; they'll surface later on, and most
+	 * of the time they are 'directory already exists' errors anyhow. */
 #if defined(WIN32) || defined(WINCE)
 	CreateDirectory(OTTD2FS(name), NULL);
 #elif defined(OS2) && !defined(__INNOTEK_LIBC__)
@@ -708,7 +721,7 @@ bool TarScanner::AddFile(const char *filename, size_t basepath_length, const cha
 	assert(tar_filename == NULL);
 
 	/* The TAR-header, repeated for every file */
-	typedef struct TarHeader {
+	struct TarHeader {
 		char name[100];      ///< Name of the file
 		char mode[8];
 		char uid[8];
@@ -727,7 +740,7 @@ bool TarScanner::AddFile(const char *filename, size_t basepath_length, const cha
 		char prefix[155];    ///< Path of the file
 
 		char unused[12];
-	} TarHeader;
+	};
 
 	/* Check if we already seen this file */
 	TarList::iterator it = _tar_list[this->subdir].find(filename);
@@ -768,28 +781,23 @@ bool TarScanner::AddFile(const char *filename, size_t basepath_length, const cha
 			if (memcmp(&th, &empty[0], 512) == 0) continue;
 
 			DEBUG(misc, 0, "The file '%s' isn't a valid tar-file", filename);
+			fclose(f);
 			return false;
 		}
 
 		name[0] = '\0';
-		size_t len = 0;
 
 		/* The prefix contains the directory-name */
 		if (th.prefix[0] != '\0') {
-			memcpy(name, th.prefix, sizeof(th.prefix));
-			name[sizeof(th.prefix)] = '\0';
-			len = strlen(name);
-			name[len] = PATHSEPCHAR;
-			len++;
+			ttd_strlcpy(name, th.prefix, lengthof(name));
+			ttd_strlcat(name, PATHSEP, lengthof(name));
 		}
 
 		/* Copy the name of the file in a safe way at the end of 'name' */
-		memcpy(&name[len], th.name, sizeof(th.name));
-		name[len + sizeof(th.name)] = '\0';
+		ttd_strlcat(name, th.name, lengthof(name));
 
 		/* Calculate the size of the file.. for some strange reason this is stored as a string */
-		memcpy(buf, th.size, sizeof(th.size));
-		buf[sizeof(th.size)] = '\0';
+		ttd_strlcpy(buf, th.size, lengthof(buf));
 		size_t skip = strtoul(buf, &end, 8);
 
 		switch (th.typeflag) {
@@ -818,8 +826,7 @@ bool TarScanner::AddFile(const char *filename, size_t basepath_length, const cha
 			case '1': // hard links
 			case '2': { // symbolic links
 				/* Copy the destination of the link in a safe way at the end of 'linkname' */
-				memcpy(link, th.linkname, sizeof(th.linkname));
-				link[sizeof(th.linkname)] = '\0';
+				ttd_strlcpy(link, th.linkname, lengthof(link));
 
 				if (strlen(name) == 0 || strlen(link) == 0) break;
 
@@ -835,7 +842,7 @@ bool TarScanner::AddFile(const char *filename, size_t basepath_length, const cha
 
 				/* Process relative path.
 				 * Note: The destination of links must not contain any directory-links. */
-				strecpy(dest, name, lastof(dest));
+				ttd_strlcpy(dest, name, lengthof(dest));
 				char *destpos = strrchr(dest, PATHSEPCHAR);
 				if (destpos == NULL) destpos = dest;
 				*destpos = '\0';
@@ -893,7 +900,11 @@ bool TarScanner::AddFile(const char *filename, size_t basepath_length, const cha
 
 		/* Skip to the next block.. */
 		skip = Align(skip, 512);
-		fseek(f, skip, SEEK_CUR);
+		if (fseek(f, skip, SEEK_CUR) < 0) {
+			DEBUG(misc, 0, "The file '%s' can't be read as a valid tar-file", filename);
+			fclose(f);
+			return false;
+		}
 		pos += skip;
 	}
 
@@ -1071,26 +1082,48 @@ bool DoScanWorkingDirectory()
 void DetermineBasePaths(const char *exe)
 {
 	char tmp[MAX_PATH];
+#if defined(WITH_XDG_BASEDIR) && defined(WITH_PERSONAL_DIR)
+	const char *xdg_data_home = xdgDataHome(NULL);
+	snprintf(tmp, MAX_PATH, "%s" PATHSEP "%s", xdg_data_home,
+			PERSONAL_DIR[0] == '.' ? &PERSONAL_DIR[1] : PERSONAL_DIR);
+	free(xdg_data_home);
+
+	AppendPathSeparator(tmp, MAX_PATH);
+	_searchpaths[SP_PERSONAL_DIR_XDG] = strdup(tmp);
+#endif
 #if defined(__MORPHOS__) || defined(__AMIGA__) || defined(DOS) || defined(OS2) || !defined(WITH_PERSONAL_DIR)
 	_searchpaths[SP_PERSONAL_DIR] = NULL;
 #else
 #ifdef __HAIKU__
 	BPath path;
 	find_directory(B_USER_SETTINGS_DIRECTORY, &path);
-	const char *homedir = path.Path();
+	const char *homedir = strdup(path.Path());
 #else
+	/* getenv is highly unsafe; duplicate it as soon as possible,
+	 * or at least before something else touches the environment
+	 * variables in any way. It can also contain all kinds of
+	 * unvalidated data we rather not want internally. */
 	const char *homedir = getenv("HOME");
+	if (homedir != NULL) {
+		homedir = strndup(homedir, MAX_PATH);
+	}
 
 	if (homedir == NULL) {
 		const struct passwd *pw = getpwuid(getuid());
-		homedir = (pw == NULL) ? "" : pw->pw_dir;
+		homedir = (pw == NULL) ? NULL : strdup(pw->pw_dir);
 	}
 #endif
 
-	snprintf(tmp, MAX_PATH, "%s" PATHSEP "%s", homedir, PERSONAL_DIR);
-	AppendPathSeparator(tmp, MAX_PATH);
+	if (homedir != NULL) {
+		ValidateString(homedir);
+		snprintf(tmp, MAX_PATH, "%s" PATHSEP "%s", homedir, PERSONAL_DIR);
+		AppendPathSeparator(tmp, MAX_PATH);
 
-	_searchpaths[SP_PERSONAL_DIR] = strdup(tmp);
+		_searchpaths[SP_PERSONAL_DIR] = strdup(tmp);
+		free(homedir);
+	} else {
+		_searchpaths[SP_PERSONAL_DIR] = NULL;
+	}
 #endif
 
 #if defined(WITH_SHARED_DIR)
@@ -1143,7 +1176,7 @@ extern void cocoaSetApplicationBundleDir();
 }
 #endif /* defined(WIN32) || defined(WINCE) */
 
-char *_personal_dir;
+const char *_personal_dir;
 
 /**
  * Acquire the base paths (personal dir and game data dir),
@@ -1155,17 +1188,29 @@ void DeterminePaths(const char *exe)
 {
 	DetermineBasePaths(exe);
 
+#if defined(WITH_XDG_BASEDIR) && defined(WITH_PERSONAL_DIR)
+	char config_home[MAX_PATH];
+
+	const char *xdg_config_home = xdgConfigHome(NULL);
+	snprintf(config_home, MAX_PATH, "%s" PATHSEP "%s", xdg_config_home,
+			PERSONAL_DIR[0] == '.' ? &PERSONAL_DIR[1] : PERSONAL_DIR);
+	free(xdg_config_home);
+
+	AppendPathSeparator(config_home, MAX_PATH);
+#endif
+
 	Searchpath sp;
 	FOR_ALL_SEARCHPATHS(sp) {
 		if (sp == SP_WORKING_DIR && !_do_scan_working_directory) continue;
 		DEBUG(misc, 4, "%s added as search path", _searchpaths[sp]);
 	}
 
+	char *config_dir;
 	if (_config_file != NULL) {
-		_personal_dir = strdup(_config_file);
-		char *end = strrchr(_personal_dir, PATHSEPCHAR);
+		config_dir = strdup(_config_file);
+		char *end = strrchr(config_dir, PATHSEPCHAR);
 		if (end == NULL) {
-			_personal_dir[0] = '\0';
+			config_dir[0] = '\0';
 		} else {
 			end[1] = '\0';
 		}
@@ -1174,35 +1219,57 @@ void DeterminePaths(const char *exe)
 		if (FioFindFullPath(personal_dir, lengthof(personal_dir), BASE_DIR, "openttd.cfg") != NULL) {
 			char *end = strrchr(personal_dir, PATHSEPCHAR);
 			if (end != NULL) end[1] = '\0';
-			_personal_dir = strdup(personal_dir);
-			_config_file = str_fmt("%sopenttd.cfg", _personal_dir);
+			config_dir = strdup(personal_dir);
+			_config_file = str_fmt("%sopenttd.cfg", config_dir);
 		} else {
+#if defined(WITH_XDG_BASEDIR) && defined(WITH_PERSONAL_DIR)
+			/* No previous configuration file found. Use the configuration folder from XDG. */
+			config_dir = config_home;
+#else
 			static const Searchpath new_openttd_cfg_order[] = {
 					SP_PERSONAL_DIR, SP_BINARY_DIR, SP_WORKING_DIR, SP_SHARED_DIR, SP_INSTALLATION_DIR
 				};
 
+			config_dir = NULL;
 			for (uint i = 0; i < lengthof(new_openttd_cfg_order); i++) {
 				if (IsValidSearchPath(new_openttd_cfg_order[i])) {
-					_personal_dir = strdup(_searchpaths[new_openttd_cfg_order[i]]);
-					_config_file = str_fmt("%sopenttd.cfg", _personal_dir);
+					config_dir = strdup(_searchpaths[new_openttd_cfg_order[i]]);
 					break;
 				}
 			}
+			assert(config_dir != NULL);
+#endif
+			_config_file = str_fmt("%sopenttd.cfg", config_dir);
 		}
 	}
 
-	DEBUG(misc, 3, "%s found as personal directory", _personal_dir);
+	DEBUG(misc, 3, "%s found as config directory", config_dir);
 
-	_highscore_file = str_fmt("%shs.dat", _personal_dir);
+	_highscore_file = str_fmt("%shs.dat", config_dir);
 	extern char *_hotkeys_file;
-	_hotkeys_file = str_fmt("%shotkeys.cfg",  _personal_dir);
+	_hotkeys_file = str_fmt("%shotkeys.cfg", config_dir);
 	extern char *_windows_file;
-	_windows_file = str_fmt("%swindows.cfg",  _personal_dir);
+	_windows_file = str_fmt("%swindows.cfg", config_dir);
+
+#if defined(WITH_XDG_BASEDIR) && defined(WITH_PERSONAL_DIR)
+	if (config_dir == config_home) {
+		/* We are using the XDG configuration home for the config file,
+		 * then store the rest in the XDG data home folder. */
+		_personal_dir = _searchpaths[SP_PERSONAL_DIR_XDG];
+		FioCreateDirectory(_personal_dir);
+	} else
+#endif
+	{
+		_personal_dir = config_dir;
+	}
 
 	/* Make the necessary folders */
 #if !defined(__MORPHOS__) && !defined(__AMIGA__) && defined(WITH_PERSONAL_DIR)
-	FioCreateDirectory(_personal_dir);
+	FioCreateDirectory(config_dir);
+	if (config_dir != _personal_dir) FioCreateDirectory(_personal_dir);
 #endif
+
+	DEBUG(misc, 3, "%s found as personal directory", _personal_dir);
 
 	static const Subdirectory default_subdirs[] = {
 		SAVE_DIR, AUTOSAVE_DIR, SCENARIO_DIR, HEIGHTMAP_DIR, BASESET_DIR, NEWGRF_DIR, AI_DIR, AI_LIBRARY_DIR, GAME_DIR, GAME_LIBRARY_DIR, SCREENSHOT_DIR

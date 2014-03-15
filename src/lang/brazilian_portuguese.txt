@@ -1071,7 +1071,8 @@ STR_CONFIG_SETTING_TYPE_GAME_INGAME                             :Config. do jogo
 STR_CONFIG_SETTING_TYPE_COMPANY_MENU                            :Config. da companhia (guardado no savegame; afeta apenas novos jogos)
 STR_CONFIG_SETTING_TYPE_COMPANY_INGAME                          :Config. da companhia (guardado no savegame; afeta apenas a comp. atual)
 
-STR_CONFIG_SETTING_RESTRICT_LABEL                               :{BLACK}Exibir:
+STR_CONFIG_SETTING_RESTRICT_CATEGORY                            :{BLACK}Categoria:
+STR_CONFIG_SETTING_RESTRICT_TYPE                                :{BLACK}Tipo:
 STR_CONFIG_SETTING_RESTRICT_DROPDOWN_HELPTEXT                   :{BLACK}Restringe a lista abaixo a mostrar apenas configs. alteradas
 STR_CONFIG_SETTING_RESTRICT_BASIC                               :Configs. básicas
 STR_CONFIG_SETTING_RESTRICT_ADVANCED                            :Configs. avançadas
@@ -1086,6 +1087,10 @@ STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU                      :Config. do jogo
 STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME                    :Config. do jogo (guardado no savegame; afeta apenas o jogo atual)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU                   :Config. da companhia (guardado no savegame; afeta apenas novos jogos)
 STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME                 :Config. de companhia (guardado no savegame; afeta apenas a companhia atual)
+STR_CONFIG_SETTING_CATEGORY_HIDES                               :{BLACK}Mostrar todos resultados por configuração{}{SILVER}Categoria {BLACK}até {WHITE}{STRING}
+STR_CONFIG_SETTING_TYPE_HIDES                                   :{BLACK}Mostrar todos resultados por configuração{}{SILVER}Tipo {BLACK}até {WHITE}Todas configurações de tipos
+STR_CONFIG_SETTING_CATEGORY_AND_TYPE_HIDES                      :{BLACK}Mostrar todos resultados por configuração{}{SILVER}Category {BLACK}até {WHITE}{STRING} {BLACK}e {SILVER}Tipo {BLACK}até {WHITE}Todas configurações de tipos
+STR_CONFIG_SETTINGS_NONE                                        :{G=m}{WHITE}- Nenhum -
 
 STR_CONFIG_SETTING_OFF                                          :Desl.
 STR_CONFIG_SETTING_ON                                           :Lig.
@@ -1340,8 +1345,8 @@ STR_CONFIG_SETTING_DATE_FORMAT_IN_SAVE_NAMES_ISO                :ISO (2008-12-31
 
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE                       :Paleta padrão a ser usada para NewGRF's sem paletas específicas: {STRING}
 STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_HELPTEXT              :Paleta padrão a ser usada por NewGRFs que não a especificarem
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Paleta do DOS
-STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Paleta do Windows
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_DOS                   :Paleta Padrão (D)
+STR_CONFIG_SETTING_NEWGRF_DEFAULT_PALETTE_WIN                   :Paleta Original (W)
 
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME                            :Pausar automaticamente ao inicar um novo jogo: {STRING}
 STR_CONFIG_SETTING_PAUSE_ON_NEW_GAME_HELPTEXT                   :Ativado, pausa o jogo ao iniciar um jogo novo, permitindo um estudo do mapa antes do jogo
@@ -1588,7 +1593,7 @@ STR_CONFIG_SETTING_DEMAND_DISTANCE                              :Efeito da dist�
 STR_CONFIG_SETTING_DEMAND_DISTANCE_HELPTEXT                     :Se você definir esse valor para maior que 0, a distância entre a estação de origem A para alguma carga e um possível destino B terá um efeito na quantidade de carga levada de A até B. Quanto mais distante B for da A, menos carga será enviada. Quanto mais alto você definir esse valor, menos carga será levada para estações distantes, e mais carga será levada para estações próximas.
 STR_CONFIG_SETTING_DEMAND_SIZE                                  :Quantidade de carga retornada no modo simétrico: {STRING}
 STR_CONFIG_SETTING_DEMAND_SIZE_HELPTEXT                         :Definir isso para menos de 100% faz com que a distribuição simétrica comporte-se mais como a assimétrica. Menos carga será devolvida forçosamente se uma certa quantidade for mandada a uma estação. Se você definir a 0%, a distribuição se comportará exatamente como a assimétrica.
-STR_CONFIG_SETTING_SHORT_PATH_SATURATION                        :Saturação de caminhos curtos antes de usar outros caminhos: {STRING}
+STR_CONFIG_SETTING_SHORT_PATH_SATURATION                        :Saturação de caminhos curtos antes de usar caminhos de alta capacidade: {STRING}
 STR_CONFIG_SETTING_SHORT_PATH_SATURATION_HELPTEXT               :Frequentemente há múltiplos caminhos entre duas estações. Cargodist irá saturar o caminho mais curto primeiro, depois usar o segundo caminho mais curto até saturá-lo, e assim por diante. Saturação é determinada pela estimação da capacidade de do uso planejado. Ao saturar todos os caminhos, se ainda houver demanda, irá sobrecarregar todos os caminhos, com preferência aos de maior capacidade. No entanto, na maior parte do tempo o algorítimo não irá estimar a capacidade corretamente. Essa configuração permite você definir até que porcentagem um caminho mais curto deverá ser saturado na primeira passada antes do algorítimo proceder ao próxido. Defina-o para menos de 100% para evitar estações sobrecarregadas no caso de capacidade superestimada.
 
 STR_CONFIG_SETTING_LOCALISATION_UNITS_VELOCITY                  :Unidade de velocidade: {STRING}
@@ -2043,6 +2048,7 @@ STR_NETWORK_CLIENT                                              :Cliente
 STR_NETWORK_SPECTATORS                                          :Espectadores
 
 STR_NETWORK_GIVE_MONEY_CAPTION                                  :{WHITE}Entre a quantia a ser dada
+STR_NETWORK_TOOLBAR_LIST_SPECTATOR                              :{BLACK}Espectador
 
 # Network set password
 STR_COMPANY_PASSWORD_CANCEL                                     :{BLACK}Não salvar a senha digitada
@@ -2547,6 +2553,7 @@ STR_LAND_AREA_INFORMATION_NEWGRF_NAME                           :{BLACK}NewGRF: 
 STR_LAND_AREA_INFORMATION_CARGO_ACCEPTED                        :{BLACK}Carga aceita: {LTBLUE}
 STR_LAND_AREA_INFORMATION_CARGO_EIGHTS                          :({COMMA}/8 {STRING})
 STR_LANG_AREA_INFORMATION_RAIL_SPEED_LIMIT                      :{BLACK}Velocidade limite do trilho: {LTBLUE}{VELOCITY}
+STR_LANG_AREA_INFORMATION_ROAD_SPEED_LIMIT                      :{BLACK}Limite de velocidade da rua: {LTBLUE}{VELOCITY}
 
 # Description of land area of different tiles
 STR_LAI_CLEAR_DESCRIPTION_ROCKS                                 :Rochas
@@ -2643,7 +2650,7 @@ STR_LAI_OBJECT_DESCRIPTION_COMPANY_OWNED_LAND                   :O terreno é pr
 STR_ABOUT_OPENTTD                                               :{WHITE}Sobre o OpenTTD...
 STR_ABOUT_ORIGINAL_COPYRIGHT                                    :{BLACK}Copyright original {COPYRIGHT} 1995 Chris Sawyer, Todos os direitos reservados
 STR_ABOUT_VERSION                                               :{BLACK}OpenTTD versão {REV}
-STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2013 A equipe do OpenTTD
+STR_ABOUT_COPYRIGHT_OPENTTD                                     :{BLACK}OpenTTD {COPYRIGHT}2002-2014 A equipe do OpenTTD
 
 # Save/load game/scenario
 STR_SAVELOAD_SAVE_CAPTION                                       :{WHITE}Salvar Jogo
@@ -2876,6 +2883,7 @@ STR_NEWGRF_LIST_MISSING                                         :{RED}Arquivos f
 STR_NEWGRF_BROKEN                                               :{WHITE}'{0:STRING}' tem altas chances de causar desincronias e/ou travamentos
 STR_NEWGRF_BROKEN_POWERED_WAGON                                 :{WHITE}Alterou o estado do vagão motorizado para '{1:ENGINE}' estando fora de um depósito
 STR_NEWGRF_BROKEN_VEHICLE_LENGTH                                :{WHITE}Mudou o tamanho do veículo para '{1:ENGINE}' estando fora de um depósito
+STR_NEWGRF_BROKEN_CAPACITY                                      :{WHITE}A capacidade do veículo mudou para '{1:ENGINE}' quando fora do depósito
 STR_BROKEN_VEHICLE_LENGTH                                       :{WHITE}Trem '{VEHICLE}' de '{COMPANY}' tem um tamanho inválido. Provavelmente causado por um NewGRF. O jogo pode travar ou sair de sincronia
 
 STR_NEWGRF_BUGGY                                                :{WHITE}O NewGRF '{0:STRING}' retorna informação incorreta
@@ -2889,6 +2897,9 @@ STR_NEWGRF_INVALID_CARGO_ABBREV                                 :??
 STR_NEWGRF_INVALID_CARGO_QUANTITY                               :{COMMA} de <carga inválida>
 STR_NEWGRF_INVALID_ENGINE                                       :<modelo de veíc. inválido>
 STR_NEWGRF_INVALID_INDUSTRYTYPE                                 :<indústria inválida>
+
+# Placeholders for other invalid stuff, e.g. vehicles that have gone (Game Script).
+STR_INVALID_VEHICLE                                             :<veículo inválido>
 
 # NewGRF scanning window
 STR_NEWGRF_SCAN_CAPTION                                         :{WHITE}Escaneando NewGRFs
@@ -3027,6 +3038,7 @@ STR_STORY_BOOK_PREV_PAGE                                        :{BLACK}Ant.
 STR_STORY_BOOK_PREV_PAGE_TOOLTIP                                :{BLACK}Vai para a página anterior
 STR_STORY_BOOK_NEXT_PAGE                                        :[BLACK}Próx.
 STR_STORY_BOOK_NEXT_PAGE_TOOLTIP                                :{BLACK}Vai para a próxima página
+STR_STORY_BOOK_INVALID_GOAL_REF                                 :{RED}Referência de objetivo inválida
 
 # Station list window
 STR_STATION_LIST_TOOLTIP                                        :{BLACK}Nomes da estação - clique no nome para centralizar a visualização principal na estação. Ctrl+Clique abre uma nova janela na localização da estação
@@ -3940,6 +3952,8 @@ STR_AI_SETTINGS_START_DELAY                                     :Número de dias
 STR_TEXTFILE_README_CAPTION                                     :{WHITE}{STRING} Leiame de {STRING}
 STR_TEXTFILE_CHANGELOG_CAPTION                                  :{WHITE}{STRING} log de mudanças de {STRING}
 STR_TEXTFILE_LICENCE_CAPTION                                    :{WHITE}{STRING} licença de {STRING}
+STR_TEXTFILE_WRAP_TEXT                                          :{WHITE}Quebra de linha
+STR_TEXTFILE_WRAP_TEXT_TOOLTIP                                  :[BLACK}Quebra linhas automaticamente para que o texto caiba na janela
 STR_TEXTFILE_VIEW_README                                        :{BLACK}Ler o Leiame
 STR_TEXTFILE_VIEW_CHANGELOG                                     :{BLACK}Log de mudanças
 STR_TEXTFILE_VIEW_LICENCE                                       :{BLACK}Licença
@@ -4496,7 +4510,7 @@ STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_KIRBY_PAUL_TANK_STEAM        :Kirby Paul Tank
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MJS_250_DIESEL               :MJS 250 (Diesel)
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_CHOO_CHOO         :Ploddyphut Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_CHOO_CHOO          :Powernaut Choo-Choo
-STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :Mightymover Choo-Choo
+STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_MIGHTYMOVER_CHOO_CHOO        :MightyMover Choo-Choo
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_PLODDYPHUT_DIESEL            :Ploddyphut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_POWERNAUT_DIESEL             :Powernaut Diesel
 STR_VEHICLE_NAME_TRAIN_ENGINE_RAIL_WILLS_2_8_0_STEAM            :Wills 2-8-0 (Vapor)
@@ -4705,7 +4719,7 @@ STR_VEHICLE_NAME_SHIP_CHUGGER_CHUG_PASSENGER                    :Navio de Passag
 STR_VEHICLE_NAME_SHIP_SHIVERSHAKE_PASSENGER_FERRY               :Navio de Passageiros Shivershake
 STR_VEHICLE_NAME_SHIP_YATE_CARGO_SHIP                           :Cargueiro Yate
 STR_VEHICLE_NAME_SHIP_BAKEWELL_CARGO_SHIP                       :Cargueiro Bakewell
-STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Cargueiro Mightymover
+STR_VEHICLE_NAME_SHIP_MIGHTYMOVER_CARGO_SHIP                    :Cargueiro MightyMover
 STR_VEHICLE_NAME_SHIP_POWERNAUT_CARGO_SHIP                      :Cargueiro Powernaut
 STR_VEHICLE_NAME_AIRCRAFT_SAMPSON_U52                           :Sampson U52
 STR_VEHICLE_NAME_AIRCRAFT_COLEMAN_COUNT                         :Coleman Count

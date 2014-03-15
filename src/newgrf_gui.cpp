@@ -119,9 +119,9 @@ static void ShowNewGRFInfo(const GRFConfig *c, uint x, uint y, uint right, uint 
 
 		/* Draw the palette of the NewGRF */
 		if (c->palette & GRFP_BLT_32BPP) {
-			SetDParamStr(0, (c->palette & GRFP_USE_WINDOWS) ? "Windows / 32 bpp" : "DOS / 32 bpp");
+			SetDParamStr(0, (c->palette & GRFP_USE_WINDOWS) ? "Legacy (W) / 32 bpp" : "Default (D) / 32 bpp");
 		} else {
-			SetDParamStr(0, (c->palette & GRFP_USE_WINDOWS) ? "Windows" : "DOS");
+			SetDParamStr(0, (c->palette & GRFP_USE_WINDOWS) ? "Legacy (W)" : "Default (D)");
 		}
 		y = DrawStringMultiLine(x, right, y, bottom, STR_NEWGRF_SETTINGS_PALETTE);
 	}
@@ -378,7 +378,7 @@ struct NewGRFParametersWindow : public Window {
 
 							DropDownList *list = new DropDownList();
 							for (uint32 i = par_info->min_value; i <= par_info->max_value; i++) {
-								list->push_back(new DropDownListCharStringItem(GetGRFStringFromGRFText(par_info->value_names.Find(i)->second), i, false));
+								*list->Append() = new DropDownListCharStringItem(GetGRFStringFromGRFText(par_info->value_names.Find(i)->second), i, false);
 							}
 
 							ShowDropDownListAt(this, list, old_val, -1, wi_rect, COLOUR_ORANGE, true);
@@ -884,11 +884,11 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 				DropDownList *list = new DropDownList();
 
 				/* Add 'None' option for clearing list */
-				list->push_back(new DropDownListStringItem(STR_NONE, -1, false));
+				*list->Append() = new DropDownListStringItem(STR_NONE, -1, false);
 
 				for (uint i = 0; i < _grf_preset_list.Length(); i++) {
 					if (_grf_preset_list[i] != NULL) {
-						list->push_back(new DropDownListPresetItem(i));
+						*list->Append() = new DropDownListPresetItem(i);
 					}
 				}
 
@@ -991,6 +991,8 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 					if (newsel == NULL && c->next == this->active_sel) newsel = c;
 
 					if (c == this->active_sel) {
+						if (newsel == c) newsel = NULL;
+
 						*pc = c->next;
 						delete c;
 						break;
@@ -1056,7 +1058,7 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 			}
 
 			case WID_NS_TOGGLE_PALETTE:
-				if (this->active_sel != NULL || !this->editable) {
+				if (this->active_sel != NULL && this->editable) {
 					this->active_sel->palette ^= GRFP_USE_MASK;
 					this->SetDirty();
 				}
@@ -1201,7 +1203,8 @@ struct NewGRFWindow : public Window, NewGRFScanCallback {
 
 		this->SetWidgetDisabledState(WID_NS_SET_PARAMETERS, !this->show_params || this->active_sel == NULL || this->active_sel->num_valid_params == 0);
 		this->SetWidgetDisabledState(WID_NS_VIEW_PARAMETERS, !this->show_params || this->active_sel == NULL || this->active_sel->num_valid_params == 0);
-		this->SetWidgetDisabledState(WID_NS_TOGGLE_PALETTE, disable_all);
+		this->SetWidgetDisabledState(WID_NS_TOGGLE_PALETTE, disable_all ||
+				(!(_settings_client.gui.newgrf_developer_tools || _settings_client.gui.scenario_developer) && ((c->palette & GRFP_GRF_MASK) != GRFP_GRF_UNSET)));
 
 		if (!disable_all) {
 			/* All widgets are now enabled, so disable widgets we can't use */

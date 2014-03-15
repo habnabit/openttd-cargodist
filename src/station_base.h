@@ -53,6 +53,7 @@ public:
 	{
 		assert(flow > 0);
 		this->shares[flow] = st;
+		this->unrestricted = flow;
 	}
 
 	/**
@@ -61,16 +62,24 @@ public:
 	 * inconsistencies.
 	 * @param st Remote station.
 	 * @param flow Amount of flow to be added.
+	 * @param restricted If the flow to be added is restricted.
 	 */
-	inline void AppendShare(StationID st, uint flow)
+	inline void AppendShare(StationID st, uint flow, bool restricted = false)
 	{
 		assert(flow > 0);
 		this->shares[(--this->shares.end())->first + flow] = st;
+		if (!restricted) this->unrestricted += flow;
 	}
 
 	uint GetShare(StationID st) const;
 
 	void ChangeShare(StationID st, int flow);
+
+	void RestrictShare(StationID st);
+
+	void ReleaseShare(StationID st);
+
+	void ScaleToMonthly(uint runtime);
 
 	/**
 	 * Get the actual shares as a const pointer so that they can be iterated
@@ -80,23 +89,51 @@ public:
 	inline const SharesMap *GetShares() const { return &this->shares; }
 
 	/**
+	 * Return total amount of unrestricted shares.
+	 * @return Amount of unrestricted shares.
+	 */
+	inline uint GetUnrestricted() const { return this->unrestricted; }
+
+	/**
 	 * Swap the shares maps, and thus the content of this FlowStat with the
 	 * other one.
 	 * @param other FlowStat to swap with.
 	 */
-	inline void SwapShares(FlowStat &other) { this->shares.swap(other.shares); }
+	inline void SwapShares(FlowStat &other)
+	{
+		this->shares.swap(other.shares);
+		Swap(this->unrestricted, other.unrestricted);
+	}
 
 	/**
 	 * Get a station a package can be routed to. This done by drawing a
 	 * random number between 0 and sum_shares and then looking that up in
 	 * the map with lower_bound. So each share gets selected with a
-	 * probability dependent on its flow.
+	 * probability dependent on its flow. Do include restricted flows here.
+	 * @param is_restricted Output if a restricted flow was chosen.
+	 * @return A station ID from the shares map.
+	 */
+	inline StationID GetViaWithRestricted(bool &is_restricted) const
+	{
+		assert(!this->shares.empty());
+		uint rand = RandomRange((--this->shares.end())->first);
+		is_restricted = rand >= this->unrestricted;
+		return this->shares.upper_bound(rand)->second;
+	}
+
+	/**
+	 * Get a station a package can be routed to. This done by drawing a
+	 * random number between 0 and sum_shares and then looking that up in
+	 * the map with lower_bound. So each share gets selected with a
+	 * probability dependent on its flow. Don't include restricted flows.
 	 * @return A station ID from the shares map.
 	 */
 	inline StationID GetVia() const
 	{
 		assert(!this->shares.empty());
-		return this->shares.upper_bound(RandomRange((--this->shares.end())->first - 1))->second;
+		return this->unrestricted > 0 ?
+				this->shares.upper_bound(RandomRange(this->unrestricted))->second :
+				INVALID_STATION;
 	}
 
 	StationID GetVia(StationID excluded, StationID excluded2 = INVALID_STATION) const;
@@ -105,6 +142,7 @@ public:
 
 private:
 	SharesMap shares;  ///< Shares of flow to be sent via specified station (or consumed locally).
+	uint unrestricted; ///< Limit for unrestricted shares.
 };
 
 /** Flow descriptions by origin stations. */
@@ -112,7 +150,9 @@ class FlowStatMap : public std::map<StationID, FlowStat> {
 public:
 	void AddFlow(StationID origin, StationID via, uint amount);
 	void PassOnFlow(StationID origin, StationID via, uint amount);
-	void DeleteFlows(StationID via);
+	StationIDStack DeleteFlows(StationID via);
+	void RestrictFlows(StationID via);
+	void ReleaseFlows(StationID via);
 	void FinalizeLocalConsumption(StationID self);
 };
 
@@ -168,6 +208,7 @@ struct GoodsEntry {
 		rating(INITIAL_STATION_RATING),
 		last_speed(0),
 		last_age(255),
+		amount_fract(0),
 		link_graph(INVALID_LINK_GRAPH),
 		node(INVALID_NODE),
 		max_waiting_cargo(0)
@@ -453,11 +494,9 @@ public:
 		return IsAirportTile(tile) && GetStationIndex(tile) == this->index;
 	}
 
-	/* virtual */ uint32 GetNewGRFVariable(const ResolverObject *object, byte variable, byte parameter, bool *available) const;
+	/* virtual */ uint32 GetNewGRFVariable(const ResolverObject &object, byte variable, byte parameter, bool *available) const;
 
 	/* virtual */ void GetTileArea(TileArea *ta, StationType type) const;
-
-	void RunAverages();
 };
 
 #define FOR_ALL_STATIONS(var) FOR_ALL_BASE_STATIONS_OF_TYPE(Station, var)
